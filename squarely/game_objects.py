@@ -234,8 +234,9 @@ class UnlockAnimation(pyglet.sprite.Sprite):
 
         super().__init__(animation)
 
-        self.x = board.columns[2]
-        self.y = board.rows[2]
+        self.x = board.columns[1]
+        self.y = board.rows[1]
+        self.scale = board.scale * 2
 
 
 class FinishedAnimation(pyglet.sprite.Sprite):

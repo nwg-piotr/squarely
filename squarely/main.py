@@ -60,6 +60,7 @@ def main():
     update_scores(panel)
 
     intro_hello(hello_msg)
+    #intro_level_unlocked(3)
     common.fx.play(panel, "hello")
 
     @window.event
