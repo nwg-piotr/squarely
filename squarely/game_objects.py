@@ -575,7 +575,14 @@ class Sounds:
         self.drop = pyglet.media.StaticSource(pyglet.media.load('sounds/drop.wav', streaming=False))
         self.rotate = pyglet.media.StaticSource(pyglet.media.load('sounds/rotate.wav', streaming=False))
         self.undo = pyglet.media.StaticSource(pyglet.media.load('sounds/undo.wav', streaming=False))
-        #self.hello = pyglet.media.StaticSource(pyglet.media.load('sounds/hello.ogg', streaming=False))
+        try:
+            """As this sound is being played first, let's check if the avbin library works"""
+            self.hello = pyglet.media.StaticSource(pyglet.media.load('sounds/hello.ogg', streaming=False))
+            common.avbin = True
+        except:
+            print("The avbin library not installed or doesn't work: soundtrack turned off :(")
+            self.hello = pyglet.media.StaticSource(pyglet.media.load('sounds/hello.wav', streaming=False))
+
 
     def play(self, panel, fx):
         if panel.sounds_on:

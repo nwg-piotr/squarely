@@ -59,8 +59,8 @@ def main():
             break
     update_scores(panel)
 
-    common.avbin = is_installed("avbin") or is_installed("avbin7")
     intro_hello(hello_msg)
+    common.fx.play(panel, "hello")
 
     @window.event
     def on_draw():
