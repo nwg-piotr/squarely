@@ -8,3 +8,5 @@ a horizontal row, disappear. All the cells above fall down. The game objective i
 the next level. Next board size will be `n+3 x n+3`.
 
 ![screen](http://nwg.pl/squarely/wiki/screen.png)
+
+A lot of work still left to do. See the current development state in action: https://youtu.be/IVEoVfDqq8Y
