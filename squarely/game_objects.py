@@ -583,7 +583,6 @@ class Sounds:
             print("The avbin library not installed or doesn't work: soundtrack turned off :(")
             self.hello = pyglet.media.StaticSource(pyglet.media.load('sounds/hello.wav', streaming=False))
 
-
     def play(self, panel, fx):
         if panel.sounds_on:
             if fx == "key":
