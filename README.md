@@ -10,3 +10,6 @@ the next level. Next board size will be `n+3 x n+3`.
 ![screen](http://nwg.pl/squarely/wiki/screen.png)
 
 A lot of work still left to do. See the current development state in action: https://youtu.be/IVEoVfDqq8Y
+
+The game is being developed on Arch Linux witch [Pycharm Community Edition](https://www.jetbrains.com/pycharm/download), 
+and it's highly unlikely to work standalone at the moment. To give it a try, clone the project in PyCharm.
