@@ -18,6 +18,7 @@ from pyglet.gl import *
 from game_objects import Cell, Player, UnlockAnimation, FinishedAnimation, HelloAnimation
 
 import os
+import subprocess
 import pickle
 import random
 import common
@@ -455,3 +456,12 @@ def intro_level_unlocked(level):
 def intro_level_finished(level, moves):
     common.intro_sprite = FinishedAnimation(common.board)
     common.intro_message = intro_label(common.board, "Level " + str(level) + " in " + str(moves) + " moves")
+
+
+def is_installed(pkg_name):
+    installed = True
+    try:
+        subprocess.check_output("which " + pkg_name, shell=True)
+    except subprocess.CalledProcessError:
+        installed = False
+    return installed

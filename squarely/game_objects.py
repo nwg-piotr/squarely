@@ -259,6 +259,7 @@ class HelloAnimation(pyglet.sprite.Sprite):
 
         self.x = board.columns[1]
         self.y = board.rows[1]
+        self.scale = board.scale * 2
 
 
 class Panel:
@@ -570,7 +571,7 @@ class Sounds:
         self.drop = pyglet.media.StaticSource(pyglet.media.load('sounds/drop.wav', streaming=False))
         self.rotate = pyglet.media.StaticSource(pyglet.media.load('sounds/rotate.wav', streaming=False))
         self.undo = pyglet.media.StaticSource(pyglet.media.load('sounds/undo.wav', streaming=False))
-        self.hello = pyglet.media.StaticSource(pyglet.media.load('sounds/hello.ogg', streaming=False))
+        #self.hello = pyglet.media.StaticSource(pyglet.media.load('sounds/hello.ogg', streaming=False))
 
     def play(self, panel, fx):
         if panel.sounds_on:

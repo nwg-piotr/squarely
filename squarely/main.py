@@ -52,7 +52,10 @@ def main():
             break
     update_scores(panel)
 
-    common.fx.play(panel, "hello")
+    if is_installed("avbin"):
+        common.fx.play(panel, "hello")
+    else:
+        print("avbin library needed to play compressed sound")
     intro_hello(hello_msg)
 
     @window.event
