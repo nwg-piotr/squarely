@@ -15,6 +15,7 @@ Dependencies (Arch Linux): python-pyglet, avbin7 (AUR package necessary to play 
 import pyglet
 from pyglet.gl import *
 from pyglet import image
+import configparser
 import common
 
 
@@ -505,17 +506,20 @@ class Panel:
                            self.button_start.area[3])
 
         if self.button_sound.selected:
-            common.board.message = "Sounds on/off"
+            common.board.message = common.lang["panel_sounds"]
         elif self.button_music.selected:
-            common.board.message = "Music on/off"
+            if common.avbin:
+                common.board.message = common.lang["panel_music"]
+            else:
+                common.board.message = common.lang["panel_music_missing"]
         elif self.button_undo.selected:
-            common.board.message = "Undo last move"
+            common.board.message = common.lang["panel_undo"]
         elif self.button_down.selected:
-            common.board.message = "Level down"
+            common.board.message = common.lang["panel_level_down"]
         elif self.button_up.selected:
-            common.board.message = "Level up"
+            common.board.message = common.lang["panel_level_up"]
         elif self.button_start.selected:
-            common.board.message = "Start new game " + self.border_size_txt
+            common.board.message = common.lang["panel_start"] + " " + self.border_size_txt
         else:
             common.board.message = None
 
@@ -593,3 +597,17 @@ class Player(object):
         self.password = password
         self.scores = scores
 
+
+class Language(dict):
+    def __init__(self, which):
+        config = configparser.ConfigParser()
+        with open('languages/' + which) as f:
+            config.read_file(f)
+
+        values = {}
+        if config.has_section("lang"):
+            options = config.options("lang")
+            for key in options:
+                value = config.get("lang", key)
+                values[key] = value
+        super().__init__(values)

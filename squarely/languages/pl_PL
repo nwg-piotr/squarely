@@ -1,0 +1,10 @@
+[lang]
+panel_music = Włącz / wyłącz muzykę
+panel_music_missing = Potrzebna biblioteka avbin!
+panel_sounds = Włącz / wyłącz dźwięki
+panel_undo = Cofnij ostatni ruch
+panel_level_down = Poziom niżej
+panel_level_up = Poziom wyżej
+panel_start = Nowa gra
+intro_welcome = Witaj w grze!
+intro_wb = Witaj z powrotem!

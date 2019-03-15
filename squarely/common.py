@@ -12,7 +12,9 @@ License: GPL3
 
 Dependencies (Arch Linux): python-pyglet, avbin7 (AUR package necessary to play compressed sound files)
 """
-app_name = "puzzle"
+lang = None  # language dictionary
+avbin = False
+app_name = "squarely"
 app_dir = None
 player_filename = 'player.pkl'
 player = None

@@ -1,0 +1,10 @@
+[lang]
+panel_music = Music on/off
+panel_music_missing = avbin library missing
+panel_sounds = Sounds on/off
+panel_undo = Undo last move
+panel_level_down = Level down
+panel_level_up = Level up
+panel_start = Start new game
+intro_welcome = Welcome to the game!
+intro_wb = Welcome back!

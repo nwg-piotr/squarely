@@ -21,6 +21,7 @@ import os
 import subprocess
 import pickle
 import random
+import configparser
 import common
 
 
@@ -465,3 +466,19 @@ def is_installed(pkg_name):
     except subprocess.CalledProcessError:
         installed = False
     return installed
+
+
+def overwrite_lang(localization):
+    if os.path.isfile("languages/" + localization):
+        print("Reading lang " + localization)
+        config = configparser.ConfigParser()
+        with open('languages/' + localization) as f:
+            config.read_file(f)
+
+        if config.has_section("lang"):
+            options = config.options("lang")
+            for key in options:
+                value = config.get("lang", key)
+                common.lang[key] = value
+    else:
+        print("Couldn't find translation for " + localization)

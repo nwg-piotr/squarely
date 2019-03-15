@@ -15,12 +15,19 @@ Dependencies (Arch Linux): python-pyglet, avbin7 (AUR package necessary to play 
 from game_objects import *
 from tools import *
 from pyglet.window import key
+import locale
 
 
 def main():
     pyglet.options['audio'] = ('openal', 'pulse', 'silent')
 
-    """Let's create resources first"""
+    """Let's preload English dictionary and overwrite with localized values if found"""
+    common.lang = Language('en_EN')
+    localization = locale.getlocale()[0]
+    if localization != 'en_EN':
+        overwrite_lang(localization)
+
+    """Create resources"""
     create_cells_bitmaps('images/cells-0.png')
     common.fx = Sounds()
 
@@ -30,7 +37,7 @@ def main():
         os.makedirs(common.app_dir)
 
     """load stored player data or create new file if not found; set the hello message"""
-    hello_msg = "Welcome back!" if player_load() else "Welcome to the game!"
+    hello_msg = common.lang["intro_wb"] if player_load() else common.lang["intro_welcome"]
     print(common.player.name, common.player.password, common.player.scores)
 
     """The GameBoard class calculates and holds many values used by other classes and MUST be instantiated first"""
@@ -52,10 +59,7 @@ def main():
             break
     update_scores(panel)
 
-    if is_installed("avbin"):
-        common.fx.play(panel, "hello")
-    else:
-        print("avbin library needed to play compressed sound")
+    common.avbin = is_installed("avbin") or is_installed("avbin7")
     intro_hello(hello_msg)
 
     @window.event
