@@ -230,7 +230,7 @@ class UnlockAnimation(pyglet.sprite.Sprite):
     def __init__(self, board):
         frames_source = image.load("images/unlock-frames.png")
         sequence = pyglet.image.ImageGrid(frames_source, 1, 6)
-        animation = (pyglet.image.Animation.from_image_sequence(sequence, 0.24, False))
+        animation = (pyglet.image.Animation.from_image_sequence(sequence, 0.24, True))
 
         super().__init__(animation)
 
@@ -242,13 +242,14 @@ class UnlockAnimation(pyglet.sprite.Sprite):
 class FinishedAnimation(pyglet.sprite.Sprite):
     def __init__(self, board):
         frames_source = image.load("images/smile-frames.png")
-        sequence = pyglet.image.ImageGrid(frames_source, 1, 6)
-        animation = (pyglet.image.Animation.from_image_sequence(sequence, 0.24, False))
+        sequence = pyglet.image.ImageGrid(frames_source, 1, 8)
+        animation = (pyglet.image.Animation.from_image_sequence(sequence, 0.24, True))
 
         super().__init__(animation)
 
-        self.x = board.columns[2]
-        self.y = board.rows[2]
+        self.x = board.columns[1]
+        self.y = board.rows[1]
+        self.scale = board.scale * 2
 
 
 class HelloAnimation(pyglet.sprite.Sprite):

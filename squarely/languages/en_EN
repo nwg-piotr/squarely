@@ -1,3 +1,4 @@
+# While adding own translation, leave all {} untouched!
 [lang]
 panel_music = Music on/off
 panel_music_missing = avbin library missing
