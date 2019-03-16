@@ -8,3 +8,5 @@ panel_level_up = Level up
 panel_start = Start new game
 intro_welcome = Welcome to the game!
 intro_wb = Welcome back!
+intro_level_unlocked = Level {} unlocked
+intro_level_in = Level {} in {} moves

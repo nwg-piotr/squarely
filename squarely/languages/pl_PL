@@ -8,3 +8,5 @@ panel_level_up = Poziom wyżej
 panel_start = Nowa gra
 intro_welcome = Witaj w grze!
 intro_wb = Witaj z powrotem!
+intro_level_unlocked = Poziom {} odblokowany
+intro_level_in = Poziom {} w {} ruchach

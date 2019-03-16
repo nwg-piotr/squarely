@@ -61,6 +61,7 @@ def main():
 
     intro_hello(hello_msg)
     #intro_level_unlocked(3)
+    #intro_level_finished(1, 30)
     common.fx.play(panel, "hello")
 
     @window.event

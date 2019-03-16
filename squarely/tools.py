@@ -451,12 +451,12 @@ def intro_hello(message):
 
 def intro_level_unlocked(level):
     common.intro_sprite = UnlockAnimation(common.board)
-    common.intro_message = intro_label(common.board, "Level " + str(level) + " unlocked")
+    common.intro_message = intro_label(common.board, common.lang["intro_level_unlocked"].format(level))
 
 
 def intro_level_finished(level, moves):
     common.intro_sprite = FinishedAnimation(common.board)
-    common.intro_message = intro_label(common.board, "Level " + str(level) + " in " + str(moves) + " moves")
+    common.intro_message = intro_label(common.board, common.lang["intro_level_in"].format(level, moves))
 
 
 def overwrite_lang(localization):
