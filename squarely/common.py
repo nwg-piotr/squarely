@@ -13,8 +13,8 @@ License: GPL3
 Dependencies (Arch Linux): python-pyglet, avbin7 (AUR package necessary to play compressed sound files)
 """
 lang = None  # language dictionary
-avbin = False
-app_name = "squarely"
+avbin = False  # being set True if playing intro sound in ogg format does not crash
+app_name = "squarely"  # determines the ~/.config/game_folder name
 app_dir = None
 player_filename = 'player.pkl'
 player = None
