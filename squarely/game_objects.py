@@ -297,8 +297,8 @@ class UnlockAnimation(pyglet.sprite.Sprite):
 
         super().__init__(animation)
 
-        self.x = board.columns[1]
-        self.y = board.rows[1]
+        self.x = board.margin + board.base
+        self.y = board.margin + board.base * 3
         self.scale = board.scale * 2
 
 
@@ -310,8 +310,8 @@ class FinishedAnimation(pyglet.sprite.Sprite):
 
         super().__init__(animation)
 
-        self.x = board.columns[1]
-        self.y = board.rows[1]
+        self.x = board.margin + board.base
+        self.y = board.margin + board.base * 3
         self.scale = board.scale * 2
 
 
@@ -323,8 +323,8 @@ class HelloAnimation(pyglet.sprite.Sprite):
 
         super().__init__(animation)
 
-        self.x = board.columns[1]
-        self.y = board.rows[1]
+        self.x = board.margin + board.base
+        self.y = board.margin + board.base * 3
         self.scale = board.scale * 2
 
 
@@ -640,6 +640,7 @@ class Sounds:
         self.drop = pyglet.media.StaticSource(pyglet.media.load('sounds/drop.wav', streaming=False))
         self.rotate = pyglet.media.StaticSource(pyglet.media.load('sounds/rotate.wav', streaming=False))
         self.undo = pyglet.media.StaticSource(pyglet.media.load('sounds/undo.wav', streaming=False))
+        self.warning = pyglet.media.StaticSource(pyglet.media.load('sounds/warning.wav', streaming=False))
         try:
             """As this sound is being played first, let's check if the avbin library works"""
             self.hello = pyglet.media.StaticSource(pyglet.media.load('sounds/hello.ogg', streaming=False))
@@ -660,6 +661,8 @@ class Sounds:
                 self.undo.play()
             if fx == "hello":
                 self.hello.play()
+            if fx == "warning":
+                self.warning.play()
 
 
 class Player(object):

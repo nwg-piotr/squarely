@@ -186,7 +186,7 @@ def main():
                 common.level = panel.selected_level
                 common.fx.play(panel, "key")
                 new_game()
-                mark_and_delete(common.board)
+                mark_and_delete(common.board, panel)
 
             elif panel.button_undo.selected:
                 common.fx.play(panel, "undo")
@@ -213,7 +213,7 @@ def main():
     def on_key_press(symbol, modifiers):
         if symbol == key.SPACE:
             new_game()
-            mark_and_delete(common.board)
+            mark_and_delete(common.board, panel)
         elif symbol == key.BACKSPACE:
             restore(common.board)
         elif symbol == key.H:
@@ -228,9 +228,9 @@ def main():
                 intro_bcg.rotation = 0
 
         if common.rotation_direction == "right":
-            rotate_selection_right(common.board)
+            rotate_selection_right(common.board, panel)
         elif common.rotation_direction == "left":
-            rotate_selection_left(common.board)
+            rotate_selection_left(common.board, panel)
 
         update_scores(panel)
 
@@ -241,7 +241,7 @@ def main():
                 common.fx.play(panel, "drop")
                 deselect_all_cells()
                 clear_to_delete(common.board)
-                mark_and_delete(common.board)
+                mark_and_delete(common.board, panel)
             else:
                 for cell in common.board.cells_to_drop_down:
                     cell.y -= common.board.scroll_step

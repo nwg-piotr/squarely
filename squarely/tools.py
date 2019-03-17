@@ -91,7 +91,7 @@ def select_highlighted_cells(board, selector_row, selector_column):
         board.sel_3.select()
 
 
-def rotate_selection_right(board):
+def rotate_selection_right(board, panel):
     for cell in cells_being_rotated(board):
         if cell is not None:
             cell.visible = False
@@ -107,10 +107,10 @@ def rotate_selection_right(board):
                 cell.visible = True
 
         clear_to_delete(board)
-        mark_and_delete(board)
+        mark_and_delete(board, panel)
 
 
-def rotate_selection_left(board):
+def rotate_selection_left(board, panel):
     for cell in cells_being_rotated(board):
         if cell is not None:
             cell.visible = False
@@ -126,7 +126,7 @@ def rotate_selection_left(board):
                 cell.visible = True
 
         clear_to_delete(board)
-        mark_and_delete(board)
+        mark_and_delete(board, panel)
 
 
 def clear_to_delete(board):
@@ -137,10 +137,11 @@ def clear_to_delete(board):
                 common.matrix[row][col].clear_to_delete()
 
 
-def mark_and_delete(board):
+def mark_and_delete(board, panel):
     board.cells_to_drop_down = []
     deselect_all_cells()
     cells_in_types = [0, 0, 0, 0, 0, 0]
+    warn = False
 
     finished = False
     while not finished:
@@ -163,7 +164,6 @@ def mark_and_delete(board):
             for col in range(board.cells_in_row):
                 if common.matrix[row][col] is not None and common.matrix[row][col].to_delete:
                     r = row
-                    print("Found to delete!")
                     common.cells_deleted = True
                     break
             if r is not None:
@@ -186,7 +186,6 @@ def mark_and_delete(board):
         else:
             finished = True
             summary_row = first_with_empty_cells(board)[0]
-            print("---------------- first with empty cells = " + str(first_with_empty_cells(board)[0]))
 
         cells_left = 0
         for row in range(board.cells_in_row):
@@ -196,21 +195,20 @@ def mark_and_delete(board):
                     cells_in_types[cell.type] += 1
                     cells_left += 1
 
-        msg = "| "
         common.summary_backup = common.summary.copy()
         common.summary = []
         for left in cells_in_types:
             if left >= 3 or left == 0:
-                msg += str(left) + " | "
                 common.summary.append(str(left))
             else:
-                msg += str(left) + " :( | "
                 common.summary.append(str(left) + ":(")
-        print(msg)
+                warn = True
         if summary_row is not None and common.cells_deleted:
             common.summary_bar.new(common.board, summary_row)
             common.summary_bar.refresh(common.summary[0], common.summary[1], common.summary[2],common.summary[3], common.summary[4], common.summary[5])
-            common.summary_bar.visible = True
+            if warn:
+                common.fx.play(panel, "warning")
+            common.summary_bar.show()
 
         if cells_left == 0:
             common.playing = False
