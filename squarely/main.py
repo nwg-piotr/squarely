@@ -43,6 +43,9 @@ def main():
     """The GameBoard class calculates and holds many values used by other classes and MUST be instantiated first"""
     common.board = GameBoard(6 + common.level * 3)  # 6 + n * 3
 
+    common.summary_batch = pyglet.graphics.Batch()
+    common.summary_bar = SummaryBar(common.board, 0, 0)
+
     window = create_game_window(common.board)
     cursor_hand = window.get_system_mouse_cursor(window.CURSOR_HAND)
     cursor_default = window.get_system_mouse_cursor(window.CURSOR_DEFAULT)
@@ -79,6 +82,9 @@ def main():
             if common.cells_batch is not None:
                 common.cells_batch.draw()
 
+            if common.summary_bar is not None and common.summary_bar.visible:
+                common.summary_bar.draw()
+
             if common.rotation_group is not None and common.rotation_direction is not None:
                 common.rotation_group.draw()
 
@@ -107,6 +113,7 @@ def main():
         common.cursor_in_board = y >= common.board.grid_start_y
 
         if common.cursor_in_board:
+            common.summary_bar.hide()
 
             if common.rotation_direction is None:
 
@@ -155,6 +162,7 @@ def main():
 
     @window.event
     def on_mouse_release(x, y, button, modifiers):
+        common.cells_deleted = False
 
         if common.cursor_in_board and common.board.selection_made:
             if button == pyglet.window.mouse.LEFT:
@@ -208,6 +216,9 @@ def main():
             mark_and_delete(common.board)
         elif symbol == key.BACKSPACE:
             restore(common.board)
+        elif symbol == key.H:
+            if common.summary_bar is not None:
+                common.summary_bar.show()
 
     def update(dt):
         if not common.playing:
@@ -268,6 +279,7 @@ def new_game():
     common.backup_values = None
     common.scores[common.level] = 0
 
+    common.summary_bar.hide()
     common.playing = True
 
 

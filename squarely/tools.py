@@ -15,7 +15,7 @@ Dependencies (Arch Linux): python-pyglet, avbin7 (AUR package necessary to play 
 import pyglet
 from pyglet import image
 from pyglet.gl import *
-from game_objects import Cell, Player, UnlockAnimation, FinishedAnimation, HelloAnimation
+from game_objects import Cell, Player, UnlockAnimation, FinishedAnimation, HelloAnimation, SummaryBar
 
 import os
 import subprocess
@@ -140,6 +140,7 @@ def clear_to_delete(board):
 def mark_and_delete(board):
     board.cells_to_drop_down = []
     deselect_all_cells()
+    cells_in_types = [0, 0, 0, 0, 0, 0]
 
     finished = False
     while not finished:
@@ -162,6 +163,8 @@ def mark_and_delete(board):
             for col in range(board.cells_in_row):
                 if common.matrix[row][col] is not None and common.matrix[row][col].to_delete:
                     r = row
+                    print("Found to delete!")
+                    common.cells_deleted = True
                     break
             if r is not None:
                 break
@@ -175,35 +178,62 @@ def mark_and_delete(board):
                         common.matrix[r][col] = None
 
         """Now we need to find the first row with empty cell(s)"""
-        row = first_with_empty_cells(board)
+        row = first_with_empty_cells(board)[1]  # first row w/ empty cells and cells above
         if row is not None:
             columns = columns_to_drop(board, row)  # *** We'll be dropping these columns before re-checking the board!
             mark_to_drop(board, columns, row)
             break
         else:
             finished = True
+            summary_row = first_with_empty_cells(board)[0]
+            print("---------------- first with empty cells = " + str(first_with_empty_cells(board)[0]))
 
-    cells_left = 0
-    for row in range(board.cells_in_row):
-        for col in range(board.cells_in_row):
-            if common.matrix[row][col] is not None:
-                cells_left += 1
-    if cells_left == 0:
-        common.playing = False
-        player_save()
-        player_load()
+        cells_left = 0
+        for row in range(board.cells_in_row):
+            for col in range(board.cells_in_row):
+                cell = common.matrix[row][col]
+                if cell is not None:
+                    cells_in_types[cell.type] += 1
+                    cells_left += 1
+
+        msg = "| "
+        common.summary_backup = common.summary.copy()
+        common.summary = []
+        for left in cells_in_types:
+            if left >= 3 or left == 0:
+                msg += str(left) + " | "
+                common.summary.append(str(left))
+            else:
+                msg += str(left) + " :( | "
+                common.summary.append(str(left) + ":(")
+        print(msg)
+        if summary_row is not None and common.cells_deleted:
+            common.summary_bar.new(common.board, summary_row)
+            common.summary_bar.refresh(common.summary[0], common.summary[1], common.summary[2],common.summary[3], common.summary[4], common.summary[5])
+            common.summary_bar.visible = True
+
+        if cells_left == 0:
+            common.playing = False
+            player_save()
+            player_load()
 
 
 def first_with_empty_cells(board):
-    """Index of the first row containing empty spots (and some cells above!)"""
+    """
+    :param board:
+    :return: tuple of (first row w/ empty cells, first row w/ empty cells and some cells above)
+    """
+    first_at_all = None
+    first_with_cells_above = None
     for row in range(board.cells_in_row):
         for col in range(board.cells_in_row):
             if common.matrix[row][col] is None:
-                """Check if there are any cells above"""
-                for r in range(row, board.cells_in_row):
+                if first_at_all is None:  # mark at the 1st iteration only
+                    first_at_all = row
+                for r in range(row, board.cells_in_row):  # Check if there are any cells above
                     if common.matrix[r][col] is not None:
-                        return row
-    return None
+                        first_with_cells_above = row
+    return first_at_all, first_with_cells_above
 
 
 def columns_to_drop(board, marked_row):
@@ -370,6 +400,11 @@ def restore(board):
                 idx += 1
         common.backup_matrix = None
         common.scores[common.level] -= 1
+
+    for i in range(len(common.summary_backup)):
+        common.summary[i] = common.summary_backup[i]
+    common.summary_bar.refresh(common.summary[0], common.summary[1], common.summary[2],common.summary[3], common.summary[4], common.summary[5])
+    common.summary_bar.show()
 
 
 def player_load():

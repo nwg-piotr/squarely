@@ -38,6 +38,12 @@ backup_values = None
 level = 0
 level_max = 5
 
+summary = []  # backup list of text labels to display in the summary bar
+summary_backup = []  # backup for the list above
+summary_bar = None
+summary_batch = None
+cells_deleted = False
+
 fx = None
 label = None
 playing = False

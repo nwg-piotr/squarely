@@ -168,6 +168,69 @@ class Selector(pyglet.sprite.Sprite):
         self.x = board.columns[self.column]
 
 
+class SummaryBar(pyglet.sprite.Sprite):
+    def __init__(self, board, x, y):
+        img = image.load("images/summary-bar.png").get_texture()
+        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
+        img.width = int(img.width * board.scale)
+        img.height = int(img.height * board.scale)
+        super().__init__(img)
+        self.x = board.columns[1]
+        self.y = y
+        self.batch = None
+
+        step = self.image.width / 6
+        self.l0 = self.lbl("0", self.image.height, self.image.height // 2)
+        self.l1 = self.lbl("0", self.image.height + step, self.image.height // 2)
+        self.l2 = self.lbl("0", self.image.height + step * 2, self.image.height // 2)
+        self.l3 = self.lbl("0", self.image.height + step * 3, self.image.height // 2)
+        self.l4 = self.lbl("0", self.image.height + step * 4, self.image.height // 2)
+        self.l5 = self.lbl("0", self.image.height + step * 5, self.image.height // 2)
+        self.visible = False
+
+    def draw(self):
+        self.image.blit(self.x, self.y)
+        self.l0.draw()
+        self.l1.draw()
+        self.l2.draw()
+        self.l3.draw()
+        self.l4.draw()
+        self.l5.draw()
+
+    def new(self, board, row):
+        self.y = board.rows[row]
+        self.visible = False
+
+    def show(self):
+        self.visible = True
+
+    def hide(self):
+        self.visible = False
+
+    def refresh(self, c0, c1, c2, c3, c4, c5):
+        self.l0.text = c0
+        self.l0.y = self.y + self.image.height // 2
+        self.l1.text = c1
+        self.l1.y = self.y + self.image.height // 2
+        self.l2.text = c2
+        self.l2.y = self.y + self.image.height // 2
+        self.l3.text = c3
+        self.l3.y = self.y + self.image.height // 2
+        self.l4.text = c4
+        self.l4.y = self.y + self.image.height // 2
+        self.l5.text = c5
+        self.l5.y = self.y + self.image.height // 2
+
+    def lbl(self, text, x, y):
+        label = pyglet.text.Label(
+            text,
+            font_name='DejaVu Sans Mono',
+            font_size=int(20 * common.board.scale),
+            x=self.x + x, y=y,
+            anchor_x='left', anchor_y='center')
+        return label
+
+
 class RotationGroup(pyglet.sprite.Sprite):
     def __init__(self, board):
 
