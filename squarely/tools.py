@@ -439,8 +439,13 @@ def player_save(panel):
             pickle.dump(common.player, output, pickle.HIGHEST_PROTOCOL)
 
     if unlocked:
-        common.fx.play(panel, "unlocked")
-        intro_level_unlocked(unlocked)  # Next level unlocked, notify!
+        if unlocked < 7:
+            common.fx.play(panel, "unlocked")
+            intro_level_unlocked(unlocked)  # Next level unlocked, notify!
+        else:
+            # todo intro last level completed
+            common.fx.play(panel, "unlocked")
+            intro_level_unlocked(unlocked)  # Next level unlocked, notify!
     else:
         common.fx.play(panel, "level")
         intro_level_finished(common.level + 1, common.scores[common.level])  # Just show the result
