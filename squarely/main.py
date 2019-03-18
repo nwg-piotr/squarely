@@ -184,7 +184,7 @@ def main():
         else:
             if panel.button_start.selected:
                 common.level = panel.selected_level
-                common.fx.play(panel, "key")
+                common.fx.play(panel, "start")
                 new_game()
                 mark_and_delete(common.board, panel)
 
@@ -212,6 +212,7 @@ def main():
     @window.event
     def on_key_press(symbol, modifiers):
         if symbol == key.SPACE:
+            common.fx.play(panel, "start")
             new_game()
             mark_and_delete(common.board, panel)
         elif symbol == key.BACKSPACE:

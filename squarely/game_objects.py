@@ -641,6 +641,9 @@ class Sounds:
         self.rotate = pyglet.media.StaticSource(pyglet.media.load('sounds/rotate.wav', streaming=False))
         self.undo = pyglet.media.StaticSource(pyglet.media.load('sounds/undo.wav', streaming=False))
         self.warning = pyglet.media.StaticSource(pyglet.media.load('sounds/warning.wav', streaming=False))
+        self.start = pyglet.media.StaticSource(pyglet.media.load('sounds/start.wav', streaming=False))
+        self.level = pyglet.media.StaticSource(pyglet.media.load('sounds/level.wav', streaming=False))
+        self.unlocked = pyglet.media.StaticSource(pyglet.media.load('sounds/unlocked.wav', streaming=False))
         try:
             """As this sound is being played first, let's check if the avbin library works"""
             self.hello = pyglet.media.StaticSource(pyglet.media.load('sounds/hello.ogg', streaming=False))
@@ -663,6 +666,12 @@ class Sounds:
                 self.hello.play()
             if fx == "warning":
                 self.warning.play()
+            if fx == "start":
+                self.start.play()
+            if fx == "level":
+                self.level.play()
+            if fx == "unlocked":
+                self.unlocked.play()
 
 
 class Player(object):
