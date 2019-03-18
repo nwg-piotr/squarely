@@ -11,3 +11,4 @@ intro_welcome = Welcome to the game!
 intro_wb = Welcome back!
 intro_level_unlocked = Level {} unlocked
 intro_level_in = Level {} in {} moves
+intro_incredible = IN-CRE_DI-BLE!

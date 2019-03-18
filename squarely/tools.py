@@ -15,10 +15,9 @@ Dependencies (Arch Linux): python-pyglet, avbin7 (AUR package necessary to play 
 import pyglet
 from pyglet import image
 from pyglet.gl import *
-from game_objects import Cell, Player, UnlockAnimation, FinishedAnimation, HelloAnimation, SummaryBar
+from game_objects import Cell, Player, UnlockAnimation, FinishedAnimation, HelloAnimation, SunglassesAnimation
 
 import os
-import subprocess
 import pickle
 import random
 import configparser
@@ -445,7 +444,7 @@ def player_save(panel):
         else:
             # todo intro last level completed
             common.fx.play(panel, "unlocked")
-            intro_level_unlocked(unlocked)  # Next level unlocked, notify!
+            intro_sunglasses()  # No new level to unlock
     else:
         common.fx.play(panel, "level")
         intro_level_finished(common.level + 1, common.scores[common.level])  # Just show the result
@@ -497,6 +496,11 @@ def intro_level_unlocked(level):
 def intro_level_finished(level, moves):
     common.intro_sprite = FinishedAnimation(common.board)
     common.intro_message = intro_label(common.board, common.lang["intro_level_in"].format(level, moves))
+
+
+def intro_sunglasses():
+    common.intro_sprite = SunglassesAnimation(common.board)
+    common.intro_message = intro_label(common.board, common.lang["intro_incredible"])
 
 
 def overwrite_lang(localization):

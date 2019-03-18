@@ -328,6 +328,19 @@ class HelloAnimation(pyglet.sprite.Sprite):
         self.scale = board.scale * 2
 
 
+class SunglassesAnimation(pyglet.sprite.Sprite):
+    def __init__(self, board):
+        frames_source = image.load("images/sunglasses-frames.png")
+        sequence = pyglet.image.ImageGrid(frames_source, 1, 6)
+        animation = (pyglet.image.Animation.from_image_sequence(sequence, 0.24, False))
+
+        super().__init__(animation)
+
+        self.x = board.margin + board.base
+        self.y = board.margin + board.base * 3
+        self.scale = board.scale * 2
+
+
 class Panel:
     """
     We use 2 bottom rows of the game board as the control panel area. Let's leave it as is util the time comes.
