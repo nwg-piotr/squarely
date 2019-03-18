@@ -442,7 +442,6 @@ def player_save(panel):
             common.fx.play(panel, "unlocked")
             intro_level_unlocked(unlocked)  # Next level unlocked, notify!
         else:
-            # todo intro last level completed
             common.fx.play(panel, "unlocked")
             intro_sunglasses()  # No new level to unlock
     else:
