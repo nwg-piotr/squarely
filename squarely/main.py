@@ -67,7 +67,7 @@ def main():
 
     intro_hello(hello_msg)
     #intro_level_unlocked(3)
-    #intro_level_finished(1, 30)
+    #intro_level_finished(1, 30).
     common.fx.play(panel, "hello")
 
     @window.event
@@ -213,6 +213,11 @@ def main():
                 panel.switch_sounds()
 
     @window.event
+    def on_mouse_scroll(x, y, scroll_x, scroll_y):
+        if common.summary_bar is not None and common.summary_bar.y > 0:
+                common.summary_bar.show()
+
+    @window.event
     def on_key_press(symbol, modifiers):
         if symbol == key.SPACE:
             common.fx.play(panel, "start")
@@ -285,6 +290,7 @@ def new_game():
 
     common.summary_bar.hide()
     common.playing = True
+    common.summary_bar.y = 0  # To mark that it has not yet been shown since the game started (still keeps old values!)
 
 
 if __name__ == "__main__":
