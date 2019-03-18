@@ -36,7 +36,10 @@ def main():
     if not os.path.exists(common.app_dir):
         os.makedirs(common.app_dir)
 
-    """load stored player data or create new file if not found; set the hello message"""
+    """
+    Load stored player data or create new file if not found; 
+    The player_load() function returns True if player exists: set the hello message accordingly.
+    """
     hello_msg = common.lang["intro_wb"] if player_load() else common.lang["intro_welcome"]
     print(common.player.name, common.player.password, common.player.scores)
 

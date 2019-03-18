@@ -146,11 +146,11 @@ class Cell(pyglet.sprite.Sprite):
 
     def mark_to_delete(self):
         self.to_delete = True
-        #self.opacity = 70
+        # self.opacity = 70
 
     def clear_to_delete(self):
         self.to_delete = False
-        #self.opacity = 255
+        # self.opacity = 255
 
 
 class Selector(pyglet.sprite.Sprite):
