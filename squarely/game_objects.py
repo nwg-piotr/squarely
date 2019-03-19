@@ -519,6 +519,8 @@ class Panel:
         self.display_l5.locked = True
         self.display_l5.label = self.score_label(self.display_l5, "L5")
 
+        self.player_name = self.player_label()
+
         self.highlight_level(common.level)
         self.selected_level = 0
 
@@ -559,6 +561,16 @@ class Panel:
             anchor_x='left', anchor_y='center')
         return label
 
+    def player_label(self):
+        label = pyglet.text.Label(
+            common.player.name,
+            font_name='DejaVu Sans Mono',
+            color=(87, 87, 120, 255),
+            font_size=int(34 * self.scale),
+            x=self.button_text.x + self.button_text.image.width // 2, y=self.button_text.y + self.button_text.image.height // 2,
+            anchor_x='center', anchor_y='center')
+        return label
+
     def highlight_level(self, which):
         self.display_l0.color = (255, 255, 255)
         self.display_l1.color = (255, 255, 255)
@@ -587,15 +599,6 @@ class Panel:
             button.selected = value
             button.color = 255, 255, 255
 
-    def deselect_all(self):
-        """For use just in case the cursor left the panel area too fast to be detected"""
-        self.set_selection(self.button_sound, False)
-        self.set_selection(self.button_music, False)
-        self.set_selection(self.button_undo, False)
-        self.set_selection(self.button_down, False)
-        self.set_selection(self.button_up, False)
-        self.set_selection(self.button_start, False)
-
     def check_selection(self, x, y):
         self.set_selection(self.button_sound,
                            self.button_sound.area[0] < x < self.button_sound.area[2] and self.button_sound.area[1] < y <
@@ -620,6 +623,22 @@ class Panel:
         self.set_selection(self.button_start,
                            self.button_start.area[0] < x < self.button_start.area[2] and self.button_start.area[1] < y <
                            self.button_start.area[3])
+
+        self.set_selection(self.button_text,
+                           self.button_text.area[0] < x < self.button_text.area[2] and self.button_text.area[1] < y <
+                           self.button_text.area[3])
+
+        self.set_selection(self.button_1,
+                           self.button_1.area[0] < x < self.button_1.area[2] and self.button_1.area[1] < y <
+                           self.button_1.area[3])
+
+        self.set_selection(self.button_2,
+                           self.button_2.area[0] < x < self.button_2.area[2] and self.button_2.area[1] < y <
+                           self.button_2.area[3])
+
+        self.set_selection(self.button_3,
+                           self.button_3.area[0] < x < self.button_3.area[2] and self.button_3.area[1] < y <
+                           self.button_3.area[3])
 
         if self.button_sound.selected:
             common.board.message = common.lang["panel_sounds"]
@@ -697,6 +716,7 @@ class Panel:
         self.display_l3.label.draw()
         self.display_l4.label.draw()
         self.display_l5.label.draw()
+        self.player_name.draw()
 
 
 class Sounds:
