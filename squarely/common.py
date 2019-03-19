@@ -25,6 +25,7 @@ selector = None
 cell_bitmaps = []
 cells_batch = None
 intro_batch = None
+player_dialog_batch = None
 cells_list = []
 matrix = None
 rotation_group = None

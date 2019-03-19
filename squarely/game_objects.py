@@ -17,6 +17,7 @@ from pyglet.gl import *
 from pyglet import image
 import configparser
 import common
+from player_tools import *
 
 
 class GameBoard:
@@ -340,6 +341,21 @@ class SunglassesAnimation(pyglet.sprite.Sprite):
         self.y = board.margin + board.base * 3
         self.scale = board.scale * 2
 
+
+class PlayerDialog(pyglet.sprite.Sprite):
+    def __init__(self, board):
+        super().__init__(image.load("images/player-dialog.png"))
+
+        self.image.width = board.base * 4
+        self.image.height = board.base * 3.5
+        self.scale = board.scale * 2
+        step = board.base * self.scale
+        self.x = board.base * 1
+        self.y = board.base * 4
+
+        self.batch = common.player_dialog_batch
+
+        self.name_field = TextWidget(common.player.name, int(self.x + step * 0.6), int(self.y + step * 2.37), 300, self.batch)
 
 class Panel:
     """

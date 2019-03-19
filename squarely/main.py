@@ -66,9 +66,10 @@ def main():
             break
     update_scores(panel)
 
+    common.player_dialog_batch = pyglet.graphics.Batch()
+    player_dialog = PlayerDialog(common.board)
+
     intro_hello(hello_msg)
-    #intro_level_unlocked(3)
-    #intro_level_finished(1, 30).
     common.fx.play(panel, "hello")
 
     text_batch = pyglet.graphics.Batch()
@@ -105,6 +106,7 @@ def main():
             if common.intro_message is not None:
                 common.intro_message.draw()
 
+        #common.player_dialog_batch.draw()
         #text_batch.draw()
         #window.push_handlers(test.caret)
 

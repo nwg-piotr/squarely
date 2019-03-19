@@ -28,7 +28,7 @@ class Rectangle(object):
 class TextWidget(object):
     def __init__(self, text, x, y, width, batch):
         self.document = pyglet.text.document.UnformattedDocument(text)
-        self.document.set_style(0, len(self.document.text), dict(color=(0, 0, 0, 255)))
+        self.document.set_style(0, len(self.document.text), dict(color=(255, 255, 255, 255), font_size=18))
         font = self.document.get_font()
         height = font.ascent - font.descent
 
@@ -41,7 +41,7 @@ class TextWidget(object):
 
         # Rectangular outline
         pad = 12
-        self.rectangle = Rectangle(x - pad, y - pad, x + width + pad, y + height + pad, batch)
+        #self.rectangle = Rectangle(x - pad, y - pad, x + width + pad, y + height + pad, batch)
 
     def hit_test(self, x, y):
         return (0 < x - self.layout.x < self.layout.width and
