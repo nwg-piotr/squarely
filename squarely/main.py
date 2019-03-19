@@ -14,6 +14,7 @@ Dependencies (Arch Linux): python-pyglet, avbin7 (AUR package necessary to play 
 """
 from game_objects import *
 from tools import *
+from player_tools import *
 from pyglet.window import key
 import locale
 
@@ -70,6 +71,9 @@ def main():
     #intro_level_finished(1, 30).
     common.fx.play(panel, "hello")
 
+    text_batch = pyglet.graphics.Batch()
+    test = TextWidget(common.player.name, int(common.board.margin), int(common.board.margin + common.board.base), int(common.board.base * 3 * common.board.scale), text_batch)
+
     @window.event
     def on_draw():
         window.clear()
@@ -100,6 +104,9 @@ def main():
                 common.intro_sprite.draw()
             if common.intro_message is not None:
                 common.intro_message.draw()
+
+        #text_batch.draw()
+        #window.push_handlers(test.caret)
 
     @window.event
     def on_mouse_enter(x, y):
@@ -223,8 +230,6 @@ def main():
             common.fx.play(panel, "start")
             new_game()
             mark_and_delete(common.board, panel)
-        elif symbol == key.BACKSPACE:
-            restore(common.board)
         elif symbol == key.H:
             if common.summary_bar is not None:
                 common.summary_bar.show()

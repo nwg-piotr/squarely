@@ -349,6 +349,7 @@ class Panel:
         self.batch = pyglet.graphics.Batch()
         self.margin = board.margin
         self.btn_dim = board.btn_dimension
+        self.btn_half = board.btn_dimension / 2
 
         self.base = board.base
         self.scale = board.window_width / (216 * 6 + 23 * 2)
@@ -378,6 +379,11 @@ class Panel:
         self.img_up = self.bcg_image(pyglet.image.load('images/btn-up.png'))
         self.img_down = self.bcg_image(pyglet.image.load('images/btn-down.png'))
         self.img_start = self.bcg_image(pyglet.image.load('images/btn-start.png'))
+
+        self.img_text = self.bcg_image_triple(pyglet.image.load('images/btn-text.png'))
+        self.img_1 = self.bcg_image_half(pyglet.image.load('images/btn-1.png'))
+        self.img_2 = self.bcg_image_half(pyglet.image.load('images/btn-2.png'))
+        self.img_3 = self.bcg_image_half(pyglet.image.load('images/btn-3.png'))
 
         self.img_locked = self.bcg_image(pyglet.image.load('images/locked.png'))
         self.img_unlocked = self.bcg_image(pyglet.image.load('images/unlocked.png'))
@@ -435,6 +441,38 @@ class Panel:
         self.button_start.area = self.button_start.x, self.button_start.y, self.button_start.x + \
                                  self.btn_dim, self.button_start.y + self.btn_dim
         self.button_start.selected = False
+
+        self.button_text = pyglet.sprite.Sprite(self.img_text)
+        self.button_text.x = self.margin
+        self.button_text.y = self.margin + self.btn_dim
+        self.button_text.batch = self.batch
+        self.button_text.area = self.button_text.x, self.button_text.y, self.button_text.x + \
+                                self.btn_dim * 3, self.button_text.y + self.btn_half
+        self.button_text.selected = False
+
+        self.button_1 = pyglet.sprite.Sprite(self.img_1)
+        self.button_1.x = self.margin + self.btn_dim * 3
+        self.button_1.y = self.margin + self.btn_dim
+        self.button_1.batch = self.batch
+        self.button_1.area = self.button_1.x, self.button_1.y, self.button_1.x + \
+                                self.btn_dim, self.button_1.y + self.btn_half
+        self.button_1.selected = False
+
+        self.button_2 = pyglet.sprite.Sprite(self.img_2)
+        self.button_2.x = self.margin + self.btn_dim * 4
+        self.button_2.y = self.margin + self.btn_dim
+        self.button_2.batch = self.batch
+        self.button_2.area = self.button_2.x, self.button_2.y, self.button_2.x + \
+                             self.btn_dim, self.button_2.y + self.btn_half
+        self.button_2.selected = False
+
+        self.button_3 = pyglet.sprite.Sprite(self.img_3)
+        self.button_3.x = self.margin + self.btn_dim * 5
+        self.button_3.y = self.margin + self.btn_dim
+        self.button_3.batch = self.batch
+        self.button_3.area = self.button_3.x, self.button_3.y, self.button_3.x + \
+                             self.btn_dim, self.button_3.y + self.btn_half
+        self.button_3.selected = False
 
         """Level score buttons"""
         self.level_display_y = self.margin * 2 + self.btn_dim * 1.5
@@ -626,6 +664,20 @@ class Panel:
         gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
         texture.width = self.btn_dim
         texture.height = self.btn_dim
+        return texture
+
+    def bcg_image_half(self, source):
+        texture = source.get_texture()
+        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
+        texture.width = self.btn_dim
+        texture.height = self.btn_dim / 2
+        return texture
+
+    def bcg_image_triple(self, source):
+        texture = source.get_texture()
+        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
+        texture.width = self.btn_dim * 3
+        texture.height = self.btn_dim / 2
         return texture
 
     def switch_sounds(self):
