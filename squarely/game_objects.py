@@ -168,11 +168,19 @@ class Selector(pyglet.sprite.Sprite):
 
 class SummaryBar(pyglet.sprite.Sprite):
     def __init__(self, board, x, y):
-        img = image.load("images/summary-bar.png").get_texture()
+        joint_image = pyglet.image.Texture.create(2628, 216)
+        joint_image.blit_into(common.cell_bitmaps[0], 0, 0, 0)
+        joint_image.blit_into(common.cell_bitmaps[1], 429 * 1, 0, 0)
+        joint_image.blit_into(common.cell_bitmaps[2], 429 * 2, 0, 0)
+        joint_image.blit_into(common.cell_bitmaps[3], 429 * 3, 0, 0)
+        joint_image.blit_into(common.cell_bitmaps[4], 429 * 4, 0, 0)
+        joint_image.blit_into(common.cell_bitmaps[5], 429 * 5, 0, 0)
+
         gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
-        img.width = int(img.width * board.scale)
-        img.height = int(img.height * board.scale)
-        super().__init__(img)
+        joint_image.width = int(864 * board.scale)
+        joint_image.height = int(71 * board.scale)
+        super().__init__(joint_image)
+
         self.x = board.columns[1]
         self.y = y
         self.batch = None

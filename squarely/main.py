@@ -30,7 +30,7 @@ def main():
         overwrite_lang(localization)
 
     """Create resources"""
-    create_cells_bitmaps('images/cells-0.png')
+    create_cells_bitmaps('images/cells-1.png')
     common.fx = Sounds()
 
     """OS-dependent preferences location (in Linux: ~/.config/common.app_name/)"""
@@ -86,6 +86,8 @@ def main():
             common.label.draw()
 
         if common.playing:
+            intro_bcg.draw()
+
             if common.cells_batch is not None:
                 common.cells_batch.draw()
 
