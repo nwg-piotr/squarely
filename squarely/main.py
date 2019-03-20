@@ -24,7 +24,8 @@ def main():
 
     """Let's preload English dictionary and overwrite with localized values if found"""
     common.lang = Language('en_EN')
-    localization = locale.getlocale()[0]
+    """Running with LC_ALL=C will return (None, None)"""
+    localization = locale.getlocale()[0] if locale.getlocale()[0] is not None else 'en_EN'
     if localization != 'en_EN':
         overwrite_lang(localization)
 
@@ -69,8 +70,8 @@ def main():
     common.player_dialog_batch = pyglet.graphics.Batch()
     player_dialog = PlayerDialog(common.board)
 
-    intro_hello(hello_msg)
-    common.fx.play(panel, "hello")
+    #intro_hello(hello_msg)
+    #common.fx.play(panel, "hello")
 
     text_batch = pyglet.graphics.Batch()
     test = TextWidget(common.player.name, int(common.board.margin), int(common.board.margin + common.board.base), int(common.board.base * 3 * common.board.scale), text_batch)
@@ -106,7 +107,8 @@ def main():
             if common.intro_message is not None:
                 common.intro_message.draw()
 
-        #common.player_dialog_batch.draw()
+        if player_dialog.is_open:
+            common.player_dialog_batch.draw()
         #text_batch.draw()
         #window.push_handlers(test.caret)
 
@@ -126,6 +128,9 @@ def main():
 
         if common.cursor_in_board:
             common.summary_bar.hide()
+
+            if player_dialog.is_open:
+                player_dialog.refresh_label(x, y)
 
             if common.rotation_direction is None:
 
@@ -176,22 +181,26 @@ def main():
     def on_mouse_release(x, y, button, modifiers):
         common.cells_deleted = False
 
-        if common.cursor_in_board and common.board.selection_made:
-            if button == pyglet.window.mouse.LEFT:
-                common.fx.play(panel, "rotate")
-                backup(common.board)
-                common.rotation_group = RotationGroup(common.board)
-                common.rotation_direction = "left"
-                deselect_all_cells()
-                common.board.selection_made = False
+        if common.cursor_in_board:
+            if common.board.selection_made:
+                if button == pyglet.window.mouse.LEFT:
+                    common.fx.play(panel, "rotate")
+                    backup(common.board)
+                    common.rotation_group = RotationGroup(common.board)
+                    common.rotation_direction = "left"
+                    deselect_all_cells()
+                    common.board.selection_made = False
 
-            elif button == pyglet.window.mouse.RIGHT:
-                common.fx.play(panel, "rotate")
-                backup(common.board)
-                common.rotation_group = RotationGroup(common.board)
-                common.rotation_direction = "right"
-                deselect_all_cells()
-                common.board.selection_made = False
+                elif button == pyglet.window.mouse.RIGHT:
+                    common.fx.play(panel, "rotate")
+                    backup(common.board)
+                    common.rotation_group = RotationGroup(common.board)
+                    common.rotation_direction = "right"
+                    deselect_all_cells()
+                    common.board.selection_made = False
+
+            if player_dialog.is_open:
+                player_dialog.click(x, y)
 
         else:
             if panel.button_start.selected:
@@ -235,6 +244,8 @@ def main():
         elif symbol == key.H:
             if common.summary_bar is not None:
                 common.summary_bar.show()
+        elif symbol == key.P:
+            player_dialog.is_open = not player_dialog.is_open
 
     def update(dt):
         if not common.playing:

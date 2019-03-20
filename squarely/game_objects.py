@@ -346,16 +346,61 @@ class PlayerDialog(pyglet.sprite.Sprite):
     def __init__(self, board):
         super().__init__(image.load("images/player-dialog.png"))
 
+        self.is_open = False
+
         self.image.width = board.base * 4
         self.image.height = board.base * 3.5
         self.scale = board.scale * 2
-        step = board.base * self.scale
+        base_square = board.base * self.scale
         self.x = board.base * 1
         self.y = board.base * 4
 
         self.batch = common.player_dialog_batch
 
-        self.name_field = TextWidget(common.player.name, int(self.x + step * 0.6), int(self.y + step * 2.37), 300, self.batch)
+        self.name_field = TextWidget(common.player.name, int(self.x + base_square * 0.6), int(self.y + base_square * 2.37), 300, self.batch)
+
+        self.label = pyglet.text.Label(
+            common.lang["player_account"],
+            font_name='DejaVu Sans Mono',
+            color=(255, 255, 255, 255),
+            font_size=int(18 * self.scale),
+            x=base_square * 3, y=self.y - base_square // 2,
+            anchor_x='center', anchor_y='center', batch=self.batch)
+
+        """Area rectangles (x1, y1, x2, y2)"""
+        self.area_add = self.x, self.y, self.x + base_square, self.y + base_square
+        self.area_delete = self.x + base_square, self.y, self.x + base_square * 2, self.y + base_square
+        self.area_login = self.x + base_square * 2, self.y, self.x + base_square * 3, self.y + base_square
+        self.area_logout = self.x + base_square * 3, self.y, self.x + base_square * 4, self.y + base_square
+        self.area_password = self.x, self.y + base_square, self.x + base_square * 4, self.y + base_square * 2
+        self.area_name = self.x, self.y + base_square * 2, self.x + base_square * 4, self.y + base_square * 3
+        self.area_close = self.x + base_square * 3.5, self.y + base_square * 3, self.x + base_square * 4, self.y + base_square * 3.5
+
+    def is_in(self, x, y, area):
+        return area[0] < x < area[2] and area[1] < y < area[3]
+
+    def refresh_label(self, x, y):
+        if self.is_in(x, y, self.area_add):
+            self.label.text = common.lang["player_add"]
+        elif self.is_in(x, y, self.area_delete):
+            self.label.text = common.lang["player_delete"]
+        elif self.is_in(x, y, self.area_login):
+            self.label.text = common.lang["player_login"]
+        elif self.is_in(x, y, self.area_logout):
+            self.label.text = common.lang["player_logout"]
+        elif self.is_in(x, y, self.area_password):
+            self.label.text = common.lang["player_password"]
+        elif self.is_in(x, y, self.area_name):
+            self.label.text = common.lang["player_name"]
+        elif self.is_in(x, y, self.area_close):
+            self.label.text = common.lang["close"]
+        else:
+            self.label.text = common.lang["player_account"]
+
+    def click(self, x, y):
+        if self.is_in(x, y, self.area_close):
+            self.is_open = False
+
 
 class Panel:
     """
@@ -458,13 +503,13 @@ class Panel:
                                  self.btn_dim, self.button_start.y + self.btn_dim
         self.button_start.selected = False
 
-        self.button_text = pyglet.sprite.Sprite(self.img_text)
-        self.button_text.x = self.margin
-        self.button_text.y = self.margin + self.btn_dim
-        self.button_text.batch = self.batch
-        self.button_text.area = self.button_text.x, self.button_text.y, self.button_text.x + \
-                                self.btn_dim * 3, self.button_text.y + self.btn_half
-        self.button_text.selected = False
+        self.button_name = pyglet.sprite.Sprite(self.img_text)
+        self.button_name.x = self.margin
+        self.button_name.y = self.margin + self.btn_dim
+        self.button_name.batch = self.batch
+        self.button_name.area = self.button_name.x, self.button_name.y, self.button_name.x + \
+                                self.btn_dim * 3, self.button_name.y + self.btn_half
+        self.button_name.selected = False
 
         self.button_1 = pyglet.sprite.Sprite(self.img_1)
         self.button_1.x = self.margin + self.btn_dim * 3
@@ -583,7 +628,7 @@ class Panel:
             font_name='DejaVu Sans Mono',
             color=(87, 87, 120, 255),
             font_size=int(34 * self.scale),
-            x=self.button_text.x + self.button_text.image.width // 2, y=self.button_text.y + self.button_text.image.height // 2,
+            x=self.button_name.x + self.button_name.image.width // 2, y=self.button_name.y + self.button_name.image.height // 2,
             anchor_x='center', anchor_y='center')
         return label
 
@@ -615,46 +660,22 @@ class Panel:
             button.selected = value
             button.color = 255, 255, 255
 
+    def is_selected(self, x, y, area):
+        return area[0] < x < area[2] and area[1] < y < area[3]
+
     def check_selection(self, x, y):
-        self.set_selection(self.button_sound,
-                           self.button_sound.area[0] < x < self.button_sound.area[2] and self.button_sound.area[1] < y <
-                           self.button_sound.area[3])
-
-        self.set_selection(self.button_music,
-                           self.button_music.area[0] < x < self.button_music.area[2] and self.button_music.area[1] < y <
-                           self.button_music.area[3])
-
-        self.set_selection(self.button_undo,
-                           self.button_undo.area[0] < x < self.button_undo.area[2] and self.button_undo.area[1] < y <
-                           self.button_undo.area[3] and common.backup_matrix is not None)
-
-        self.set_selection(self.button_down,
-                           self.button_down.area[0] < x < self.button_down.area[2] and self.button_down.area[1] < y <
-                           self.button_down.area[3] and self.selected_level > 0)
-
-        self.set_selection(self.button_up,
-                           self.button_up.area[0] < x < self.button_up.area[2] and self.button_up.area[1] < y <
-                           self.button_up.area[3] and common.level < common.level_max)
-
-        self.set_selection(self.button_start,
-                           self.button_start.area[0] < x < self.button_start.area[2] and self.button_start.area[1] < y <
-                           self.button_start.area[3])
-
-        self.set_selection(self.button_text,
-                           self.button_text.area[0] < x < self.button_text.area[2] and self.button_text.area[1] < y <
-                           self.button_text.area[3])
-
-        self.set_selection(self.button_1,
-                           self.button_1.area[0] < x < self.button_1.area[2] and self.button_1.area[1] < y <
-                           self.button_1.area[3])
-
-        self.set_selection(self.button_2,
-                           self.button_2.area[0] < x < self.button_2.area[2] and self.button_2.area[1] < y <
-                           self.button_2.area[3])
-
-        self.set_selection(self.button_3,
-                           self.button_3.area[0] < x < self.button_3.area[2] and self.button_3.area[1] < y <
-                           self.button_3.area[3])
+        # Game control buttons
+        self.set_selection(self.button_sound, self.is_selected(x, y, self.button_sound.area))
+        self.set_selection(self.button_music, self.is_selected(x, y, self.button_music.area))
+        self.set_selection(self.button_undo, self.is_selected(x, y, self.button_undo.area))
+        self.set_selection(self.button_down, self.is_selected(x, y, self.button_down.area))
+        self.set_selection(self.button_up, self.is_selected(x, y, self.button_up.area))
+        self.set_selection(self.button_start, self.is_selected(x, y, self.button_start.area))
+        # Player account buttons
+        self.set_selection(self.button_name, self.is_selected(x, y, self.button_name.area))
+        self.set_selection(self.button_1, self.is_selected(x, y, self.button_1.area))
+        self.set_selection(self.button_2, self.is_selected(x, y, self.button_2.area))
+        self.set_selection(self.button_3, self.is_selected(x, y, self.button_3.area))
 
         if self.button_sound.selected:
             common.board.message = common.lang["panel_sounds"]
