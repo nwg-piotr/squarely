@@ -176,12 +176,17 @@ class SummaryBar(pyglet.sprite.Sprite):
         joint_image.blit_into(common.cell_bitmaps[4], 429 * 4, 0, 0)
         joint_image.blit_into(common.cell_bitmaps[5], 429 * 5, 0, 0)
 
+        underline = pyglet.image.load("images/underline.png")
+        underline.width = 2628
+        underline.height = 5
+        joint_image.blit_into(underline, 0, 0, 0)
+
         gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
-        joint_image.width = int(864 * board.scale)
-        joint_image.height = int(71 * board.scale)
+        joint_image.width = int(board.base * 4)
+        joint_image.height = int(board.base / 3)
         super().__init__(joint_image)
 
-        self.x = board.columns[1]
+        self.x = board.base
         self.y = y
         self.batch = None
 
