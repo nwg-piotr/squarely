@@ -48,6 +48,8 @@ cells_deleted = False
 fx = None
 label = None
 playing = False
+intro = True
+dialog = False
 
 intro_sprite = None
 intro_message = None

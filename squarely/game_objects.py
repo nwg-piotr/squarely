@@ -20,7 +20,7 @@ import common
 from player_tools import *
 
 
-class GameBoard:
+class GameBoard(object):
     """
     This class calculates and holds window dimensions and placement, and all the game board related values
     """
@@ -85,9 +85,6 @@ class GameBoard:
         self.rows = []  # list of y coordinates of each board row
         for col in range(self.cells_in_row):
             self.rows.append(self.grid_start_y + col * self.cell_dimension)
-
-        self.status_message_y = self.base * 0.12
-        self.message = None
 
         """Selected cells"""
         self.sel_0 = None
@@ -347,6 +344,9 @@ class PlayerDialog(pyglet.sprite.Sprite):
         super().__init__(image.load("images/player-dialog.png"))
 
         self.is_open = False
+        # we need to know what to do after the dialog is closed
+        self.old_intro_state = False
+        self.old_playing_state = False
 
         self.image.width = board.base * 4
         self.image.height = board.base * 3.5
@@ -376,6 +376,22 @@ class PlayerDialog(pyglet.sprite.Sprite):
         self.area_name = self.x, self.y + base_square * 2, self.x + base_square * 4, self.y + base_square * 3
         self.area_close = self.x + base_square * 3.5, self.y + base_square * 3, self.x + base_square * 4, self.y + base_square * 3.5
 
+    def open(self):
+        if not self.is_open:
+            self.is_open = True
+            self.old_intro_state = common.intro
+            common.intro = False
+            self.old_playing_state = common.playing
+            common.playing = False
+            common.dialog = True  # if to draw the rotating background
+
+    def close(self):
+        if self.is_open:
+            self.is_open = False
+            common.intro = self.old_intro_state
+            common.playing = self.old_playing_state
+            common.dialog = False
+
     def is_in(self, x, y, area):
         return area[0] < x < area[2] and area[1] < y < area[3]
 
@@ -399,12 +415,12 @@ class PlayerDialog(pyglet.sprite.Sprite):
 
     def click(self, x, y):
         if self.is_in(x, y, self.area_close):
-            self.is_open = False
+            self.close()
 
 
-class Panel:
+class Panel(object):
     """
-    We use 2 bottom rows of the game board as the control panel area. Let's leave it as is util the time comes.
+    We use 2 bottom base rows as the control panel area.
     """
     def __init__(self, board):
         self.batch = pyglet.graphics.Batch()
@@ -510,6 +526,13 @@ class Panel:
         self.button_name.area = self.button_name.x, self.button_name.y, self.button_name.x + \
                                 self.btn_dim * 3, self.button_name.y + self.btn_half
         self.button_name.selected = False
+        self.button_name.label = pyglet.text.Label(
+            common.player.name,
+            font_name='DejaVu Sans Mono',
+            color=(87, 87, 120, 255),
+            font_size=int(34 * self.scale),
+            x=self.button_name.x + self.button_name.image.width // 2, y=self.button_name.y + self.button_name.image.height // 2,
+            anchor_x='center', anchor_y='center', batch=self.batch)
 
         self.button_1 = pyglet.sprite.Sprite(self.img_1)
         self.button_1.x = self.margin + self.btn_dim * 3
@@ -580,10 +603,15 @@ class Panel:
         self.display_l5.locked = True
         self.display_l5.label = self.score_label(self.display_l5, "L5")
 
-        self.player_name = self.player_label()
-
         self.highlight_level(common.level)
         self.selected_level = 0
+
+        self.label = pyglet.text.Label(
+            "",
+            font_name='DejaVu Sans Mono',
+            font_size=20 * board.scale,
+            x=board.board_width // 2, y=24 * self.scale,
+            anchor_x='center', anchor_y='center', batch=self.batch)
 
     def set_lock_state(self, level, is_locked):
         if level == 0:
@@ -620,16 +648,6 @@ class Panel:
             font_size=int(24 * self.scale),
             x=sprite.x + self.margin * 1.5, y=sprite.y + sprite.image.height // 2,
             anchor_x='left', anchor_y='center')
-        return label
-
-    def player_label(self):
-        label = pyglet.text.Label(
-            common.player.name,
-            font_name='DejaVu Sans Mono',
-            color=(87, 87, 120, 255),
-            font_size=int(34 * self.scale),
-            x=self.button_name.x + self.button_name.image.width // 2, y=self.button_name.y + self.button_name.image.height // 2,
-            anchor_x='center', anchor_y='center')
         return label
 
     def highlight_level(self, which):
@@ -678,22 +696,30 @@ class Panel:
         self.set_selection(self.button_3, self.is_selected(x, y, self.button_3.area))
 
         if self.button_sound.selected:
-            common.board.message = common.lang["panel_sounds"]
+            self.label.text = common.lang["panel_sounds"]
         elif self.button_music.selected:
             if common.avbin:
-                common.board.message = common.lang["panel_music"]
+                self.label.text = common.lang["panel_music"]
             else:
-                common.board.message = common.lang["panel_music_missing"]
+                self.label.text = common.lang["panel_music_missing"]
         elif self.button_undo.selected:
-            common.board.message = common.lang["panel_undo"]
+            self.label.text = common.lang["panel_undo"]
         elif self.button_down.selected:
-            common.board.message = common.lang["panel_level_down"]
+            self.label.text = common.lang["panel_level_down"]
         elif self.button_up.selected:
-            common.board.message = common.lang["panel_level_up"]
+            self.label.text = common.lang["panel_level_up"]
         elif self.button_start.selected:
-            common.board.message = common.lang["panel_start"] + " " + self.border_size_txt
+            self.label.text = common.lang["panel_start"] + " " + self.border_size_txt
+        elif self.button_name.selected:
+            self.label.text = common.lang["player_account"]
+        elif self.button_1.selected:
+            self.label.text = common.lang["nothing"]
+        elif self.button_2.selected:
+            self.label.text = common.lang["nothing"]
+        elif self.button_3.selected:
+            self.label.text = common.lang["nothing"]
         else:
-            common.board.message = None
+            self.label.text = ""
 
     def level_up(self):
         if self.selected_level < common.level_max:
@@ -753,10 +779,9 @@ class Panel:
         self.display_l3.label.draw()
         self.display_l4.label.draw()
         self.display_l5.label.draw()
-        self.player_name.draw()
 
 
-class Sounds:
+class Sounds(object):
     def __init__(self):
         self.key = pyglet.media.StaticSource(pyglet.media.load('sounds/key.wav', streaming=False))
         self.drop = pyglet.media.StaticSource(pyglet.media.load('sounds/drop.wav', streaming=False))

@@ -20,3 +20,4 @@ player_delete = Delete player
 player_login = Sign in
 player_logout = Sign out
 close = Close
+nothing = Nothing yet

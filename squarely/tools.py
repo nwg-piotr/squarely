@@ -354,16 +354,6 @@ def cells_being_rotated(board):
     return [board.sel_0, board.sel_1, board.sel_2, board.sel_3]
 
 
-def status_txt(board):
-    label = pyglet.text.Label(
-        board.message,
-        font_name='DejaVu Sans Mono',
-        font_size=10,
-        x=board.board_width // 2, y=board.status_message_y,
-        anchor_x='center', anchor_y='center')
-    return label
-
-
 def backup(board):
     """For simplicity we'll store undo data in identical 2-dimensional list as the matrix itself"""
     common.backup_matrix = [[0 for c in range(board.cells_in_row)] for r in range(board.cells_in_row)]

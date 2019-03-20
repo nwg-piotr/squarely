@@ -70,19 +70,17 @@ def main():
     common.player_dialog_batch = pyglet.graphics.Batch()
     player_dialog = PlayerDialog(common.board)
 
-    #intro_hello(hello_msg)
-    #common.fx.play(panel, "hello")
+    if common.intro:
+        intro_hello(hello_msg)
+        common.fx.play(panel, "hello")
 
-    text_batch = pyglet.graphics.Batch()
-    test = TextWidget(common.player.name, int(common.board.margin), int(common.board.margin + common.board.base), int(common.board.base * 3 * common.board.scale), text_batch)
+    #text_batch = pyglet.graphics.Batch()
+    #test = TextWidget(common.player.name, int(common.board.margin), int(common.board.margin + common.board.base), int(common.board.base * 3 * common.board.scale), text_batch)
 
     @window.event
     def on_draw():
         window.clear()
         panel.draw()
-        if common.board.message is not None:
-            label = status_txt(common.board)
-            label.draw()
 
         if common.label is not None:
             common.label.draw()
@@ -100,12 +98,16 @@ def main():
             if not common.scrolling:
                 if common.cursor_in and common.cursor_in_board and common.board.selection_made:
                     common.selector.draw()
-        else:
+
+        elif common.intro:
             common.intro_batch.draw()
             if common.intro_sprite is not None:
                 common.intro_sprite.draw()
             if common.intro_message is not None:
                 common.intro_message.draw()
+
+        elif common.dialog:
+            intro_bcg.draw()
 
         if player_dialog.is_open:
             common.player_dialog_batch.draw()
@@ -181,7 +183,7 @@ def main():
     def on_mouse_release(x, y, button, modifiers):
         common.cells_deleted = False
 
-        if common.cursor_in_board:
+        if common.cursor_in_board and common.playing:
             if common.board.selection_made:
                 if button == pyglet.window.mouse.LEFT:
                     common.fx.play(panel, "rotate")
@@ -199,11 +201,10 @@ def main():
                     deselect_all_cells()
                     common.board.selection_made = False
 
-            if player_dialog.is_open:
-                player_dialog.click(x, y)
-
         else:
             if panel.button_start.selected:
+                if player_dialog.is_open:
+                    player_dialog.close()
                 common.level = panel.selected_level
                 common.fx.play(panel, "start")
                 new_game()
@@ -230,6 +231,15 @@ def main():
                 common.fx.play(panel, "key")
                 panel.switch_sounds()
 
+            elif panel.button_name.selected:
+                if not player_dialog.is_open:
+                    player_dialog.open()
+                else:
+                    player_dialog.close()
+
+        if player_dialog.is_open:
+            player_dialog.click(x, y)
+
     @window.event
     def on_mouse_scroll(x, y, scroll_x, scroll_y):
         if common.summary_bar is not None and common.summary_bar.y > 0:
@@ -244,11 +254,9 @@ def main():
         elif symbol == key.H:
             if common.summary_bar is not None:
                 common.summary_bar.show()
-        elif symbol == key.P:
-            player_dialog.is_open = not player_dialog.is_open
 
     def update(dt):
-        if not common.playing:
+        if not common.playing and common.intro or common.dialog:
             if intro_bcg.rotation < 360:
                 intro_bcg.rotation += 0.25
             else:
