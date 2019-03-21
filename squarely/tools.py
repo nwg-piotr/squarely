@@ -506,3 +506,4 @@ def overwrite_lang(localization):
                 common.lang[key] = value
     else:
         print("Couldn't find translation for " + localization)
+

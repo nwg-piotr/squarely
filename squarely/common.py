@@ -20,6 +20,8 @@ player_filename = 'player.pkl'
 player = None
 scores = [None, None, None, None, None, None]
 
+rc = None
+
 board = None
 selector = None
 cell_bitmaps = []

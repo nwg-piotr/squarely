@@ -22,6 +22,13 @@ import locale
 def main():
     pyglet.options['audio'] = ('openal', 'pulse', 'silent')
 
+    """OS-dependent preferences location (in Linux: ~/.config/common.app_name/)"""
+    common.app_dir = pyglet.resource.get_settings_path(common.app_name)
+    if not os.path.exists(common.app_dir):
+        os.makedirs(common.app_dir)
+
+    common.rc = RuntimeConfig()
+
     """Let's preload English dictionary and overwrite with localized values if found"""
     common.lang = Language('en_EN')
     """Running with LC_ALL=C will return (None, None)"""
@@ -30,13 +37,11 @@ def main():
         overwrite_lang(localization)
 
     """Create resources"""
-    create_cells_bitmaps('images/cells-1.png')
+    if os.path.isfile('images/cells-' + str(common.rc.cells_set) + '.png'):
+        create_cells_bitmaps('images/cells-' + str(common.rc.cells_set) + '.png')
+    else:
+        create_cells_bitmaps('images/cells-0.png')
     common.fx = Sounds()
-
-    """OS-dependent preferences location (in Linux: ~/.config/common.app_name/)"""
-    common.app_dir = pyglet.resource.get_settings_path(common.app_name)
-    if not os.path.exists(common.app_dir):
-        os.makedirs(common.app_dir)
 
     """
     Load stored player data or create new file if not found; 
@@ -86,7 +91,8 @@ def main():
             common.label.draw()
 
         if common.playing:
-            intro_bcg.draw()
+            if common.rc.background_draw:
+                intro_bcg.draw()
 
             if common.cells_batch is not None:
                 common.cells_batch.draw()
@@ -258,7 +264,7 @@ def main():
                 common.summary_bar.show()
 
     def update(dt):
-        if not common.playing and common.intro or common.dialog:
+        if common.intro or common.dialog or common.playing and common.rc.background_draw and common.rc.background_rotate:
             if intro_bcg.rotation < 360:
                 intro_bcg.rotation += 0.25
             else:
@@ -317,6 +323,7 @@ def new_game():
     common.scores[common.level] = 0
 
     common.summary_bar.hide()
+    common.intro =  False
     common.playing = True
     common.summary_bar.y = 0  # To mark that it has not yet been shown since the game started (still keeps old values!)
 

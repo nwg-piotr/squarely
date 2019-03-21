@@ -1,0 +1,4 @@
+[board]
+cells_set = 0
+background_draw = True
+background_rotate = False

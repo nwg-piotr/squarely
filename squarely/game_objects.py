@@ -16,6 +16,8 @@ import pyglet
 from pyglet.gl import *
 from pyglet import image
 import configparser
+import os
+from shutil import copyfile
 import common
 from player_tools import *
 
@@ -857,3 +859,18 @@ class Language(dict):
                 value = config.get("lang", key)
                 values[key] = value
         super().__init__(values)
+
+
+class RuntimeConfig(object):
+    def __init__(self):
+        if not os.path.isfile(common.app_dir + "/squarelyrc"):
+            copyfile("squarelyrc", common.app_dir + "/squarelyrc")  # Should the default file got to /etc?
+
+        config = configparser.ConfigParser()
+        with open(common.app_dir + "/squarelyrc") as f:
+            config.read_file(f)
+
+        if config.has_section("board"):
+            self.cells_set = config.getint("board", "cells_set") if config.has_option("board", "cells_set") else 0
+            self.background_draw = config.getboolean("board", "background_draw") if config.has_option("board", "background_draw") else False
+            self.background_rotate = config.getboolean("board", "background_rotate") if config.has_option("board", "background_rotate") else False
