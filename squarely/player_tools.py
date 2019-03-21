@@ -46,3 +46,6 @@ class TextWidget(object):
     def hit_test(self, x, y):
         return (0 < x - self.layout.x < self.layout.width and
                 0 < y - self.layout.y < self.layout.height)
+
+    def update(self, text):
+        self.document.text = text

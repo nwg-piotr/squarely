@@ -26,6 +26,7 @@ class GameBoard(object):
     """
     This class calculates and holds window dimensions and placement, and all the game board related values
     """
+
     def __init__(self, cells_in_row):
 
         total_cells = cells_in_row * cells_in_row
@@ -170,7 +171,6 @@ class Selector(pyglet.sprite.Sprite):
 
 class SummaryBar(pyglet.sprite.Sprite):
     def __init__(self, board, x, y):
-
         bcg = pyglet.image.load("images/bar-bcg.png").get_texture()
         bcg.width = board.base * 4
         bcg.height = int(board.base / 3)
@@ -358,9 +358,10 @@ class SunglassesAnimation(pyglet.sprite.Sprite):
 
 
 class PlayerDialog(pyglet.sprite.Sprite):
-    def __init__(self, board):
+    def __init__(self, window, board):
         super().__init__(image.load("images/player-dialog.png"))
 
+        self.window = window
         self.is_open = False
         # we need to know what to do after the dialog is closed
         self.old_intro_state = False
@@ -369,33 +370,47 @@ class PlayerDialog(pyglet.sprite.Sprite):
         self.image.width = board.base * 4
         self.image.height = board.base * 3.5
         self.scale = board.scale * 2
-        base_square = board.base * self.scale
+        self.base_square = board.base * self.scale
         self.x = board.base * 1
         self.y = board.base * 4
 
+        self.message = common.lang["player_account"]
+
         self.batch = common.player_dialog_batch
 
-        self.name_field = TextWidget(common.player.name, int(self.x + base_square * 0.6), int(self.y + base_square * 2.37), 300, self.batch)
+        self.name_field = TextWidget(common.player.name, int(self.x + self.base_square * 0.6),
+                                     int(self.y + self.base_square * 2.37), 300, self.batch)
+
+        pswd = common.player.password if common.player.password is not None else ""
+        self.pass_field = TextWidget(pswd, int(self.x + self.base_square * 0.6),
+                                     int(self.y + self.base_square * 1.37), 300, self.batch)
 
         self.label = pyglet.text.Label(
             common.lang["player_account"],
             font_name='DejaVu Sans Mono',
             color=(255, 255, 255, 255),
-            font_size=int(18 * self.scale),
-            x=base_square * 3, y=self.y - base_square // 2,
+            font_size=int(12 * self.scale),
+            x=self.base_square * 3, y=self.y - self.base_square // 2,
             anchor_x='center', anchor_y='center', batch=self.batch)
 
         """Area rectangles (x1, y1, x2, y2)"""
-        self.area_add = self.x, self.y, self.x + base_square, self.y + base_square
-        self.area_delete = self.x + base_square, self.y, self.x + base_square * 2, self.y + base_square
-        self.area_login = self.x + base_square * 2, self.y, self.x + base_square * 3, self.y + base_square
-        self.area_logout = self.x + base_square * 3, self.y, self.x + base_square * 4, self.y + base_square
-        self.area_password = self.x, self.y + base_square, self.x + base_square * 4, self.y + base_square * 2
-        self.area_name = self.x, self.y + base_square * 2, self.x + base_square * 4, self.y + base_square * 3
-        self.area_close = self.x + base_square * 3.5, self.y + base_square * 3, self.x + base_square * 4, self.y + base_square * 3.5
+        self.area_add = self.x, self.y, self.x + self.base_square, self.y + self.base_square
+        self.area_delete = self.x + self.base_square, self.y, self.x + self.base_square * 2, self.y + self.base_square
+        self.area_login = self.x + self.base_square * 2, self.y, self.x + self.base_square * 3, self.y + self.base_square
+        self.area_logout = self.x + self.base_square * 3, self.y, self.x + self.base_square * 4, self.y + self.base_square
+        self.area_password = self.x, self.y + self.base_square, self.x + self.base_square * 4, self.y + self.base_square * 2
+        self.area_name = self.x, self.y + self.base_square * 2, self.x + self.base_square * 4, self.y + self.base_square * 3
+        self.area_close = self.x + self.base_square * 3.5, self.y + self.base_square * 3, self.x + self.base_square * 4, self.y + self.base_square * 3.5
 
     def open(self):
         if not self.is_open:
+            self.name_field.update(common.player.name)
+            pswd = common.player.password if common.player.password is not None else ""
+            self.pass_field.update(pswd)
+
+            self.message = common.lang["player_account"]
+            self.label.text = self.message
+
             self.is_open = True
             self.old_intro_state = common.intro
             common.intro = False
@@ -429,17 +444,42 @@ class PlayerDialog(pyglet.sprite.Sprite):
         elif self.is_in(x, y, self.area_close):
             self.label.text = common.lang["close"]
         else:
-            self.label.text = common.lang["player_account"]
+            self.label.text = self.message
 
     def click(self, x, y):
         if self.is_in(x, y, self.area_close):
             self.close()
+        elif self.is_in(x, y, self.area_name):
+            self.window.push_handlers(self.name_field.caret)  # set focus
+        elif self.is_in(x, y, self.area_password):
+            self.window.push_handlers(self.pass_field.caret)
+        elif self.is_in(x, y, self.area_add):
+            self.new_player()
+        else:
+            self.message = common.lang["player_account"]
+            self.label.text = self.message
+
+    def new_player(self):
+        name_ok = self.name_field.document.text.upper() != "ANONYMOUS" and len(self.name_field.document.text) < 6
+        pass_ok = len(self.pass_field.document.text) >= 6
+        if name_ok and pass_ok:
+            self.message = common.lang["player_created"]
+            self.label.text = self.message
+        else:
+            msg = ""
+            if not name_ok:
+                msg += common.lang["player_wrong_name"]
+            if not pass_ok:
+                msg += " " + common.lang["player_wrong_pass"]
+            self.message = msg
+            self.label.text = self.message
 
 
 class Panel(object):
     """
     We use 2 bottom base rows as the control panel area.
     """
+
     def __init__(self, board):
         self.batch = pyglet.graphics.Batch()
         self.margin = board.margin
@@ -549,7 +589,8 @@ class Panel(object):
             font_name='DejaVu Sans Mono',
             color=(87, 87, 120, 255),
             font_size=int(34 * self.scale),
-            x=self.button_name.x + self.button_name.image.width // 2, y=self.button_name.y + self.button_name.image.height // 2,
+            x=self.button_name.x + self.button_name.image.width // 2,
+            y=self.button_name.y + self.button_name.image.height // 2,
             anchor_x='center', anchor_y='center', batch=self.batch)
 
         self.button_1 = pyglet.sprite.Sprite(self.img_1)
@@ -557,7 +598,7 @@ class Panel(object):
         self.button_1.y = self.margin + self.btn_dim
         self.button_1.batch = self.batch
         self.button_1.area = self.button_1.x, self.button_1.y, self.button_1.x + \
-                                self.btn_dim, self.button_1.y + self.btn_half
+                             self.btn_dim, self.button_1.y + self.btn_half
         self.button_1.selected = False
 
         self.button_2 = pyglet.sprite.Sprite(self.img_2)
@@ -652,12 +693,24 @@ class Panel(object):
             self.display_l5.image = self.img_locked if is_locked else self.img_unlocked
 
     def update_score_labels(self):
-        self.display_l0.label = self.score_label(self.display_l0, "L1: " + str(common.scores[0])) if common.scores[0] is not None else self.score_label(self.display_l0, "L1:")
-        self.display_l1.label = self.score_label(self.display_l1, "L2: " + str(common.scores[1])) if common.scores[1] is not None else self.score_label(self.display_l1, "L2:")
-        self.display_l2.label = self.score_label(self.display_l2, "L3: " + str(common.scores[2])) if common.scores[2] is not None else self.score_label(self.display_l2, "L3:")
-        self.display_l3.label = self.score_label(self.display_l3, "L4: " + str(common.scores[3])) if common.scores[3] is not None else self.score_label(self.display_l3, "L4:")
-        self.display_l4.label = self.score_label(self.display_l4, "L5: " + str(common.scores[4])) if common.scores[4] is not None else self.score_label(self.display_l4, "L5:")
-        self.display_l5.label = self.score_label(self.display_l5, "L6: " + str(common.scores[5])) if common.scores[5] is not None else self.score_label(self.display_l5, "L6:")
+        self.display_l0.label = self.score_label(self.display_l0, "L1: " + str(common.scores[0])) if common.scores[
+                                                                                                         0] is not None else self.score_label(
+            self.display_l0, "L1:")
+        self.display_l1.label = self.score_label(self.display_l1, "L2: " + str(common.scores[1])) if common.scores[
+                                                                                                         1] is not None else self.score_label(
+            self.display_l1, "L2:")
+        self.display_l2.label = self.score_label(self.display_l2, "L3: " + str(common.scores[2])) if common.scores[
+                                                                                                         2] is not None else self.score_label(
+            self.display_l2, "L3:")
+        self.display_l3.label = self.score_label(self.display_l3, "L4: " + str(common.scores[3])) if common.scores[
+                                                                                                         3] is not None else self.score_label(
+            self.display_l3, "L4:")
+        self.display_l4.label = self.score_label(self.display_l4, "L5: " + str(common.scores[4])) if common.scores[
+                                                                                                         4] is not None else self.score_label(
+            self.display_l4, "L5:")
+        self.display_l5.label = self.score_label(self.display_l5, "L6: " + str(common.scores[5])) if common.scores[
+                                                                                                         5] is not None else self.score_label(
+            self.display_l5, "L6:")
 
     def score_label(self, sprite, txt):
         label = pyglet.text.Label(
@@ -872,5 +925,7 @@ class RuntimeConfig(object):
 
         if config.has_section("board"):
             self.cells_set = config.getint("board", "cells_set") if config.has_option("board", "cells_set") else 0
-            self.background_draw = config.getboolean("board", "background_draw") if config.has_option("board", "background_draw") else False
-            self.background_rotate = config.getboolean("board", "background_rotate") if config.has_option("board", "background_rotate") else False
+            self.background_draw = config.getboolean("board", "background_draw") if config.has_option("board",
+                                                                                                      "background_draw") else False
+            self.background_rotate = config.getboolean("board", "background_rotate") if config.has_option("board",
+                                                                                                          "background_rotate") else False

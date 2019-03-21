@@ -427,6 +427,7 @@ def player_save(panel):
         with open(common.player_filename, 'wb') as output:
             pickle.dump(common.player, output, pickle.HIGHEST_PROTOCOL)
 
+    common.intro = True
     if unlocked:
         if unlocked < 7:
             common.fx.play(panel, "unlocked")

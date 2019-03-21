@@ -73,7 +73,7 @@ def main():
     update_scores(panel)
 
     common.player_dialog_batch = pyglet.graphics.Batch()
-    player_dialog = PlayerDialog(common.board)
+    player_dialog = PlayerDialog(window, common.board)
 
     if common.intro:
         intro_hello(hello_msg)
@@ -120,7 +120,8 @@ def main():
         if player_dialog.is_open:
             common.player_dialog_batch.draw()
         #text_batch.draw()
-        #window.push_handlers(test.caret)
+            #window.push_handlers(player_dialog.name_field.caret)
+            #window.push_handlers(player_dialog.pass_field.caret)
 
     @window.event
     def on_mouse_enter(x, y):
