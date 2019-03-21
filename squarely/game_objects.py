@@ -379,11 +379,11 @@ class PlayerDialog(pyglet.sprite.Sprite):
         self.batch = common.player_dialog_batch
 
         self.name_field = TextWidget(common.player.name, int(self.x + self.base_square * 0.6),
-                                     int(self.y + self.base_square * 2.37), 300, self.batch)
+                                     int(self.y + self.base_square * 2.37), 300, self.batch, False)
 
         pswd = common.player.password if common.player.password is not None else ""
         self.pass_field = TextWidget(pswd, int(self.x + self.base_square * 0.6),
-                                     int(self.y + self.base_square * 1.37), 300, self.batch)
+                                     int(self.y + self.base_square * 1.37), 300, self.batch, True)
 
         self.label = pyglet.text.Label(
             common.lang["player_account"],

@@ -26,15 +26,18 @@ class Rectangle(object):
 
 
 class TextWidget(object):
-    def __init__(self, text, x, y, width, batch):
+    def __init__(self, text, x, y, width, batch, is_password):
+
+        color = (0, 0, 0, 0) if is_password else (255, 255, 255, 255)
+
         self.document = pyglet.text.document.UnformattedDocument(text)
-        self.document.set_style(0, len(self.document.text), dict(color=(255, 255, 255, 255), font_size=18))
+        self.document.set_style(0, len(self.document.text), dict(color=color, font_size=18))
         font = self.document.get_font()
         height = font.ascent - font.descent
 
         self.layout = pyglet.text.layout.IncrementalTextLayout(self.document, width, height, multiline=False,
                                                                batch=batch)
-        self.caret = pyglet.text.caret.Caret(self.layout)
+        self.caret = pyglet.text.caret.Caret(self.layout, color=(255, 255, 255))
 
         self.layout.x = x
         self.layout.y = y
