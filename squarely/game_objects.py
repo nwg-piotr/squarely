@@ -168,39 +168,42 @@ class Selector(pyglet.sprite.Sprite):
 
 class SummaryBar(pyglet.sprite.Sprite):
     def __init__(self, board, x, y):
-        joint_image = pyglet.image.Texture.create(2628, 216)
-        joint_image.blit_into(common.cell_bitmaps[0], 0, 0, 0)
-        joint_image.blit_into(common.cell_bitmaps[1], 429 * 1, 0, 0)
-        joint_image.blit_into(common.cell_bitmaps[2], 429 * 2, 0, 0)
-        joint_image.blit_into(common.cell_bitmaps[3], 429 * 3, 0, 0)
-        joint_image.blit_into(common.cell_bitmaps[4], 429 * 4, 0, 0)
-        joint_image.blit_into(common.cell_bitmaps[5], 429 * 5, 0, 0)
 
-        underline = pyglet.image.load("images/underline.png")
-        underline.width = 2628
-        underline.height = 5
-        joint_image.blit_into(underline, 0, 0, 0)
+        bcg = pyglet.image.load("images/bar-bcg.png").get_texture()
+        bcg.width = board.base * 4
+        bcg.height = int(board.base / 3)
+        self.joint_image = pyglet.image.Texture.create(2592, 216)
+        self.joint_image.blit_into(common.cell_bitmaps[0], 0, 0, 0)
+        self.joint_image.blit_into(common.cell_bitmaps[1], 429 * 1, 0, 0)
+        self.joint_image.blit_into(common.cell_bitmaps[2], 429 * 2, 0, 0)
+        self.joint_image.blit_into(common.cell_bitmaps[3], 429 * 3, 0, 0)
+        self.joint_image.blit_into(common.cell_bitmaps[4], 429 * 4, 0, 0)
+        self.joint_image.blit_into(common.cell_bitmaps[5], 429 * 5, 0, 0)
 
         gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
-        joint_image.width = int(board.base * 4)
-        joint_image.height = int(board.base / 3)
-        super().__init__(joint_image)
+        self.joint_image.width = board.base * 4
+        self.joint_image.height = board.base // 3
+        super().__init__(bcg, subpixel=True)
 
         self.x = board.base
         self.y = y
         self.batch = None
 
-        step = self.image.width / 6
-        self.l0 = self.lbl("0", self.image.height, self.image.height // 2)
-        self.l1 = self.lbl("0", self.image.height + step, self.image.height // 2)
-        self.l2 = self.lbl("0", self.image.height + step * 2, self.image.height // 2)
-        self.l3 = self.lbl("0", self.image.height + step * 3, self.image.height // 2)
-        self.l4 = self.lbl("0", self.image.height + step * 4, self.image.height // 2)
-        self.l5 = self.lbl("0", self.image.height + step * 5, self.image.height // 2)
+        step = self.joint_image.width / 12
+        self.l0 = self.lbl("0", step, self.image.height // 2)
+        self.l1 = self.lbl("0", step * 3, self.image.height // 2)
+        self.l2 = self.lbl("0", step * 5, self.image.height // 2)
+        self.l3 = self.lbl("0", step * 7, self.image.height // 2)
+        self.l4 = self.lbl("0", step * 9, self.image.height // 2)
+        self.l5 = self.lbl("0", step * 11, self.image.height // 2)
         self.visible = False
 
     def draw(self):
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         self.image.blit(self.x, self.y)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        self.joint_image.blit(self.x, self.y)
         self.l0.draw()
         self.l1.draw()
         self.l2.draw()
@@ -209,7 +212,7 @@ class SummaryBar(pyglet.sprite.Sprite):
         self.l5.draw()
 
     def new(self, board, row):
-        self.y = board.rows[row]
+        self.y = board.rows[row] + board.margin
         self.visible = False
 
     def show(self):
@@ -236,7 +239,7 @@ class SummaryBar(pyglet.sprite.Sprite):
         label = pyglet.text.Label(
             text,
             font_name='DejaVu Sans Mono',
-            font_size=int(20 * common.board.scale),
+            font_size=int(24 * common.board.scale),
             x=self.x + x, y=y,
             anchor_x='left', anchor_y='center')
         return label

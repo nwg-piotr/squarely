@@ -91,15 +91,15 @@ def main():
             if common.cells_batch is not None:
                 common.cells_batch.draw()
 
-            if common.summary_bar is not None and common.summary_bar.visible:
-                common.summary_bar.draw()
-
             if common.rotation_group is not None and common.rotation_direction is not None:
                 common.rotation_group.draw()
 
             if not common.scrolling:
                 if common.cursor_in and common.cursor_in_board and common.board.selection_made:
                     common.selector.draw()
+
+            if common.summary_bar is not None and common.summary_bar.visible:
+                common.summary_bar.draw()
 
         elif common.intro:
             common.intro_batch.draw()
