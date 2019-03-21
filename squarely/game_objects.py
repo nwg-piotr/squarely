@@ -460,7 +460,7 @@ class PlayerDialog(pyglet.sprite.Sprite):
             self.label.text = self.message
 
     def new_player(self):
-        name_ok = self.name_field.document.text.upper() != "ANONYMOUS" and len(self.name_field.document.text) < 6
+        name_ok = self.name_field.document.text.upper() != "ANONYMOUS" and len(self.name_field.document.text) >= 3
         pass_ok = len(self.pass_field.document.text) >= 6
         if name_ok and pass_ok:
             self.message = common.lang["player_created"]
