@@ -450,8 +450,12 @@ class PlayerDialog(pyglet.sprite.Sprite):
         if self.is_in(x, y, self.area_close):
             self.close()
         elif self.is_in(x, y, self.area_name):
+            self.pass_field.caret.visible = False
+            self.name_field.caret.visible = True
             self.window.push_handlers(self.name_field.caret)  # set focus
         elif self.is_in(x, y, self.area_password):
+            self.name_field.caret.visible = False
+            self.pass_field.caret.visible = True
             self.window.push_handlers(self.pass_field.caret)
         elif self.is_in(x, y, self.area_add):
             self.new_player()
