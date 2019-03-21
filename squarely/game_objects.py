@@ -19,7 +19,7 @@ import configparser
 import os
 from shutil import copyfile
 import common
-from player_tools import *
+from text_tools import *
 
 
 class GameBoard(object):

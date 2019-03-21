@@ -14,7 +14,7 @@ Dependencies (Arch Linux): python-pyglet, avbin7 (AUR package necessary to play 
 """
 from game_objects import *
 from tools import *
-from player_tools import *
+from text_tools import *
 from pyglet.window import key
 import locale
 
@@ -256,10 +256,8 @@ def main():
 
     @window.event
     def on_key_press(symbol, modifiers):
-        if symbol == key.SPACE:
-            common.fx.play(panel, "start")
-            new_game()
-            mark_and_delete(common.board, panel)
+        if symbol == key.ESCAPE:
+            exit(0)
         elif symbol == key.H:
             if common.summary_bar is not None:
                 common.summary_bar.show()
