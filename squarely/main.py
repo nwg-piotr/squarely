@@ -10,7 +10,7 @@ Website: http://nwg.pl
 Project: https://github.com/nwg-piotr/squarely
 License: GPL3
 
-Dependencies (Arch Linux): python-pyglet, avbin7 (AUR package necessary to play compressed sound files)
+Dependencies (Arch Linux): python-pyglet, ' python-requests' avbin7 (AUR - to play compressed sound files)
 """
 from game_objects import *
 from tools import *
