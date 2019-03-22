@@ -10,10 +10,11 @@ Website: http://nwg.pl
 Project: https://github.com/nwg-piotr/squarely
 License: GPL3
 """
+import platform
 import requests
 import common
 
 
 def create_player():
-    print("create_player", common.player.name, common.player.password)
+    print("create_player", common.player.name, common.player.password, platform.system(), platform.release())
 
