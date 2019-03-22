@@ -471,9 +471,7 @@ class PlayerDialog(pyglet.sprite.Sprite):
         if name_ok and pass_ok:
             self.message = common.lang["player_created"]
             self.label.text = self.message
-            common.player.name = name
-            common.player.password = hashlib.md5(pswd.encode('utf-8')).hexdigest()
-            create_player()  # in cloud_tools
+            create_player(name, hashlib.md5(pswd.encode('utf-8')).hexdigest())  # in cloud_tools
         else:
             msg = ""
             if not name_ok:

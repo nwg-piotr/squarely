@@ -15,6 +15,6 @@ import requests
 import common
 
 
-def create_player():
+def create_player(name, password):
     print("create_player", common.player.name, common.player.password, platform.system(), platform.release())
 
