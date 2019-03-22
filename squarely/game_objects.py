@@ -20,6 +20,8 @@ import os
 from shutil import copyfile
 import common
 from text_tools import *
+import hashlib
+from cloud_tools import create_player
 
 
 class GameBoard(object):
@@ -464,11 +466,16 @@ class PlayerDialog(pyglet.sprite.Sprite):
             self.label.text = self.message
 
     def new_player(self):
-        name_ok = self.name_field.document.text.upper() != "ANONYMOUS" and len(self.name_field.document.text) >= 3
-        pass_ok = len(self.pass_field.document.text) >= 6
+        name = self.name_field.document.text
+        pswd = self.pass_field.document.text
+        name_ok = name.upper() != "ANONYMOUS" and len(name) >= 3
+        pass_ok = len(pswd) >= 6
         if name_ok and pass_ok:
             self.message = common.lang["player_created"]
             self.label.text = self.message
+            common.player.name = name
+            common.player.password = hashlib.md5(pswd.encode('utf-8')).hexdigest()
+            create_player()  # in cloud_tools
         else:
             msg = ""
             if not name_ok:
