@@ -1,0 +1,180 @@
+// The code below is based on what I wrote for my previous games. It still needs modifications.
+<?php
+    include 'config/config.php';
+    $conn = mysql_connect($dbhost, $dbuser, $dbpass);
+
+    // Non-standard user agent to disallow simple access via a browser
+    $agent = $_SERVER['HTTP_USER_AGENT'];
+
+    if (! $conn ) {
+        die('Could not connect: ' . mysql_error());
+    }
+
+    $action = $_GET['action'];
+    $pname = $_GET['pname'];
+    $ppswd = $_GET['ppswd'];
+    $ps0 = $_GET['ps0'];
+    $ps1 = $_GET['ps1'];
+    $ps2 = $_GET['ps2'];
+    $ps3 = $_GET['ps3'];
+    $ps4 = $_GET['ps4'];
+    $ps5 = $_GET['ps5'];
+    $pos = $_GET['pos'];
+    $plimit = $_GET['plimit'];
+
+    if ($action != 'display') {
+        if ($pname == "" or $ppswd == "") {
+            die("data_missing");
+        }
+    }
+
+	mysql_select_db($dbname);
+
+    if($action == 'login') {
+   	
+   	    if($agent != $vagent) {
+			die("access_denied");
+   	    }
+
+		// Check if user exists and password ok
+        $sql = "SELECT * FROM players WHERE pname = '$pname' AND ppswd = '$ppswd'";
+   	    $result = mysql_query( $sql, $conn );
+
+   	    if (mysql_num_rows($result) > 0) {
+   		
+            // player & password ok, update last access timestamp
+            $sql = "UPDATE players SET placcess=current_timestamp, WHERE pname = '$pname' AND ppswd = '$ppswd'";
+            $res = mysql_query( $sql, $conn );
+
+            if($result) {
+
+                $sql = "SELECT pname, ppoints, placcess, tester FROM players WHERE pname = '$pname' AND ppswd = '$ppswd'";
+                $result = mysql_query( $sql, $conn );
+
+                if($result) {
+
+                    $row = mysql_fetch_row($result);
+                    $pname = $row[0];
+                    $ppoints = $row[1];
+                    $placcess = $row[2];
+                    $ptester = $row[3];
+
+                    echo "login_ok," .$pname. "," .$ps0. "," .$placcess. "," .$ptester;
+                }
+            }
+	
+        } else {
+
+            // Check if at least the user exists
+            $sql = "SELECT * FROM players WHERE pname = '$pname'";
+            $result = mysql_query( $sql, $conn );
+
+            if (mysql_num_rows($result) > 0) {
+                // User exist, wrong password
+                echo "wrong_pswd";
+            } else {
+                // User not found
+                echo "no_such_player";
+            }
+        }
+   	
+	} else if ($action == 'update') {
+		
+		if ($agent != $vagent) {
+			die("access_denied");
+   	    }
+
+	    // Check if user exists and password ok
+        $sql = "SELECT * FROM players WHERE pname = '$pname' AND ppswd = '$ppswd'";
+   	    $result = mysql_query( $sql, $conn );
+   	
+   	    if ($result) {
+   		
+   		    // user & password ok, update data & last access timestamp
+   		    $sql = "UPDATE players SET ppoints = '$ppoints', placcess=current_timestamp WHERE pname = '$pname'";
+   		    $result = mysql_query( $sql, $conn );
+
+   		    if($result) {
+				echo "scores_updated";
+   		    }
+	
+   	    } else {
+   		    echo "user_data_invalid";
+   	    }
+
+
+	} else if ($action == 'create') {
+		
+		if($agent != $vagent) {
+			die("access_denied");
+   	    }
+   	
+   	    // Check if player exists, die if so
+        $sql = "SELECT * FROM players WHERE pname = '$pname'";
+   	    $result = mysql_query( $sql, $conn );
+   	
+   	    if(mysql_num_rows($result) > 0) {
+   		    die("player_exists");
+   	    }
+
+        // create a player
+        $sql = "INSERT INTO players (pname, ppswd, ps0, pos)
+        VALUES('$pname', '$ppswd', 0, '$pos')";
+
+   	    $result = mysql_query( $sql, $conn );
+   	
+   	    if($result) {
+   			
+   		    echo "player_created";
+   			 
+   	    } else {
+   		    echo "failed_creating";
+ 		}
+   	
+	} else if ($action == 'delete') {
+		
+		if($agent != $vagent) {
+			die("access_denied");
+   	    }
+   	
+		$sql = "SELECT pname FROM players WHERE pname = '$pname' AND ppswd = '$ppswd'";		
+		$result = mysql_query( $sql, $conn );
+		
+		$num_rows = mysql_num_rows($result);	
+		
+		if($num_rows > 0){
+			
+			$row = mysql_fetch_row($result);
+			$pname = $row[0];
+			$sql = "DELETE FROM players WHERE pname = '$pname' AND ppswd = '$ppswd'";
+			$res = mysql_query( $sql, $conn );
+			if($res) {
+	   			echo "player_deleted";
+	   		} else {
+	   			echo "failed_deleting";
+	   		}
+			
+		} else {
+			echo "no_player_wrong_pass";
+		}
+   	
+	} else if ($action == 'display'){
+		
+		if ($plimit == 0){
+			$sql = "SELECT * FROM players ORDER BY ppoints DESC, ppoints";
+		} else {
+			$sql = "SELECT * FROM players ORDER BY ppoints DESC, ppoints LIMIT $plimit";
+		}
+
+		$result = mysql_query( $sql, $conn );
+		$num_rows = mysql_num_rows($result);
+		
+		while ($row = mysql_fetch_array($result)) {
+			echo $row['pname'].",".$row['ppoints'].",".$row['placcess']."#";
+		} 
+	
+	} else {
+		echo "action_unknown";
+	}
+	mysql_close($conn);
+?>

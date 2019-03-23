@@ -589,6 +589,7 @@ class Panel(object):
         self.button_name.area = self.button_name.x, self.button_name.y, self.button_name.x + \
                                 self.btn_dim * 3, self.button_name.y + self.btn_half
         self.button_name.selected = False
+
         self.button_name.label = pyglet.text.Label(
             common.player.name,
             font_name='DejaVu Sans Mono',
@@ -597,6 +598,8 @@ class Panel(object):
             x=self.button_name.x + self.button_name.image.width // 2,
             y=self.button_name.y + self.button_name.image.height // 2,
             anchor_x='center', anchor_y='center', batch=self.batch)
+
+        self.update_user_label()  # check if it's necessary
 
         self.button_1 = pyglet.sprite.Sprite(self.img_1)
         self.button_1.x = self.margin + self.btn_dim * 3
@@ -716,6 +719,10 @@ class Panel(object):
         self.display_l5.label = self.score_label(self.display_l5, "L6: " + str(common.scores[5])) if common.scores[
                                                                                                          5] is not None else self.score_label(
             self.display_l5, "L6:")
+
+    def update_user_label(self):
+        self.button_name.label.text = common.player.name
+        self.button_name.label.color = (255, 255, 255, 255) if common.player.name!= "Anonymous" else (87, 87, 120, 255)
 
     def score_label(self, sprite, txt):
         label = pyglet.text.Label(
