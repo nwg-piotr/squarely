@@ -234,11 +234,15 @@ def main():
 
             elif panel.button_music.selected:
                 common.fx.play(panel, "key")
-                panel.switch_music()
+                common.rc.switch_music(panel)
+                common.rc.save()
+                common.rc.load()
 
             elif panel.button_sound.selected:
                 common.fx.play(panel, "key")
-                panel.switch_sounds()
+                common.rc.switch_sounds(panel)
+                common.rc.save()
+                common.rc.load()
 
             elif panel.button_name.selected:
                 if not player_dialog.is_open:

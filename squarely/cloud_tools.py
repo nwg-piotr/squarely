@@ -13,13 +13,13 @@ License: GPL3
 import platform
 import requests
 import locale
+import pickle
 import common
 
 
-# from tools import player_save, player_load
-
-def create_player(name, password):
-    os = platform.system() + " " + platform.release() + " " + str(locale.getlocale()[0]) if common.rc.allow_os_info else "forbidden"
+def create_player(name, password, dialog):
+    os = platform.system() + " " + platform.release() + " " + str(
+        locale.getlocale()[0]) if common.rc.allow_os_info else "forbidden"
     url = 'http://nwg.pl/puzzle/player.php?action=create&pname=' + name + '&ppswd=' + password + '&pos=' + os
     print(url)
     try:
@@ -32,4 +32,9 @@ def create_player(name, password):
     if response_text == "player_created":
         common.player.name = name
         common.player.password = password
-        # player_save() todo sound preferences should not be attached to the panel, change! Maybe to the player?
+        with open(common.player_filename, 'wb') as output:
+            pickle.dump(common.player, output, pickle.HIGHEST_PROTOCOL)
+        dialog.label.text = common.lang["player_created"]
+
+    elif response_text == 'failed_creating':
+        dialog.set_message(common.lang["player_failed_creating"])

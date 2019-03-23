@@ -374,8 +374,6 @@ class PlayerDialog(pyglet.sprite.Sprite):
         self.x = board.base * 1
         self.y = board.base * 4
 
-        self.message = common.lang["player_account"]
-
         self.batch = common.player_dialog_batch
 
         self.name_field = TextWidget(common.player.name, int(self.x + self.base_square * 0.6),
@@ -402,14 +400,15 @@ class PlayerDialog(pyglet.sprite.Sprite):
         self.area_name = self.x, self.y + self.base_square * 2, self.x + self.base_square * 4, self.y + self.base_square * 3
         self.area_close = self.x + self.base_square * 3.5, self.y + self.base_square * 3, self.x + self.base_square * 4, self.y + self.base_square * 3.5
 
+        self.set_message(common.lang["player_account"])
+
     def open(self):
         if not self.is_open:
             self.name_field.update(common.player.name)
             pswd = common.player.password if common.player.password is not None else ""
             self.pass_field.update(pswd)
 
-            self.message = common.lang["player_account"]
-            self.label.text = self.message
+            self.set_message(common.lang["player_account"])
 
             self.is_open = True
             self.old_intro_state = common.intro
@@ -460,8 +459,11 @@ class PlayerDialog(pyglet.sprite.Sprite):
         elif self.is_in(x, y, self.area_add):
             self.new_player()
         else:
-            self.message = common.lang["player_account"]
-            self.label.text = self.message
+            self.set_message(common.lang["player_account"])
+
+    def set_message(self, message):
+        self.message = message
+        self.label.text = self.message
 
     def new_player(self):
         name = self.name_field.document.text
@@ -469,9 +471,8 @@ class PlayerDialog(pyglet.sprite.Sprite):
         name_ok = name.upper() != "ANONYMOUS" and len(name) >= 3
         pass_ok = len(pswd) >= 6
         if name_ok and pass_ok:
-            self.message = common.lang["player_created"]
-            self.label.text = self.message
-            create_player(name, hashlib.md5(pswd.encode('utf-8')).hexdigest())  # in cloud_tools
+            self.set_message(common.lang["player_creating"])
+            create_player(name, hashlib.md5(pswd.encode('utf-8')).hexdigest(), self)  # in cloud_tools
         else:
             msg = ""
             if not name_ok:
@@ -508,9 +509,6 @@ class Panel(object):
         self.background.width = board.base * 6
         self.background.height = board.base * 2
 
-        self.music_on = True
-        self.sounds_on = True
-
         self.intro_message = None  # This will be a label, drawn in not None
 
         self.img_sound = self.bcg_image(pyglet.image.load('images/btn-sound.png')).get_region(0, 0, 216, 216)
@@ -534,7 +532,7 @@ class Panel(object):
         self.img_unlocked.width = board.base
         self.img_unlocked.height = board.base / 3
 
-        self.button_sound = pyglet.sprite.Sprite(self.img_sound)
+        self.button_sound = pyglet.sprite.Sprite(self.img_sound if common.rc.sounds else self.img_sound_off)
         self.button_sound.x = self.margin
         self.button_sound.scale = self.scale
         self.button_sound.y = self.margin
@@ -543,7 +541,7 @@ class Panel(object):
                                  self.btn_dim, self.button_sound.y + self.btn_dim
         self.button_sound.selected = False
 
-        self.button_music = pyglet.sprite.Sprite(self.img_music)
+        self.button_music = pyglet.sprite.Sprite(self.img_music if common.rc.music else self.img_music_off)
         self.button_music.scale = self.scale
         self.button_music.x = self.margin + self.btn_dim
         self.button_music.y = self.margin
@@ -840,14 +838,6 @@ class Panel(object):
         texture.height = self.btn_dim / 2
         return texture
 
-    def switch_sounds(self):
-        self.sounds_on = not self.sounds_on
-        self.button_sound.image = self.img_sound if self.sounds_on else self.img_sound_off
-
-    def switch_music(self):
-        self.music_on = not self.music_on
-        self.button_music.image = self.img_music if self.music_on else self.img_music_off
-
     def draw(self):
         self.background.blit(0, 0)
         self.batch.draw()
@@ -878,7 +868,7 @@ class Sounds(object):
             self.hello = pyglet.media.StaticSource(pyglet.media.load('sounds/hello.wav', streaming=False))
 
     def play(self, panel, fx):
-        if panel.sounds_on:
+        if common.rc.sounds:
             if fx == "key":
                 self.key.play()
             if fx == "drop":
@@ -926,16 +916,64 @@ class RuntimeConfig(object):
         if not os.path.isfile(common.app_dir + "/squarelyrc"):
             copyfile("squarelyrc", common.app_dir + "/squarelyrc")  # Should the default file got to /etc?
 
-        config = configparser.ConfigParser()
-        with open(common.app_dir + "/squarelyrc") as f:
-            config.read_file(f)
+        self.config = configparser.ConfigParser()
+        self.file = common.app_dir + "/squarelyrc"
+        with open(self.file) as f:
+            self.config.read_file(f)
 
-        if config.has_section("board"):
-            self.cells_set = config.getint("board", "cells_set") if config.has_option("board", "cells_set") else 0
-            self.background_draw = config.getboolean("board", "background_draw") if config.has_option("board",
+        if self.config.has_section("board"):
+            self.cells_set = self.config.getint("board", "cells_set") if self.config.has_option("board", "cells_set") else 0
+            self.background_draw = self.config.getboolean("board", "background_draw") if self.config.has_option("board",
                                                                                                       "background_draw") else False
-            self.background_rotate = config.getboolean("board", "background_rotate") if config.has_option("board",
+            self.background_rotate = self.config.getboolean("board", "background_rotate") if self.config.has_option("board",
                                                                                                           "background_rotate") else False
-            self.sounds = config.getboolean("other", "sounds") if config.has_option("other", "sounds") else False
-            self.music = config.getboolean("other", "music") if config.has_option("other", "music") else False
-            self.allow_os_info = config.getboolean("other", "allow_os_info") if config.has_option("other", "allow_os_info") else False
+
+        if self.config.has_section("other"):
+            self.sounds = self.config.getboolean("other", "sounds") if self.config.has_option("other", "sounds") else False
+            self.music = self.config.getboolean("other", "music") if self.config.has_option("other", "music") else False
+            self.allow_os_info = self.config.getboolean("other", "allow_os_info") if self.config.has_option("other", "allow_os_info") else False
+
+    def save(self):
+        if not self.config.has_section("board"):
+            self.config.add_section("board")
+
+        self.config.set("board", "cells_set", str(self.cells_set))
+        self.config.set("board", "background_draw", str(self.background_draw))
+        self.config.set("board", "background_rotate", str(self.background_rotate))
+
+        if not self.config.has_section("other"):
+            self.config.add_section("other")
+
+        self.config.set("other", "sounds", str(self.sounds))
+        self.config.set("other", "music", str(self.music))
+        self.config.set("other", "allow_os_info", str(self.allow_os_info))
+
+        file = open(self.file, 'w')
+        self.config.write(file)
+        file.close()
+
+    def load(self):
+        with open(self.file) as f:
+            self.config.read_file(f)
+
+        if self.config.has_section("board"):
+            self.cells_set = self.config.getint("board", "cells_set") if self.config.has_option("board", "cells_set") else 0
+            self.background_draw = self.config.getboolean("board", "background_draw") if self.config.has_option("board",
+                                                                                                      "background_draw") else False
+            self.background_rotate = self.config.getboolean("board", "background_rotate") if self.config.has_option("board",
+                                                                                                          "background_rotate") else False
+
+        if self.config.has_section("other"):
+            self.sounds = self.config.getboolean("other", "sounds") if self.config.has_option("other", "sounds") else False
+            self.music = self.config.getboolean("other", "music") if self.config.has_option("other", "music") else False
+            self.allow_os_info = self.config.getboolean("other", "allow_os_info") if self.config.has_option("other", "allow_os_info") else False
+
+    def switch_sounds(self, panel):
+        self.sounds = not self.sounds
+        panel.button_sound.image = panel.img_sound if self.sounds else panel.img_sound_off
+        print("switching sounds", self.sounds)
+
+    def switch_music(self, panel):
+        self.music = not self.music
+        panel.button_music.image = panel.img_music if self.music else panel.img_music_off
+        print("switching music", self.music)

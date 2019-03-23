@@ -209,7 +209,7 @@ def mark_and_delete(board, panel):
 
         if cells_left == 0:
             common.playing = False
-            player_save(panel)
+            player_save_results(panel)
             player_load()
 
 
@@ -411,7 +411,7 @@ def player_load():
     return exists
 
 
-def player_save(panel):
+def player_save_results(panel):
     """Level finished successfully"""
     unlocked = None
     if common.player.scores[common.level] is None:
@@ -422,8 +422,7 @@ def player_save(panel):
 
         """Update score for this level, save all"""
         common.player.scores[common.level] = common.scores[common.level]
-        with open(common.player_filename, 'wb') as output:
-            pickle.dump(common.player, output, pickle.HIGHEST_PROTOCOL)
+        player_save()
 
     common.intro = True
     if unlocked:
@@ -436,6 +435,11 @@ def player_save(panel):
     else:
         common.fx.play(panel, "level")
         intro_level_finished(common.level + 1, common.scores[common.level])  # Just show the result
+
+
+def player_save():
+    with open(common.player_filename, 'wb') as output:
+        pickle.dump(common.player, output, pickle.HIGHEST_PROTOCOL)
 
 
 def update_scores(panel):

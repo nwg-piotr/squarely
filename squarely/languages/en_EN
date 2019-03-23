@@ -22,5 +22,7 @@ player_logout = Sign out
 player_wrong_name = Wrong name (5+ chars)
 player_wrong_pass = Wrong password (6+ chars)
 player_created = Player created
+player_creating = Creating player account...
+player_failed_creating = Failed creating account
 close = Close
 nothing = Nothing yet
