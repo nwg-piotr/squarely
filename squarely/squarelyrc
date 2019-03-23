@@ -2,3 +2,7 @@
 cells_set = 0
 background_draw = True
 background_rotate = False
+[other]
+sounds = True
+music = True
+allow_os_info = True

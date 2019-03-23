@@ -936,3 +936,6 @@ class RuntimeConfig(object):
                                                                                                       "background_draw") else False
             self.background_rotate = config.getboolean("board", "background_rotate") if config.has_option("board",
                                                                                                           "background_rotate") else False
+            self.sounds = config.getboolean("other", "sounds") if config.has_option("other", "sounds") else False
+            self.music = config.getboolean("other", "music") if config.has_option("other", "music") else False
+            self.allow_os_info = config.getboolean("other", "allow_os_info") if config.has_option("other", "allow_os_info") else False

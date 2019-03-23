@@ -12,14 +12,16 @@ License: GPL3
 """
 import platform
 import requests
+import locale
 import common
-#from tools import player_save, player_load
 
+
+# from tools import player_save, player_load
 
 def create_player(name, password):
-    os = platform.system() + " " + platform.release()
-    print("create_player", name, password, os)
+    os = platform.system() + " " + platform.release() + " " + str(locale.getlocale()[0]) if common.rc.allow_os_info else "forbidden"
     url = 'http://nwg.pl/puzzle/player.php?action=create&pname=' + name + '&ppswd=' + password + '&pos=' + os
+    print(url)
     try:
         response = requests.get(url, headers=common.headers)
         print(response.content)
@@ -31,4 +33,3 @@ def create_player(name, password):
         common.player.name = name
         common.player.password = password
         # player_save() todo sound preferences should not be attached to the panel, change! Maybe to the player?
-
