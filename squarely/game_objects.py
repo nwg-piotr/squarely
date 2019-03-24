@@ -402,6 +402,8 @@ class PlayerDialog(pyglet.sprite.Sprite):
 
         self.set_message(common.lang["player_account"])
 
+        self.online = False
+
     def open(self):
         if not self.is_open:
             self.name_field.update(common.player.name)
@@ -521,7 +523,8 @@ class Panel(object):
         self.img_start = self.bcg_image(pyglet.image.load('images/btn-start.png'))
 
         self.img_text = self.bcg_image_triple(pyglet.image.load('images/btn-text.png'))
-        self.img_1 = self.bcg_image_half(pyglet.image.load('images/btn-1.png'))
+        self.img_online = self.bcg_image_half(pyglet.image.load('images/btn-online.png'))
+        self.img_offline = self.bcg_image_half(pyglet.image.load('images/btn-offline.png'))
         self.img_2 = self.bcg_image_half(pyglet.image.load('images/btn-2.png'))
         self.img_3 = self.bcg_image_half(pyglet.image.load('images/btn-3.png'))
 
@@ -601,13 +604,14 @@ class Panel(object):
 
         self.update_user_label()  # check if it's necessary
 
-        self.button_1 = pyglet.sprite.Sprite(self.img_1)
-        self.button_1.x = self.margin + self.btn_dim * 3
-        self.button_1.y = self.margin + self.btn_dim
-        self.button_1.batch = self.batch
-        self.button_1.area = self.button_1.x, self.button_1.y, self.button_1.x + \
-                             self.btn_dim, self.button_1.y + self.btn_half
-        self.button_1.selected = False
+        self.button_cloud = pyglet.sprite.Sprite(self.img_offline)
+        self.button_cloud.x = self.margin + self.btn_dim * 3
+        self.button_cloud.y = self.margin + self.btn_dim
+        self.button_cloud.batch = self.batch
+        self.button_cloud.area = self.button_cloud.x, self.button_cloud.y, self.button_cloud.x + \
+                                 self.btn_dim, self.button_cloud.y + self.btn_half
+        self.button_cloud.selected = False
+        self.button_cloud.online = False
 
         self.button_2 = pyglet.sprite.Sprite(self.img_2)
         self.button_2.x = self.margin + self.btn_dim * 4
@@ -679,6 +683,10 @@ class Panel(object):
             font_size=20 * board.scale,
             x=board.board_width // 2, y=24 * self.scale,
             anchor_x='center', anchor_y='center', batch=self.batch)
+
+    def set_online(self, value):
+        self.button_cloud.online = value
+        self.button_cloud.image = self.img_online if value else self.img_offline
 
     def set_lock_state(self, level, is_locked):
         if level == 0:
@@ -774,7 +782,7 @@ class Panel(object):
         self.set_selection(self.button_start, self.is_selected(x, y, self.button_start.area))
         # Player account buttons
         self.set_selection(self.button_name, self.is_selected(x, y, self.button_name.area))
-        self.set_selection(self.button_1, self.is_selected(x, y, self.button_1.area))
+        self.set_selection(self.button_cloud, self.is_selected(x, y, self.button_cloud.area))
         self.set_selection(self.button_2, self.is_selected(x, y, self.button_2.area))
         self.set_selection(self.button_3, self.is_selected(x, y, self.button_3.area))
 
@@ -795,7 +803,7 @@ class Panel(object):
             self.label.text = common.lang["panel_start"] + " " + self.border_size_txt
         elif self.button_name.selected:
             self.label.text = common.lang["player_account"]
-        elif self.button_1.selected:
+        elif self.button_cloud.selected:
             self.label.text = common.lang["nothing"]
         elif self.button_2.selected:
             self.label.text = common.lang["nothing"]
