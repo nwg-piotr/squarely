@@ -250,7 +250,7 @@ def main():
                     common.player_dialog.close()
 
         if common.player_dialog.is_open:
-            common.player_dialog.click(x, y)
+            common.player_dialog.click(panel, x, y)
 
     @window.event
     def on_mouse_scroll(x, y, scroll_x, scroll_y):

@@ -455,7 +455,7 @@ class PlayerDialog(pyglet.sprite.Sprite):
         else:
             self.label.text = self.message
 
-    def click(self, x, y):
+    def click(self, panel, x, y):
         if self.is_in(x, y, self.area_close):
             self.close()
         elif self.is_in(x, y, self.area_name):
@@ -471,7 +471,7 @@ class PlayerDialog(pyglet.sprite.Sprite):
         elif self.is_in(x, y, self.area_login):
             self.login_player()
         elif self.is_in(x, y, self.area_logout):
-            self.logout_player()
+            self.logout_player(panel)
 
         else:
             self.set_message(common.lang["player_account"])
@@ -514,14 +514,21 @@ class PlayerDialog(pyglet.sprite.Sprite):
             self.message = msg
             self.label.text = self.message
 
-    def logout_player(self):
+    def logout_player(self, panel):
         common.player.online = False
         self.close("Anonymous")
-        for i in range(6):
-            common.scores = None
-            common.player.scores = None
+        common.scores = [None, None, None, None, None, None]
+        common.player.scores = [None, None, None, None, None, None]
+
         with open(common.player_filename, 'wb') as output:
             pickle.dump(common.player, output, pickle.HIGHEST_PROTOCOL)
+
+        #with open(common.player_filename, 'rb') as input_data:
+        #    common.player = pickle.load(input_data)
+        #for i in range(len(common.scores)):
+        #    common.scores[i] = common.player.scores[i]
+
+        panel.update_score_labels()
 
 
 class Panel(object):
@@ -748,24 +755,27 @@ class Panel(object):
             self.display_l5.image = self.img_locked if is_locked else self.img_unlocked
 
     def update_score_labels(self):
-        self.display_l0.label = self.score_label(self.display_l0, "L1: " + str(common.scores[0])) if common.scores[
-                                                                                                         0] is not None else self.score_label(
-            self.display_l0, "L1:")
-        self.display_l1.label = self.score_label(self.display_l1, "L2: " + str(common.scores[1])) if common.scores[
-                                                                                                         1] is not None else self.score_label(
-            self.display_l1, "L2:")
-        self.display_l2.label = self.score_label(self.display_l2, "L3: " + str(common.scores[2])) if common.scores[
-                                                                                                         2] is not None else self.score_label(
-            self.display_l2, "L3:")
-        self.display_l3.label = self.score_label(self.display_l3, "L4: " + str(common.scores[3])) if common.scores[
-                                                                                                         3] is not None else self.score_label(
-            self.display_l3, "L4:")
-        self.display_l4.label = self.score_label(self.display_l4, "L5: " + str(common.scores[4])) if common.scores[
-                                                                                                         4] is not None else self.score_label(
-            self.display_l4, "L5:")
-        self.display_l5.label = self.score_label(self.display_l5, "L6: " + str(common.scores[5])) if common.scores[
-                                                                                                         5] is not None else self.score_label(
-            self.display_l5, "L6:")
+        self.display_l0.label = self.score_label(self.display_l0, "L1: " + str(common.scores[0])) if common.scores[0] is not None else self.score_label(self.display_l0, "L1:")
+
+        if common.scores[1] is not None:
+            self.display_l1.label = self.score_label(self.display_l1, "L2: " + str(common.scores[1]))
+            self.display_l1.image = self.img_unlocked
+        else:
+            self.display_l1.label = self.score_label(self.display_l1, "L2:")
+            self.display_l1.image = self.img_locked
+
+        if common.scores[2] is not None:
+            self.display_l2.label = self.score_label(self.display_l2, "L3: " + str(common.scores[2]))
+            self.display_l2.image = self.img_unlocked
+        else:
+            self.display_l2.label = self.score_label(self.display_l2, "L3:")
+            self.display_l2.image = self.img_locked
+
+        #self.display_l1.label = self.score_label(self.display_l1, "L2: " + str(common.scores[1])) if common.scores[1] is not None else self.score_label(self.display_l1, "L2:")
+        #self.display_l2.label = self.score_label(self.display_l2, "L3: " + str(common.scores[2])) if common.scores[2] is not None else self.score_label(self.display_l2, "L3:")
+        self.display_l3.label = self.score_label(self.display_l3, "L4: " + str(common.scores[3])) if common.scores[3] is not None else self.score_label(self.display_l3, "L4:")
+        self.display_l4.label = self.score_label(self.display_l4, "L5: " + str(common.scores[4])) if common.scores[4] is not None else self.score_label(self.display_l4, "L5:")
+        self.display_l5.label = self.score_label(self.display_l5, "L6: " + str(common.scores[5])) if common.scores[5] is not None else self.score_label(self.display_l5, "L6:")
 
         self.update_user_label()  # check if it's necessary
 

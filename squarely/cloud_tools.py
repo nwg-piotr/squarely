@@ -63,13 +63,13 @@ def player_login(name, password):
     url = 'http://nwg.pl/puzzle/player.php?action=login&pname=' + name + '&ppswd=' + password
     print(url)
     if internet_on():
-        async_request('get', url, headers=common.headers, callback=lambda r: login_result(r))
+        async_request('get', url, headers=common.headers, pwd=password, callback=lambda r, p: login_result(r, p))
     else:
         common.player.online = False
         common.player.name = common.lang["player_offline"]
 
 
-def login_result(result):
+def login_result(result, password):
     txt = result.content.decode("utf-8")
     print(txt)
     if txt.startswith('login_ok'):
@@ -85,8 +85,9 @@ def login_result(result):
             except ValueError:
                 common.player.cloud_scores.append(None)
         print(common.player.cloud_scores)
+        # update and save player data
         common.player.name = name
-        common.player_dialog.close(name)
+        common.player.password = password
 
         for i in range(len(common.player.cloud_scores)):
             if common.player.cloud_scores[i] is not None:
@@ -95,6 +96,9 @@ def login_result(result):
 
         with open(common.player_filename, 'wb') as output:
             pickle.dump(common.player, output, pickle.HIGHEST_PROTOCOL)
+
+        common.player_dialog.close(name)
+
     else:
         common.player.online = False
         if txt == 'no_such_player':
@@ -105,7 +109,7 @@ def login_result(result):
             common.player.name = common.lang["player_login_failed"]
 
 
-def async_request(method, *args, callback=None, timeout=15, **kwargs):
+def async_request(method, *args, callback=None, pwd=None, timeout=15, **kwargs):
     """ Credits go to @kylebebak at https://stackoverflow.com/a/44917020/4040598
 
     Makes request on a different thread, and optionally passes response to a
@@ -114,7 +118,7 @@ def async_request(method, *args, callback=None, timeout=15, **kwargs):
     method = request_methods[method.lower()]
     if callback:
         def callback_with_args(response, *args, **kwargs):
-            callback(response)
+            callback(response, pwd)
         kwargs['hooks'] = {'response': callback_with_args}
     kwargs['timeout'] = timeout
     thread = Thread(target=method, args=args, kwargs=kwargs)
