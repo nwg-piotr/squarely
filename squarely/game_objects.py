@@ -380,10 +380,11 @@ class PlayerDialog(pyglet.sprite.Sprite):
         self.old_player_name = None
 
         self.name_field = TextWidget(common.player.name, int(self.x + self.base_square * 0.6),
-                                     int(self.y + self.base_square * 2.37), self.base_square * 2.7, 40 * common.board.scale, self.batch, False)
+                                     int(self.y + self.base_square * 2.37), self.base_square * 2.7,
+                                     40 * common.board.scale, self.batch, False)
 
-        self.pass_field = TextWidget('', int(self.x + self.base_square * 0.6),
-                                     int(self.y + self.base_square * 1.37), self.base_square * 2.7, 40 * common.board.scale, self.batch, True)
+        self.pass_field = TextWidget('', int(self.x + self.base_square * 0.6), int(self.y + self.base_square * 1.37),
+                                     self.base_square * 2.7, 40 * common.board.scale, self.batch, True)
 
         self.label = pyglet.text.Label(
             common.lang["player_account"],
