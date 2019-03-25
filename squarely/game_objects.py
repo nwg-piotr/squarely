@@ -370,7 +370,7 @@ class PlayerDialog(pyglet.sprite.Sprite):
 
         self.image.width = board.base * 4
         self.image.height = board.base * 3.5
-        self.scale = board.scale * 2
+        #self.scale = board.scale * 2
         self.base_square = board.base * self.scale
         self.x = board.base * 1
         self.y = board.base * 4
