@@ -382,7 +382,6 @@ class PlayerDialog(pyglet.sprite.Sprite):
         self.name_field = TextWidget(common.player.name, int(self.x + self.base_square * 0.6),
                                      int(self.y + self.base_square * 2.37), 300, self.batch, False)
 
-        pswd = common.player.password if common.player.password is not None else ""
         self.pass_field = TextWidget('', int(self.x + self.base_square * 0.6),
                                      int(self.y + self.base_square * 1.37), 300, self.batch, True)
 
@@ -519,14 +518,10 @@ class PlayerDialog(pyglet.sprite.Sprite):
         self.close("Anonymous")
         common.scores = [None, None, None, None, None, None]
         common.player.scores = [None, None, None, None, None, None]
+        common.player.password = None
 
         with open(common.player_filename, 'wb') as output:
             pickle.dump(common.player, output, pickle.HIGHEST_PROTOCOL)
-
-        #with open(common.player_filename, 'rb') as input_data:
-        #    common.player = pickle.load(input_data)
-        #for i in range(len(common.scores)):
-        #    common.scores[i] = common.player.scores[i]
 
         panel.update_score_labels()
 

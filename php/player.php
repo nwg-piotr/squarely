@@ -121,8 +121,8 @@
    	    }
 
         // create a player
-        $sql = "INSERT INTO players (pname, ppswd, ps0, pos)
-        VALUES('$pname', '$ppswd', 0, '$pos')";
+        $sql = "INSERT INTO players (pname, ppswd, pos)
+        VALUES('$pname', '$ppswd', '$pos')";
 
    	    $result = mysql_query( $sql, $conn );
    	

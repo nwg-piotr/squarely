@@ -44,16 +44,11 @@ def player_create(name, password, dialog):
         response_text = "Error: " + str(e)
 
     if response_text == "player_created":
-        common.player.name = name
-        common.player.password = password
-        # as we can not just import tools.player_save here, let's save and reload this way:
-        with open(common.player_filename, 'wb') as output:
-            pickle.dump(common.player, output, pickle.HIGHEST_PROTOCOL)
-
-        with open(common.player_filename, 'rb') as input_data:
-            common.player = pickle.load(input_data)
-
         dialog.label.text = common.lang["player_created"]
+        dialog.message = common.lang["player_created"]
+    elif response_text == "player_exists":
+        dialog.label.text = common.lang["player_exists"]
+        dialog.message = common.lang["player_exists"]
 
     elif response_text == 'failed_creating':
         dialog.set_message(common.lang["player_failed_creating"])
