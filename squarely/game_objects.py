@@ -771,11 +771,26 @@ class Panel(object):
             self.display_l2.label = self.score_label(self.display_l2, "L3:")
             self.display_l2.image = self.img_locked
 
-        #self.display_l1.label = self.score_label(self.display_l1, "L2: " + str(common.scores[1])) if common.scores[1] is not None else self.score_label(self.display_l1, "L2:")
-        #self.display_l2.label = self.score_label(self.display_l2, "L3: " + str(common.scores[2])) if common.scores[2] is not None else self.score_label(self.display_l2, "L3:")
-        self.display_l3.label = self.score_label(self.display_l3, "L4: " + str(common.scores[3])) if common.scores[3] is not None else self.score_label(self.display_l3, "L4:")
-        self.display_l4.label = self.score_label(self.display_l4, "L5: " + str(common.scores[4])) if common.scores[4] is not None else self.score_label(self.display_l4, "L5:")
-        self.display_l5.label = self.score_label(self.display_l5, "L6: " + str(common.scores[5])) if common.scores[5] is not None else self.score_label(self.display_l5, "L6:")
+        if common.scores[3] is not None:
+            self.display_l3.label = self.score_label(self.display_l3, "L4: " + str(common.scores[2]))
+            self.display_l3.image = self.img_unlocked
+        else:
+            self.display_l3.label = self.score_label(self.display_l3, "L4:")
+            self.display_l3.image = self.img_locked
+
+        if common.scores[4] is not None:
+            self.display_l4.label = self.score_label(self.display_l4, "L5: " + str(common.scores[2]))
+            self.display_l4.image = self.img_unlocked
+        else:
+            self.display_l4.label = self.score_label(self.display_l4, "L5:")
+            self.display_l4.image = self.img_locked
+
+        if common.scores[5] is not None:
+            self.display_l5.label = self.score_label(self.display_l5, "L6: " + str(common.scores[2]))
+            self.display_l5.image = self.img_unlocked
+        else:
+            self.display_l5.label = self.score_label(self.display_l5, "L6:")
+            self.display_l5.image = self.img_locked
 
         self.update_user_label()  # check if it's necessary
 
