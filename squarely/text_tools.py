@@ -26,12 +26,12 @@ class Rectangle(object):
 
 
 class TextWidget(object):
-    def __init__(self, text, x, y, width, batch, is_password):
+    def __init__(self, text, x, y, width, font_size, batch, is_password):
 
         color = (0, 0, 0, 0) if is_password else (255, 255, 255, 255)
 
         self.document = pyglet.text.document.UnformattedDocument(text)
-        self.document.set_style(0, len(self.document.text), dict(color=color, font_size=18))
+        self.document.set_style(0, len(self.document.text), dict(color=color, font_size=font_size))
         font = self.document.get_font()
         height = font.ascent - font.descent
 
