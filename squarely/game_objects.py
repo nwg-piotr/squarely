@@ -1010,7 +1010,6 @@ class RuntimeConfig(object):
         if self.config.has_section("other"):
             self.sounds = self.config.getboolean("other", "sounds") if self.config.has_option("other", "sounds") else False
             self.music = self.config.getboolean("other", "music") if self.config.has_option("other", "music") else False
-            self.allow_os_info = self.config.getboolean("other", "allow_os_info") if self.config.has_option("other", "allow_os_info") else False
 
     def save(self):
         if not self.config.has_section("board"):
@@ -1025,7 +1024,6 @@ class RuntimeConfig(object):
 
         self.config.set("other", "sounds", str(self.sounds))
         self.config.set("other", "music", str(self.music))
-        self.config.set("other", "allow_os_info", str(self.allow_os_info))
 
         file = open(self.file, 'w')
         self.config.write(file)
@@ -1045,7 +1043,6 @@ class RuntimeConfig(object):
         if self.config.has_section("other"):
             self.sounds = self.config.getboolean("other", "sounds") if self.config.has_option("other", "sounds") else False
             self.music = self.config.getboolean("other", "music") if self.config.has_option("other", "music") else False
-            self.allow_os_info = self.config.getboolean("other", "allow_os_info") if self.config.has_option("other", "allow_os_info") else False
 
     def switch_sounds(self, panel):
         self.sounds = not self.sounds
