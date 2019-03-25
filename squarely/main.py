@@ -15,6 +15,7 @@ Dependencies (Arch Linux): python-pyglet, ' python-requests', optionally avbin7 
 from game_objects import *
 from tools import *
 from text_tools import *
+from cloud_tools import player_login
 from pyglet.window import key
 import locale
 
@@ -72,15 +73,16 @@ def main():
             break
     update_scores(panel)
 
+    common.player.online = False
+    if common.player.name != 'Anonymous':
+        player_login(common.player.name, common.player.password)
+
     common.player_dialog_batch = pyglet.graphics.Batch()
-    player_dialog = PlayerDialog(window, common.board)
+    common.player_dialog = PlayerDialog(window, common.board)
 
     if common.intro:
         intro_hello(hello_msg)
         common.fx.play(panel, "hello")
-
-    #text_batch = pyglet.graphics.Batch()
-    #test = TextWidget(common.player.name, int(common.board.margin), int(common.board.margin + common.board.base), int(common.board.base * 3 * common.board.scale), text_batch)
 
     @window.event
     def on_draw():
@@ -117,11 +119,8 @@ def main():
         elif common.dialog:
             intro_bcg.draw()
 
-        if player_dialog.is_open:
+        if common.player_dialog.is_open:
             common.player_dialog_batch.draw()
-        #text_batch.draw()
-            #window.push_handlers(player_dialog.name_field.caret)
-            #window.push_handlers(player_dialog.pass_field.caret)
 
     @window.event
     def on_mouse_enter(x, y):
@@ -140,8 +139,8 @@ def main():
         if common.cursor_in_board:
             common.summary_bar.hide()
 
-            if player_dialog.is_open:
-                player_dialog.refresh_label(x, y)
+            if common.player_dialog.is_open:
+                common.player_dialog.refresh_label(x, y)
 
             if common.rotation_direction is None:
 
@@ -212,8 +211,8 @@ def main():
 
         else:
             if panel.button_start.selected:
-                if player_dialog.is_open:
-                    player_dialog.close()
+                if common.player_dialog.is_open:
+                    common.player_dialog.close()
                 common.level = panel.selected_level
                 common.fx.play(panel, "start")
                 new_game()
@@ -245,13 +244,13 @@ def main():
                 common.rc.load()
 
             elif panel.button_name.selected:
-                if not player_dialog.is_open:
-                    player_dialog.open()
+                if not common.player_dialog.is_open:
+                    common.player_dialog.open()
                 else:
-                    player_dialog.close()
+                    common.player_dialog.close()
 
-        if player_dialog.is_open:
-            player_dialog.click(x, y)
+        if common.player_dialog.is_open:
+            common.player_dialog.click(x, y)
 
     @window.event
     def on_mouse_scroll(x, y, scroll_x, scroll_y):

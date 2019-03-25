@@ -18,6 +18,8 @@ player_filename = 'player.pkl'
 player = None
 scores = [None, None, None, None, None, None]
 
+player_dialog = None
+
 rc = None
 
 board = None
@@ -55,3 +57,4 @@ intro_sprite = None
 intro_message = None
 
 headers = {'User-Agent': 'SquarelyTheGame'}  # prevent php scripts from simple access via a browser
+message = None

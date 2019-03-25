@@ -408,6 +408,7 @@ def player_load():
         common.player = pickle.load(input_data)
         for i in range(len(common.scores)):
             common.scores[i] = common.player.scores[i]
+        common.player.online = True
     return exists
 
 

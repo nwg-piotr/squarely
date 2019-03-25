@@ -19,7 +19,8 @@ from shutil import copyfile
 import common
 from text_tools import *
 import hashlib
-from cloud_tools import create_player
+import pickle
+from cloud_tools import player_create, player_login
 
 
 class GameBoard(object):
@@ -376,11 +377,13 @@ class PlayerDialog(pyglet.sprite.Sprite):
 
         self.batch = common.player_dialog_batch
 
+        self.old_player_name = None
+
         self.name_field = TextWidget(common.player.name, int(self.x + self.base_square * 0.6),
                                      int(self.y + self.base_square * 2.37), 300, self.batch, False)
 
         pswd = common.player.password if common.player.password is not None else ""
-        self.pass_field = TextWidget(pswd, int(self.x + self.base_square * 0.6),
+        self.pass_field = TextWidget('', int(self.x + self.base_square * 0.6),
                                      int(self.y + self.base_square * 1.37), 300, self.batch, True)
 
         self.label = pyglet.text.Label(
@@ -402,13 +405,12 @@ class PlayerDialog(pyglet.sprite.Sprite):
 
         self.set_message(common.lang["player_account"])
 
-        self.online = False
-
     def open(self):
         if not self.is_open:
-            self.name_field.update(common.player.name)
+            self.old_player_name = common.player.name
+            self.name_field.update('')
             pswd = common.player.password if common.player.password is not None else ""
-            self.pass_field.update(pswd)
+            self.pass_field.update('')
 
             self.set_message(common.lang["player_account"])
 
@@ -419,12 +421,18 @@ class PlayerDialog(pyglet.sprite.Sprite):
             common.playing = False
             common.dialog = True  # if to draw the rotating background
 
-    def close(self):
+    def close(self, new_player_name=None):
         if self.is_open:
             self.is_open = False
             common.intro = self.old_intro_state
             common.playing = self.old_playing_state
             common.dialog = False
+            # Change the player name if login successful (as we use the same field to show error msg and player name)
+            if new_player_name:
+                common.player.name = new_player_name
+            else:
+                common.player.name = self.old_player_name
+                common.player.online = True
 
     def is_in(self, x, y, area):
         return area[0] < x < area[2] and area[1] < y < area[3]
@@ -460,6 +468,11 @@ class PlayerDialog(pyglet.sprite.Sprite):
             self.window.push_handlers(self.pass_field.caret)
         elif self.is_in(x, y, self.area_add):
             self.new_player()
+        elif self.is_in(x, y, self.area_login):
+            self.login_player()
+        elif self.is_in(x, y, self.area_logout):
+            self.logout_player()
+
         else:
             self.set_message(common.lang["player_account"])
 
@@ -474,7 +487,7 @@ class PlayerDialog(pyglet.sprite.Sprite):
         pass_ok = len(pswd) >= 6
         if name_ok and pass_ok:
             self.set_message(common.lang["player_creating"])
-            create_player(name, hashlib.md5(pswd.encode('utf-8')).hexdigest(), self)  # in cloud_tools
+            player_create(name, hashlib.md5(pswd.encode('utf-8')).hexdigest(), self)  # in cloud_tools
         else:
             msg = ""
             if not name_ok:
@@ -483,6 +496,32 @@ class PlayerDialog(pyglet.sprite.Sprite):
                 msg += " " + common.lang["player_wrong_pass"]
             self.message = msg
             self.label.text = self.message
+
+    def login_player(self):
+        name = self.name_field.document.text
+        pswd = self.pass_field.document.text
+        name_ok = name.upper() != "ANONYMOUS" and len(name) >= 3
+        pass_ok = len(pswd) >= 6
+        if name_ok and pass_ok:
+            self.set_message(common.lang["player_logging_in"].format(name))
+            player_login(name, hashlib.md5(pswd.encode('utf-8')).hexdigest())  # in cloud_tools
+        else:
+            msg = ""
+            if not name_ok:
+                msg += common.lang["player_wrong_name"]
+            if not pass_ok:
+                msg += " " + common.lang["player_wrong_pass"]
+            self.message = msg
+            self.label.text = self.message
+
+    def logout_player(self):
+        common.player.online = False
+        self.close("Anonymous")
+        for i in range(6):
+            common.scores = None
+            common.player.scores = None
+        with open(common.player_filename, 'wb') as output:
+            pickle.dump(common.player, output, pickle.HIGHEST_PROTOCOL)
 
 
 class Panel(object):
@@ -602,8 +641,6 @@ class Panel(object):
             y=self.button_name.y + self.button_name.image.height // 2,
             anchor_x='center', anchor_y='center', batch=self.batch)
 
-        self.update_user_label()  # check if it's necessary
-
         self.button_cloud = pyglet.sprite.Sprite(self.img_offline)
         self.button_cloud.x = self.margin + self.btn_dim * 3
         self.button_cloud.y = self.margin + self.btn_dim
@@ -612,6 +649,8 @@ class Panel(object):
                                  self.btn_dim, self.button_cloud.y + self.btn_half
         self.button_cloud.selected = False
         self.button_cloud.online = False
+
+        self.update_user_label()  # check if it's necessary
 
         self.button_2 = pyglet.sprite.Sprite(self.img_2)
         self.button_2.x = self.margin + self.btn_dim * 4
@@ -728,9 +767,12 @@ class Panel(object):
                                                                                                          5] is not None else self.score_label(
             self.display_l5, "L6:")
 
+        self.update_user_label()  # check if it's necessary
+
     def update_user_label(self):
         self.button_name.label.text = common.player.name
-        self.button_name.label.color = (255, 255, 255, 255) if common.player.name!= "Anonymous" else (87, 87, 120, 255)
+        self.button_name.label.color = (255, 255, 255, 255) if common.player.name != "Anonymous" else (87, 87, 120, 255)
+        self.button_cloud.image = self.img_online if common.player.online else self.img_offline
 
     def score_label(self, sprite, txt):
         label = pyglet.text.Label(
@@ -782,7 +824,7 @@ class Panel(object):
         self.set_selection(self.button_start, self.is_selected(x, y, self.button_start.area))
         # Player account buttons
         self.set_selection(self.button_name, self.is_selected(x, y, self.button_name.area))
-        self.set_selection(self.button_cloud, self.is_selected(x, y, self.button_cloud.area))
+        #self.set_selection(self.button_cloud, self.is_selected(x, y, self.button_cloud.area))
         self.set_selection(self.button_2, self.is_selected(x, y, self.button_2.area))
         self.set_selection(self.button_3, self.is_selected(x, y, self.button_3.area))
 
@@ -909,6 +951,8 @@ class Player(object):
         self.name = name
         self.password = password
         self.scores = scores
+        self.cloud_scores = None
+        self.online = False
 
 
 class Language(dict):

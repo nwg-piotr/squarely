@@ -1,5 +1,5 @@
-// The code below is based on what I wrote for my previous games. It still needs modifications.
 <?php
+    // The code below is based on what I wrote for my previous games. It still needs modifications.
     include 'config/config.php';
     $conn = mysql_connect($dbhost, $dbuser, $dbpass);
 
@@ -33,7 +33,7 @@
     if($action == 'login') {
    	
    	    if($agent != $vagent) {
-			die("access_denied");
+			// die("access_denied");
    	    }
 
 		// Check if user exists and password ok
@@ -47,19 +47,22 @@
             $res = mysql_query( $sql, $conn );
 
             if($result) {
-
-                $sql = "SELECT pname, ppoints, placcess, tester FROM players WHERE pname = '$pname' AND ppswd = '$ppswd'";
+                $sql = "SELECT pname, ps0, ps1, ps2, ps3, ps4, ps5, placcess FROM players WHERE pname = '$pname' AND ppswd = '$ppswd'";
                 $result = mysql_query( $sql, $conn );
 
                 if($result) {
 
                     $row = mysql_fetch_row($result);
                     $pname = $row[0];
-                    $ppoints = $row[1];
-                    $placcess = $row[2];
-                    $ptester = $row[3];
+                    $ps0 = $row[1];
+                    $ps1 = $row[2];
+                    $ps2 = $row[3];
+                    $ps3 = $row[4];
+                    $ps4 = $row[5];
+                    $ps5 = $row[6];
+                    $placcess = $row[7];
 
-                    echo "login_ok," .$pname. "," .$ps0. "," .$placcess. "," .$ptester;
+                    echo "login_ok," .$pname. "," .$ps0. ":"  .$ps1. ":"  .$ps2. ":"  .$ps3. ":"  .$ps4. ":"  .$ps5. "," .$placcess;
                 }
             }
 	
