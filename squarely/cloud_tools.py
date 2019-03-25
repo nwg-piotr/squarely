@@ -32,9 +32,7 @@ request_methods = {
 
 
 def player_create(name, password, dialog):
-    os = platform.system() + " " + platform.release() + " " + str(
-        locale.getlocale()[0]) if common.rc.allow_os_info else "forbidden"
-    url = 'http://nwg.pl/puzzle/player.php?action=create&pname=' + name + '&ppswd=' + password + '&pos=' + os
+    url = 'http://nwg.pl/puzzle/player.php?action=create&pname=' + name + '&ppswd=' + password
     print(url)
     try:
         response = requests.get(url, headers=common.headers)
@@ -80,6 +78,7 @@ def login_result(result, password):
             except ValueError:
                 common.player.cloud_scores.append(None)
         print(common.player.cloud_scores)
+
         # update and save player data
         common.player.name = name
         common.player.password = password
@@ -88,6 +87,9 @@ def login_result(result, password):
             if common.player.cloud_scores[i] is not None:
                 common.player.scores[i] = common.player.cloud_scores[i]
                 common.scores[i] = common.player.cloud_scores[i]
+            else:
+                common.player.scores[i] = None
+                common.scores[i] = None
 
         with open(common.player_filename, 'wb') as output:
             pickle.dump(common.player, output, pickle.HIGHEST_PROTOCOL)
