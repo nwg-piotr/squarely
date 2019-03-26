@@ -73,7 +73,7 @@ def main():
             break
     update_scores(panel)
 
-    common.player.online = False
+    common.player.online = common.OFFLINE
     if common.player.name != 'Anonymous':
         player_login(common.player.name, common.player.password)
 

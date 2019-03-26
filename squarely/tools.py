@@ -386,10 +386,11 @@ def restore(board):
         common.backup_matrix = None
         common.scores[common.level] -= 1
 
-    for i in range(len(common.summary_backup)):
-        common.summary[i] = common.summary_backup[i]
-    common.summary_bar.refresh(common.summary[0], common.summary[1], common.summary[2],common.summary[3], common.summary[4], common.summary[5])
-    common.summary_bar.show()
+    if common.summary:
+        for i in range(len(common.summary_backup)):
+            common.summary[i] = common.summary_backup[i]
+        common.summary_bar.refresh(common.summary[0], common.summary[1], common.summary[2],common.summary[3], common.summary[4], common.summary[5])
+        common.summary_bar.show()
 
 
 def player_load():
@@ -408,7 +409,7 @@ def player_load():
         common.player = pickle.load(input_data)
         for i in range(len(common.scores)):
             common.scores[i] = common.player.scores[i]
-        common.player.online = True
+        common.player.online = common.ONLINE
     return exists
 
 
