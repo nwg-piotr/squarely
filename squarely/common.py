@@ -10,6 +10,10 @@ Website: http://nwg.pl
 Project: https://github.com/nwg-piotr/squarely
 License: GPL3
 """
+OFFLINE = 0
+SYNCING = 1
+ONLINE = 2
+
 lang = None  # language dictionary
 avbin = False  # being set True if playing intro sound in ogg format does not crash
 app_name = "squarely"  # determines the ~/.config/game_folder name

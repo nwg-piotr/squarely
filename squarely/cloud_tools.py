@@ -53,12 +53,13 @@ def player_create(name, password, dialog):
 
 
 def player_login(name, password):
+    common.player.online = common.SYNCING
     url = 'http://nwg.pl/puzzle/player.php?action=login&pname=' + name + '&ppswd=' + password
     print(url)
     if internet_on():
         async_request('get', url, headers=common.headers, pwd=password, callback=lambda r, p: login_result(r, p))
     else:
-        common.player.online = False
+        common.player.online = common.OFFLINE
         common.player.name = common.lang["player_offline"]
 
 
@@ -66,7 +67,7 @@ def login_result(result, password):
     txt = result.content.decode("utf-8")
     print(txt)
     if txt.startswith('login_ok'):
-        common.player.online = True
+        common.player.online = common.ONLINE
         # we need numerical values of scores we've just read
         data = txt.split(",")
         name = data[1]
@@ -97,7 +98,7 @@ def login_result(result, password):
         common.player_dialog.close(name)
 
     else:
-        common.player.online = False
+        common.player.online = common.OFFLINE
         if txt == 'no_such_player':
             common.player.name = common.lang["player_no_such"]
         elif txt == 'wrong_pswd':

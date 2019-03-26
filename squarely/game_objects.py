@@ -431,7 +431,7 @@ class PlayerDialog(pyglet.sprite.Sprite):
                 common.player.name = new_player_name
             else:
                 common.player.name = self.old_player_name
-                common.player.online = True
+                common.player.online = common.ONLINE
 
     def is_in(self, x, y, area):
         return area[0] < x < area[2] and area[1] < y < area[3]
@@ -514,7 +514,7 @@ class PlayerDialog(pyglet.sprite.Sprite):
             self.label.text = self.message
 
     def logout_player(self, panel):
-        common.player.online = False
+        common.player.online = common.OFFLINE
         self.close("Anonymous")
         common.scores = [None, None, None, None, None, None]
         common.player.scores = [None, None, None, None, None, None]
@@ -566,6 +566,7 @@ class Panel(object):
         self.img_text = self.bcg_image_triple(pyglet.image.load('images/btn-text.png'))
         self.img_online = self.bcg_image_half(pyglet.image.load('images/btn-online.png'))
         self.img_offline = self.bcg_image_half(pyglet.image.load('images/btn-offline.png'))
+        self.img_syncing = self.bcg_image_half(pyglet.image.load('images/btn-syncing.png'))
         self.img_2 = self.bcg_image_half(pyglet.image.load('images/btn-2.png'))
         self.img_3 = self.bcg_image_half(pyglet.image.load('images/btn-3.png'))
 
@@ -725,10 +726,6 @@ class Panel(object):
             x=board.board_width // 2, y=24 * self.scale,
             anchor_x='center', anchor_y='center', batch=self.batch)
 
-    def set_online(self, value):
-        self.button_cloud.online = value
-        self.button_cloud.image = self.img_online if value else self.img_offline
-
     def set_lock_state(self, level, is_locked):
         if level == 0:
             self.display_l0.locked = is_locked
@@ -792,7 +789,13 @@ class Panel(object):
     def update_user_label(self):
         self.button_name.label.text = common.player.name
         self.button_name.label.color = (255, 255, 255, 255) if common.player.name != "Anonymous" else (87, 87, 120, 255)
-        self.button_cloud.image = self.img_online if common.player.online else self.img_offline
+        if common.player.online == common.ONLINE:
+            self.button_cloud.image = self.img_online
+        elif common.player.online == common.OFFLINE:
+            self.button_cloud.image = self.img_offline
+        elif common.player.online == common.SYNCING:
+            self.button_cloud.image = self.img_syncing
+        #self.button_cloud.image = self.img_online if common.player.online else self.img_offline
 
     def score_label(self, sprite, txt):
         label = pyglet.text.Label(
@@ -972,7 +975,7 @@ class Player(object):
         self.password = password
         self.scores = scores
         self.cloud_scores = None
-        self.online = False
+        self.online = common.OFFLINE
 
 
 class Language(dict):
