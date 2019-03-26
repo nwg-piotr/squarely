@@ -847,7 +847,7 @@ class Panel(object):
         self.set_selection(self.button_start, self.is_selected(x, y, self.button_start.area))
         # Player account buttons
         self.set_selection(self.button_name, self.is_selected(x, y, self.button_name.area))
-        #self.set_selection(self.button_cloud, self.is_selected(x, y, self.button_cloud.area))
+        self.set_selection(self.button_cloud, self.is_selected(x, y, self.button_cloud.area))
         self.set_selection(self.button_2, self.is_selected(x, y, self.button_2.area))
         self.set_selection(self.button_3, self.is_selected(x, y, self.button_3.area))
 
@@ -869,7 +869,12 @@ class Panel(object):
         elif self.button_name.selected:
             self.label.text = common.lang["player_account"]
         elif self.button_cloud.selected:
-            self.label.text = common.lang["nothing"]
+            if common.player.online == common.ONLINE:
+                self.label.text = common.lang["panel_cloud_status"]
+            elif common.player.online == common.OFFLINE:
+                self.label.text = common.lang["player_offline"]
+            elif common.player.online == common.SYNCING:
+                self.label.text = common.lang["player_syncing"]
         elif self.button_2.selected:
             self.label.text = common.lang["nothing"]
         elif self.button_3.selected:
