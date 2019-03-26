@@ -10,10 +10,8 @@ Website: http://nwg.pl
 Project: https://github.com/nwg-piotr/squarely
 License: GPL3
 """
-import platform
 import requests
 from threading import Thread
-import locale
 import pickle
 import common
 import socket
@@ -31,7 +29,9 @@ request_methods = {
 }
 
 
-def player_create(name, password, dialog):
+def player_create(name, password):
+    old = common.player.online
+    common.player.online = common.SYNCING
     url = 'http://nwg.pl/puzzle/player.php?action=create&pname=' + name + '&ppswd=' + password
     print(url)
     try:
@@ -42,14 +42,15 @@ def player_create(name, password, dialog):
         response_text = "Error: " + str(e)
 
     if response_text == "player_created":
-        dialog.label.text = common.lang["player_created"]
-        dialog.message = common.lang["player_created"]
+        common.player_dialog.set_message(common.lang["player_created"])
+
     elif response_text == "player_exists":
-        dialog.label.text = common.lang["player_exists"]
-        dialog.message = common.lang["player_exists"]
+        common.player_dialog.set_message(common.lang["player_exists"])
 
     elif response_text == 'failed_creating':
-        dialog.set_message(common.lang["player_failed_creating"])
+        common.player_dialog.set_message(common.lang["player_failed_creating"])
+
+    common.player.online = old
 
 
 def player_login(name, password):
@@ -99,12 +100,14 @@ def login_result(result, password):
 
     else:
         common.player.online = common.OFFLINE
+        # For some mysterious reason the label.text can not be updated from here (crashes),
+        # so we won't use the set_message method. The label will stay out od date until mouse moved :(
         if txt == 'no_such_player':
-            common.player.name = common.lang["player_no_such"]
+            common.player_dialog.message = common.lang["player_no_such"]
         elif txt == 'wrong_pswd':
-            common.player.name = common.lang["player_wrong_password"]
+            common.player_dialog.message = common.lang["player_wrong_password"]
         else:
-            common.player.name = common.lang["player_login_failed"]
+            common.player_dialog.message = common.lang["player_login_failed"]
 
 
 def async_request(method, *args, callback=None, pwd=None, timeout=15, **kwargs):

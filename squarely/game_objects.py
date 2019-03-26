@@ -402,7 +402,7 @@ class PlayerDialog(pyglet.sprite.Sprite):
         self.area_name = self.x, self.y + self.base_square * 2, self.x + self.base_square * 4, self.y + self.base_square * 3
         self.area_close = self.x + self.base_square * 3.5, self.y + self.base_square * 3, self.x + self.base_square * 4, self.y + self.base_square * 3.5
 
-        self.set_message(common.lang["player_account"])
+        self.message = common.lang["player_account"]
 
     def open(self):
         if not self.is_open:
@@ -475,8 +475,8 @@ class PlayerDialog(pyglet.sprite.Sprite):
         else:
             self.set_message(common.lang["player_account"])
 
-    def set_message(self, message):
-        self.message = message
+    def set_message(self, msg):
+        self.message = msg
         self.label.text = self.message
 
     def new_player(self):
@@ -485,8 +485,8 @@ class PlayerDialog(pyglet.sprite.Sprite):
         name_ok = name.upper() != "ANONYMOUS" and len(name) >= 3
         pass_ok = len(pswd) >= 6
         if name_ok and pass_ok:
-            self.set_message(common.lang["player_creating"])
-            player_create(name, hashlib.md5(pswd.encode('utf-8')).hexdigest(), self)  # in cloud_tools
+            self.message = common.lang["player_creating"]
+            player_create(name, hashlib.md5(pswd.encode('utf-8')).hexdigest())  # in cloud_tools
         else:
             msg = ""
             if not name_ok:

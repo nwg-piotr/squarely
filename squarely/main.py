@@ -255,7 +255,7 @@ def main():
     @window.event
     def on_mouse_scroll(x, y, scroll_x, scroll_y):
         if common.summary_bar is not None and common.summary_bar.y > 0:
-                common.summary_bar.show()
+            common.summary_bar.show()
 
     @window.event
     def on_key_press(symbol, modifiers):
@@ -267,6 +267,11 @@ def main():
 
     def update(dt):
         if common.intro or common.dialog or common.playing and common.rc.background_draw and common.rc.background_rotate:
+            # We won't say "Welcome back" to anonymous players!
+            if isinstance(common.intro_sprite, HelloAnimation):  # Are we still in the Hello animation?
+                common.intro_message.text = common.lang["intro_wb"] if common.player.name != 'Anonymous' else \
+                    common.lang["intro_welcome"]
+
             if intro_bcg.rotation < 360:
                 intro_bcg.rotation += 0.25
             else:
@@ -325,7 +330,7 @@ def new_game():
     common.scores[common.level] = 0
 
     common.summary_bar.hide()
-    common.intro =  False
+    common.intro = False
     common.playing = True
     common.summary_bar.y = 0  # To mark that it has not yet been shown since the game started (still keeps old values!)
 
