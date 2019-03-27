@@ -24,7 +24,7 @@ scores = [None, None, None, None, None, None]
 
 player_dialog = None
 
-rc = None
+rc = None  # RuntimeConfiguration; (to be finally replaced with pickle?)
 
 board = None
 selector = None
@@ -33,7 +33,7 @@ cells_batch = None
 intro_batch = None
 player_dialog_batch = None
 cells_list = []
-matrix = None
+matrix = None  # 2-dimensional list [row] [col] to assign cells (or None if the spot empty)
 rotation_group = None
 rotation_direction = None
 cursor_in = False
@@ -43,10 +43,10 @@ scroll_counter = 0
 backup_matrix = None
 backup_values = None
 level = 0
-level_max = 5
+level_max = 5  # 6 in human-readable format :)
 
-summary = []  # backup list of text labels to display in the summary bar
-summary_backup = []  # backup for the list above
+summary = []  # list of text labels to display in the summary bar
+summary_backup = []  # backup for the list above (for Undo)
 summary_bar = None
 summary_batch = None
 cells_deleted = False
