@@ -56,45 +56,64 @@ def player_create(name, password):
 def player_login(name, password):
     common.player.online = common.SYNCING
     url = 'http://nwg.pl/puzzle/player.php?action=login&pname=' + name + '&ppswd=' + password
-    print(url)
+    #print(url)
     if internet_on():
         async_request('get', url, headers=common.headers, pwd=password, callback=lambda r, p: login_result(r, p))
     else:
         common.player.online = common.OFFLINE
-        common.player.name = common.lang["player_offline"]
 
 
 def login_result(result, password):
     txt = result.content.decode("utf-8")
     print(txt)
+
     if txt.startswith('login_ok'):
         common.player.online = common.ONLINE
         # we need numerical values of scores we've just read
         data = txt.split(",")
         name = data[1]
         scores_txt = data[2].split(":")
+        # Scores stored in the cloud
         common.player.cloud_scores = []
         for item in scores_txt:
             try:
                 common.player.cloud_scores.append(int(item))
             except ValueError:
                 common.player.cloud_scores.append(None)
-        print(common.player.cloud_scores)
 
-        # update and save player data
+        # update and save player credentials: we'll need them to update scores
         common.player.name = name
         common.player.password = password
 
+        """
+        We need to resolve conflicts between what's stored online and local scores. The criteria will be values.
+        The player could have stored results on another machine or offline. To keep things simple, let each better 
+        (lower) value overwrite the worse one. Let's start from sorting things locally.
+        """
+        need_sync = False  # Will be set true if some local score turns out better than remote
         for i in range(len(common.player.cloud_scores)):
-            if common.player.cloud_scores[i] is not None:
-                common.player.scores[i] = common.player.cloud_scores[i]
-                common.scores[i] = common.player.cloud_scores[i]
-            else:
-                common.player.scores[i] = None
-                common.scores[i] = None
 
+            local = common.player.scores[i]
+            remote = common.player.cloud_scores[i]
+
+            if remote is not None:
+                if remote < local:
+                    local = remote
+                    common.scores[i] = local
+                elif local < remote:
+                    need_sync = True
+
+            elif local is not None:  # No score for this level in the cloud, but we have a local value
+                need_sync = True
+
+        print("need_sync", need_sync)
+
+        # Now we should have all the best scores locally, let's save
         with open(common.player_filename, 'wb') as output:
             pickle.dump(common.player, output, pickle.HIGHEST_PROTOCOL)
+
+        if need_sync:
+            player_sync(name, password)
 
         common.player_dialog.close(name)
 
@@ -110,6 +129,30 @@ def login_result(result, password):
             common.player_dialog.message = common.lang["player_login_failed"]
 
 
+def player_sync(name, password):
+    common.player.online = common.SYNCING
+
+    url = 'http://nwg.pl/puzzle/player.php?action=update&pname=' + name + '&ppswd=' + password
+
+    for i in range(len(common.player.scores)):
+        if common.player.scores[i]:
+            url += '&ps' + str(i) + "=" + str(common.player.scores[i])
+
+    #print(url)
+    if internet_on():
+        async_request('get', url, headers=common.headers, pwd=password, callback=lambda r, p: sync_result(r, p))
+    else:
+        common.player.online = common.OFFLINE
+
+
+def sync_result(result, password):
+    txt = result.content.decode("utf-8")
+    print(txt)
+    if txt.startswith('scores_updated'):
+        print("GOING ONLINE")
+        common.player.online = common.ONLINE
+
+
 def async_request(method, *args, callback=None, pwd=None, timeout=15, **kwargs):
     """ Credits go to @kylebebak at https://stackoverflow.com/a/44917020/4040598
 
@@ -120,6 +163,7 @@ def async_request(method, *args, callback=None, pwd=None, timeout=15, **kwargs):
     if callback:
         def callback_with_args(response, *args, **kwargs):
             callback(response, pwd)
+
         kwargs['hooks'] = {'response': callback_with_args}
     kwargs['timeout'] = timeout
     thread = Thread(target=method, args=args, kwargs=kwargs)

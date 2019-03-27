@@ -19,8 +19,9 @@
     $ps3 = $_GET['ps3'];
     $ps4 = $_GET['ps4'];
     $ps5 = $_GET['ps5'];
-    $pos = $_GET['pos'];
     $plimit = $_GET['plimit'];
+
+   	// die("0=" .$ps0. " 1=" .$ps1. " 2=" .$ps2. " 3=" .$ps3. " 4=" .$ps4. " 5=" .$ps4);
 
     if ($action != 'display') {
         if ($pname == "" or $ppswd == "") {
@@ -74,10 +75,10 @@
 
             if (mysql_num_rows($result) > 0) {
                 // User exist, wrong password
-                echo "wrong_pswd";
+                die("wrong_pswd");
             } else {
                 // User not found
-                echo "no_such_player";
+                die("no_such_player");
             }
         }
    	
@@ -94,7 +95,29 @@
    	    if ($result) {
    		
    		    // user & password ok, update data & last access timestamp
-   		    $sql = "UPDATE players SET ppoints = '$ppoints', placcess=current_timestamp WHERE pname = '$pname'";
+   		    // $sql = "UPDATE players SET ps0 = '$ps0', ps1 = '$ps1', ps2 = '$ps2', ps3 = '$ps3', ps4 = '$ps4', ps5 = '$ps5', placcess=current_timestamp WHERE pname = '$pname'";
+
+   		    $sql = "UPDATE players SET ";
+   		    if(isset($ps0) && !empty(ps0)){
+                $sql .= "ps0 = '$ps0'";
+            }
+            if(isset($ps1) && !empty(ps1)){
+                $sql .= ", ps1 = '$ps1'";
+            }
+            if(isset($ps2) && !empty(ps2)){
+                $sql .= ", ps2 = '$ps2'";
+            }
+            if(isset($ps3) && !empty(ps3)){
+                $sql .= ", ps3 = '$ps3'";
+            }
+            if(isset($ps4) && !empty(ps4)){
+                $sql .= ", ps4 = '$ps4'";
+            }
+            if(isset($ps5) && !empty(ps5)){
+                $sql .= ", ps5 = '$ps5'";
+            }
+            $sql .= ", placcess=current_timestamp WHERE pname = '$pname'";
+
    		    $result = mysql_query( $sql, $conn );
 
    		    if($result) {
@@ -102,7 +125,7 @@
    		    }
 	
    	    } else {
-   		    echo "user_data_invalid";
+   		    die ("user_data_invalid");
    	    }
 
 

@@ -97,7 +97,7 @@ class GameBoard(object):
         self.sel_3 = None
 
         print("Rows: " + str(self.rows))
-        print("Columns: " + str(self.columns))
+        print("Columns: " + str(self.columns) + "\n")
 
         self.selection_made = False
 
