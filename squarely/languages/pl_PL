@@ -1,6 +1,6 @@
 # Dodając tłumaczenie, pozostaw wszystkie {} bez zmian!
 [lang]
-panel_music = Włącz / wyłącz muzykę
+panel_music = Włącz/wyłącz muzykę
 panel_music_missing = Potrzebna biblioteka avbin!
 panel_sounds = Włącz / wyłącz dźwięki
 panel_undo = Cofnij ostatni ruch
@@ -33,5 +33,8 @@ player_wrong_password = Błędne hasło
 player_login_failed = Logowanie nieudane
 player_offline = Najpierw musisz się zalogować
 player_syncing = Trwa synchronizacja...
+player_deleted = Konto gracza usunięte
+player_delete_failed = Nie udało się usunąć konta
+player_delete_no_player = Błędny nick lub hasło
 close = Zamknij
 nothing = Jeszcze nic

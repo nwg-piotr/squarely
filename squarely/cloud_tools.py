@@ -53,6 +53,27 @@ def player_create(name, password):
     common.player.online = old
 
 
+def player_delete(name, password):
+    common.player.online = common.SYNCING
+    url = 'http://nwg.pl/puzzle/player.php?action=delete&pname=' + name + '&ppswd=' + password
+    print(url)
+    try:
+        response = requests.get(url, headers=common.headers)
+        print(response.content)
+        response_text = response.text
+    except requests.exceptions.RequestException as e:
+        response_text = "Error: " + str(e)
+
+    if response_text == "player_deleted":
+        common.player_dialog.set_message(common.lang["player_deleted"])
+
+    elif response_text == "failed_deleting":
+        common.player_dialog.set_message(common.lang["player_delete_failed"])
+
+    elif response_text == 'no_player_wrong_pass':
+        common.player_dialog.set_message(common.lang["player_delete_no_player"])
+
+
 def player_login(name, password):
     common.player.online = common.SYNCING
     url = 'http://nwg.pl/puzzle/player.php?action=login&pname=' + name + '&ppswd=' + password
