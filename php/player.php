@@ -21,6 +21,8 @@
     $ps5 = $_GET['ps5'];
     $plimit = $_GET['plimit'];
 
+    // $datetime = date("Y-m-d H:i:s", $current_timestamp);
+
    	// die("0=" .$ps0. " 1=" .$ps1. " 2=" .$ps2. " 3=" .$ps3. " 4=" .$ps4. " 5=" .$ps4);
 
     if ($action != 'display') {
@@ -44,7 +46,7 @@
    	    if (mysql_num_rows($result) > 0) {
    		
             // player & password ok, update last access timestamp
-            $sql = "UPDATE players SET placcess=current_timestamp, WHERE pname = '$pname' AND ppswd = '$ppswd'";
+            $sql = "UPDATE players SET placcess=current_timestamp WHERE pname = '$pname' AND ppswd = '$ppswd'";
             $res = mysql_query( $sql, $conn );
 
             if($result) {
@@ -95,7 +97,6 @@
    	    if ($result) {
    		
    		    // user & password ok, update data & last access timestamp
-   		    // $sql = "UPDATE players SET ps0 = '$ps0', ps1 = '$ps1', ps2 = '$ps2', ps3 = '$ps3', ps4 = '$ps4', ps5 = '$ps5', placcess=current_timestamp WHERE pname = '$pname'";
 
    		    $sql = "UPDATE players SET ";
    		    if(isset($ps0) && !empty(ps0)){
@@ -116,6 +117,7 @@
             if(isset($ps5) && !empty(ps5)){
                 $sql .= ", ps5 = '$ps5'";
             }
+            // $sql .= ", placcess=current_timestamp WHERE pname = '$pname'";
             $sql .= ", placcess=current_timestamp WHERE pname = '$pname'";
 
    		    $result = mysql_query( $sql, $conn );

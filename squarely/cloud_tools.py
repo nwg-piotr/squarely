@@ -150,7 +150,7 @@ def player_sync(name, password):
         if common.player.scores[i]:
             url += '&ps' + str(i) + "=" + str(common.player.scores[i])
 
-    #print(url)
+    # print(url)
     if internet_on():
         async_request('get', url, headers=common.headers, callback=lambda r, p: sync_result(r, p))
     else:
