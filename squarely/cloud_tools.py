@@ -161,11 +161,10 @@ def sync_result(result, password):
     txt = result.content.decode("utf-8")
     print(txt)
     if txt == 'scores_updated' or txt == 'no_result':
-        print("WE ARE ONLINE")
         common.player.online = common.ONLINE
     else:
         common.player.online = common.OFFLINE
-        print("OFFLINE - could not sync")
+        print("COULD NOT SYNC")
 
 
 def async_request(method, *args, callback=None, pwd=None, timeout=15, **kwargs):

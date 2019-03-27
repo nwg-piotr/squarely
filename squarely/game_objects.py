@@ -870,7 +870,7 @@ class Panel(object):
             self.label.text = common.lang["player_account"]
         elif self.button_cloud.selected:
             if common.player.online == common.ONLINE:
-                self.label.text = common.lang["panel_cloud_status"]
+                self.label.text = common.lang["panel_force_sync"]
             elif common.player.online == common.OFFLINE:
                 self.label.text = common.lang["player_offline"]
             elif common.player.online == common.SYNCING:

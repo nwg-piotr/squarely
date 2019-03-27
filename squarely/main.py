@@ -15,7 +15,7 @@ Dependencies (Arch Linux): python-pyglet, ' python-requests', optionally avbin7 
 from game_objects import *
 from tools import *
 from text_tools import *
-from cloud_tools import player_login
+from cloud_tools import player_login, player_sync
 from pyglet.window import key
 import locale
 
@@ -248,6 +248,10 @@ def main():
                     common.player_dialog.open()
                 else:
                     common.player_dialog.close()
+
+            elif panel.button_cloud.selected:
+                if common.player.name != 'Anonymous':
+                    player_sync(common.player.name, common.player.password)
 
         if common.player_dialog.is_open:
             common.player_dialog.click(panel, x, y)
