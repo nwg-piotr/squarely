@@ -21,10 +21,6 @@
     $ps5 = $_GET['ps5'];
     $plimit = $_GET['plimit'];
 
-    // $datetime = date("Y-m-d H:i:s", $current_timestamp);
-
-   	// die("0=" .$ps0. " 1=" .$ps1. " 2=" .$ps2. " 3=" .$ps3. " 4=" .$ps4. " 5=" .$ps4);
-
     if ($action != 'display') {
         if ($pname == "" or $ppswd == "") {
             die("data_missing");
