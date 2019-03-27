@@ -96,22 +96,34 @@ def login_result(result, password):
             local = common.player.scores[i]
             remote = common.player.cloud_scores[i]
 
-            if remote is not None:
+            # Compare values if both are numbers; overwrite worse (higher) with better
+            if local and remote:
                 if remote < local:
-                    local = remote
-                    common.scores[i] = local
+                    local = remote               # just update the local value
+                    common.scores[i] = local     # and also update the temporary list
                 elif local < remote:
-                    need_sync = True
+                    need_sync = True             # Let's sync local scores to the cloud when ready
+                    print("Sync: local < remote ")
 
-            elif local is not None:  # No score for this level in the cloud, but we have a local value
+            # In case we have no local value:
+            if remote and not local:             # we have None local value locally, remote counterpart present
+                local = remote                   # just update tle local value
+                common.player.scores[i] = local  # update local score
+                common.scores[i] = local         # and also the temporary list
+
+            if local and not remote:             # we have a local value, remote counterpart absent
                 need_sync = True
+                print("Sync: local and not remote ")
 
-        print("need_sync", need_sync)
+        print("Local: ", common.player.scores)
+        print("Remote: ", common.player.cloud_scores)
+        print("need_sync:", need_sync)
 
-        # Now we should have all the best scores locally, let's save
+        # Now we should have all the scores locally locally up to date. Let's save...
         with open(common.player_filename, 'wb') as output:
             pickle.dump(common.player, output, pickle.HIGHEST_PROTOCOL)
 
+        # ...and sync to the cloud if necessary
         if need_sync:
             player_sync(name, password)
 
@@ -140,7 +152,7 @@ def player_sync(name, password):
 
     #print(url)
     if internet_on():
-        async_request('get', url, headers=common.headers, pwd=password, callback=lambda r, p: sync_result(r, p))
+        async_request('get', url, headers=common.headers, callback=lambda r, p: sync_result(r, p))
     else:
         common.player.online = common.OFFLINE
 
@@ -148,9 +160,12 @@ def player_sync(name, password):
 def sync_result(result, password):
     txt = result.content.decode("utf-8")
     print(txt)
-    if txt.startswith('scores_updated'):
-        print("GOING ONLINE")
+    if txt == 'scores_updated' or txt == 'no_result':
+        print("WE ARE ONLINE")
         common.player.online = common.ONLINE
+    else:
+        common.player.online = common.OFFLINE
+        print("OFFLINE - could not sync")
 
 
 def async_request(method, *args, callback=None, pwd=None, timeout=15, **kwargs):

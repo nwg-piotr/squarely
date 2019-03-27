@@ -85,7 +85,7 @@
 	} else if ($action == 'update') {
 		
 		if ($agent != $vagent) {
-			die("access_denied");
+			// die("access_denied");
    	    }
 
 	    // Check if user exists and password ok
@@ -122,6 +122,8 @@
 
    		    if($result) {
 				echo "scores_updated";
+   		    } else {
+   		        echo "no_result";
    		    }
 	
    	    } else {
