@@ -10,7 +10,6 @@ Website: http://nwg.pl
 Project: https://github.com/nwg-piotr/squarely
 License: GPL3
 """
-import pyglet
 from pyglet.gl import *
 from pyglet import image
 import configparser
@@ -27,7 +26,6 @@ class GameBoard(object):
     """
     This class calculates and holds window dimensions and placement, and all the game board related values
     """
-
     def __init__(self, cells_in_row):
 
         total_cells = cells_in_row * cells_in_row
@@ -358,6 +356,24 @@ class SunglassesAnimation(pyglet.sprite.Sprite):
         self.scale = board.scale * 2
 
 
+class PlayerConfirmation(pyglet.sprite.Sprite):
+    def __init__(self, board):
+        frames_source = image.load("images/player-confirm.png")
+        sequence = pyglet.image.ImageGrid(frames_source, 1, 2)
+        animation = (pyglet.image.Animation.from_image_sequence(sequence, 0.5, True))
+        super().__init__(animation)
+        self.x = board.base * 2
+        self.y = board.base * 4
+        self.scale = board.scale * 1.04
+        self.visible = False
+
+    def show(self, name, password):
+        self.visible = True
+
+    def hide(self):
+        self.visible = False
+
+
 class PlayerDialog(pyglet.sprite.Sprite):
     def __init__(self, window, board):
         super().__init__(image.load("images/player-dialog.png"))
@@ -420,6 +436,9 @@ class PlayerDialog(pyglet.sprite.Sprite):
             common.playing = False
             common.dialog = True  # if to draw the rotating background
 
+            if common.player_confirmation:
+                common.player_confirmation.hide()
+
     def close(self, new_player_name=None):
         if self.is_open:
             self.is_open = False
@@ -458,22 +477,35 @@ class PlayerDialog(pyglet.sprite.Sprite):
         if self.is_in(x, y, self.area_close):
             self.close()
         elif self.is_in(x, y, self.area_name):
+            self.close_confirmation()
             self.pass_field.caret.visible = False
             self.name_field.caret.visible = True
             self.window.push_handlers(self.name_field.caret)  # set focus
         elif self.is_in(x, y, self.area_password):
+            self.close_confirmation()
             self.name_field.caret.visible = False
             self.pass_field.caret.visible = True
             self.window.push_handlers(self.pass_field.caret)
         elif self.is_in(x, y, self.area_add):
+            self.close_confirmation()
             self.new_player()
+        elif self.is_in(x, y, self.area_delete):
+            if common.player_confirmation:
+                common.player_confirmation.show("asd", "fgh")
         elif self.is_in(x, y, self.area_login):
+            self.close_confirmation()
             self.login_player()
         elif self.is_in(x, y, self.area_logout):
+            self.close_confirmation()
             self.logout_player(panel)
 
         else:
+            self.close_confirmation()
             self.set_message(common.lang["player_account"])
+
+    def close_confirmation(self):
+        if common.player_confirmation and common.player_confirmation.visible:
+            common.player_confirmation.hide()
 
     def set_message(self, msg):
         self.message = msg

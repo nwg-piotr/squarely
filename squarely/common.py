@@ -23,6 +23,7 @@ player = None
 scores = [None, None, None, None, None, None]
 
 player_dialog = None
+player_confirmation = None
 
 rc = None  # RuntimeConfiguration; (to be finally replaced with pickle?)
 
