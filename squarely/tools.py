@@ -14,6 +14,7 @@ import pyglet
 from pyglet import image
 from pyglet.gl import *
 from game_objects import Cell, Player, UnlockAnimation, FinishedAnimation, HelloAnimation, SunglassesAnimation
+from cloud_tools import sync_needed, player_sync
 
 import os
 import pickle
@@ -437,6 +438,10 @@ def player_save_results(panel):
     else:
         common.fx.play(panel, "level")
         intro_level_finished(common.level + 1, common.scores[common.level])  # Just show the result
+
+    # Save to the cloud IF ANY BETTER RESULT ACHIEVED
+    if sync_needed():
+        player_sync(common.player.name, common.player.password)
 
 
 def player_save():

@@ -85,46 +85,15 @@ def login_result(result, password):
         common.player.name = name
         common.player.password = password
 
-        """
-        We need to resolve conflicts between what's stored online and local scores. The criteria will be values.
-        The player could have stored results on another machine or offline. To keep things simple, let each better 
-        (lower) value overwrite the worse one. Let's start from sorting things locally.
-        """
-        need_sync = False  # Will be set true if some local score turns out better than remote
-        for i in range(len(common.player.cloud_scores)):
-
-            local = common.player.scores[i]
-            remote = common.player.cloud_scores[i]
-
-            # Compare values if both are numbers; overwrite worse (higher) with better
-            if local and remote:
-                if remote < local:
-                    local = remote               # just update the local value
-                    common.scores[i] = local     # and also update the temporary list
-                elif local < remote:
-                    need_sync = True             # Let's sync local scores to the cloud when ready
-                    print("Sync: local < remote ")
-
-            # In case we have no local value:
-            if remote and not local:             # we have None local value locally, remote counterpart present
-                local = remote                   # just update tle local value
-                common.player.scores[i] = local  # update local score
-                common.scores[i] = local         # and also the temporary list
-
-            if local and not remote:             # we have a local value, remote counterpart absent
-                need_sync = True
-                print("Sync: local and not remote ")
-
-        print("Local: ", common.player.scores)
-        print("Remote: ", common.player.cloud_scores)
-        print("need_sync:", need_sync)
+        # Resolve possible conflicts
+        synchronize = sync_needed()
 
         # Now we should have all the scores locally locally up to date. Let's save...
         with open(common.player_filename, 'wb') as output:
             pickle.dump(common.player, output, pickle.HIGHEST_PROTOCOL)
 
         # ...and sync to the cloud if necessary
-        if need_sync:
+        if synchronize:
             player_sync(name, password)
 
         common.player_dialog.close(name)
@@ -141,7 +110,49 @@ def login_result(result, password):
             common.player_dialog.message = common.lang["player_login_failed"]
 
 
+def sync_needed():
+    """
+    We need to resolve conflicts between what's stored online and local scores. The criteria will be values.
+    The player could have stored results on another machine or offline. To keep things simple, let each better
+    (lower) value overwrite the worse one. Let's start from sorting things locally.
+    """
+    needed = False
+    for i in range(len(common.player.cloud_scores)):
+
+        local = common.player.scores[i]
+        remote = common.player.cloud_scores[i]
+
+        # Compare values if both are numbers; overwrite worse (higher) with better
+        if local and remote:
+            if remote < local:
+                local = remote  # just update the local value
+                common.scores[i] = local  # and also update the temporary list
+            elif local < remote:
+                needed = True  # Let's sync local scores to the cloud when ready
+                print("Sync: local < remote ")
+
+        # In case we have no local value:
+        if remote and not local:  # we have None local value locally, remote counterpart present
+            local = remote  # just update tle local value
+            common.player.scores[i] = local  # update local score
+            common.scores[i] = local  # and also the temporary list
+
+        if local and not remote:  # we have a local value, remote counterpart absent
+            needed = True
+            print("Sync: local and not remote ")
+
+    print("Local: ", common.player.scores)
+    print("Remote: ", common.player.cloud_scores)
+    print("Do we need to sync?", needed)
+
+    return needed
+
+
 def player_sync(name, password):
+    # We will not reload from the cloud, so let's update the helper online scores list this way
+    for i in range(len(common.player.scores)):
+        common.player.cloud_scores[i] = common.player.scores[i]
+
     common.player.online = common.SYNCING
 
     url = 'http://nwg.pl/puzzle/player.php?action=update&pname=' + name + '&ppswd=' + password
