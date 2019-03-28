@@ -257,7 +257,7 @@ def main():
                     player_sync(common.player.name, common.player.password)
 
             elif panel.button_2.selected:
-                top_ten(None)
+                top_ten()
 
         if common.player_dialog.is_open:
             common.player_dialog.click(panel, x, y)

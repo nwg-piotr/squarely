@@ -87,22 +87,53 @@ def top_ten(password=None):
 def top_ten_result(result, password=None):
     txt = result.content.decode("utf-8")
     if txt.startswith('top_10'):
-        # print(txt[7:])
+        # print(txt)
         levels = txt[7:].split("#")
         #print(levels)
-        level0 = levels[0].split(":")
-        level1 = levels[1].split(":")
-        level2 = levels[2].split(":")
-        level3 = levels[3].split(":")
-        level4 = levels[4].split(":")
-        level5 = levels[5].split(":")
+        level0 = levels[0][:-1].split(":")
+        level1 = levels[1][:-1].split(":")
+        level2 = levels[2][:-1].split(":")
+        level3 = levels[3][:-1].split(":")
+        level4 = levels[4][:-1].split(":")
+        level5 = levels[5][:-1].split(":")
 
-        print("level1", level0)
-        print("level2", level1)
-        print("level3", level2)
-        print("level4", level3)
-        print("level5", level4)
-        print("level6", level5)
+        output_l0 = "Level 1: "
+        for i in range(len(level0)):
+            elements = level0[i].split(",")
+            output_l0 += str(i + 1) + ". " + elements[0] + " (" + str(elements[1]) + ") "
+
+        output_l1 = "Level 2: "
+        for i in range(len(level1)):
+            elements = level1[i].split(",")
+            output_l1 += str(i + 1) + ". " + elements[0] + " (" + str(elements[1]) + ") "
+
+        output_l2 = "Level 3: "
+        for i in range(len(level2)):
+            elements = level2[i].split(",")
+            output_l2 += str(i + 1) + ". " + elements[0] + " (" + str(elements[1]) + ") "
+
+        output_l3 = "Level 4: "
+        for i in range(len(level3)):
+            elements = level3[i].split(",")
+            output_l3 += str(i + 1) + ". " + elements[0] + " (" + str(elements[1]) + ") "
+
+        output_l4 = "Level 5: "
+        for i in range(len(level4)):
+            elements = level4[i].split(",")
+            output_l4 += str(i + 1) + ". " + elements[0] + " (" + str(elements[1]) + ") "
+
+        output_l5 = "Level 6: "
+        for i in range(len(level5)):
+            elements = level5[i].split(",")
+            if len(elements) > 1:
+                output_l5 += str(i + 1) + ". " + elements[0] + " (" + str(elements[1]) + ") "
+
+        print(output_l0)
+        print(output_l1)
+        print(output_l2)
+        print(output_l3)
+        print(output_l4)
+        print(output_l5)
 
 
 def player_login(name, password):
