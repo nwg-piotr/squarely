@@ -37,5 +37,6 @@ player_deleting = Deleting player account...
 player_deleted = Player deleted
 player_delete_failed = Player deletion failed
 player_delete_no_player = No such player or wrong password
+top_ten = Top 10 Players
 close = Close
 nothing = Nothing yet

@@ -19,6 +19,8 @@ from cloud_tools import player_login, player_sync, top_ten
 from pyglet.window import key
 import locale
 
+import datetime
+
 
 def main():
     pyglet.options['audio'] = ('openal', 'pulse', 'silent')
@@ -81,6 +83,9 @@ def main():
     common.player_dialog = PlayerDialog(window, common.board)
     common.player_confirmation = PlayerConfirmation(common.board)
 
+    common.top_list_batch = pyglet.graphics.Batch()
+    common.top_list = TopList(common.board)
+
     if common.intro:
         intro_hello(hello_msg)
         common.fx.play(panel, "hello")
@@ -124,6 +129,10 @@ def main():
             common.player_dialog_batch.draw()
             if common.player_confirmation is not None and common.player_confirmation.visible:
                 common.player_confirmation.draw()
+
+        if common.top10:
+            intro_bcg.draw()
+            common.top_list_batch.draw()
 
     @window.event
     def on_mouse_enter(x, y):
@@ -257,7 +266,10 @@ def main():
                     player_sync(common.player.name, common.player.password)
 
             elif panel.button_2.selected:
-                top_ten()
+                if not common.top_list.visible:
+                    top_ten(common.top_list.label)
+                else:
+                    common.top_list.hide()
 
         if common.player_dialog.is_open:
             common.player_dialog.click(panel, x, y)
@@ -267,29 +279,20 @@ def main():
         if common.summary_bar is not None and common.summary_bar.y > 0:
             common.summary_bar.show()
 
-    """
-    @window.event
-    def on_key_press(symbol, modifiers):
-        if symbol == key.ESCAPE:
-            if common.player_confirmation.visible:
-                common.player_confirmation.hide()
-            elif common.player_dialog.is_open:
-                common.player_dialog.close()
-            else:
-                exit(0)
-        elif symbol == key.H:
-            if common.summary_bar is not None:
-                common.summary_bar.show()
-    """
-
     @window.event
     def on_key_press(symbol, modifiers):
         if symbol == key.H:
             if common.summary_bar is not None:
                 common.summary_bar.show()
 
+        if symbol == key.T:
+            if not common.top_list.visible:
+                common.top_list.show()
+            else:
+                common.top_list.hide()
+
     def update(dt):
-        if common.intro or common.dialog or common.playing and common.rc.background_draw and common.rc.background_rotate:
+        if common.intro or common.dialog or common.top10 or common.playing and common.rc.background_draw and common.rc.background_rotate:
             # We won't say "Welcome back" to anonymous players!
             if isinstance(common.intro_sprite, HelloAnimation):  # Are we still in the Hello animation?
                 common.intro_message.text = common.lang["intro_wb"] if common.player.name != 'Anonymous' else \

@@ -37,5 +37,6 @@ player_deleting = Usuwanie konta gracza...
 player_deleted = Konto gracza usunięte
 player_delete_failed = Nie udało się usunąć konta
 player_delete_no_player = Błędny nick lub hasło
+top_ten = Top 10 Graczy
 close = Zamknij
 nothing = Jeszcze nic

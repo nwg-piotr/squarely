@@ -135,6 +135,10 @@ def top_ten_result(result, password=None):
         print(output_l4)
         print(output_l5)
 
+        txt = common.lang["top_ten"] + "\n" + output_l0 + "\n" + output_l1
+        common.top_list.refresh("asd")
+        #common.top_list.show()
+
 
 def player_login(name, password):
     common.player.online = common.SYNCING

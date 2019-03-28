@@ -33,6 +33,8 @@ cell_bitmaps = []
 cells_batch = None
 intro_batch = None
 player_dialog_batch = None
+top_list_batch = None
+top_list = None
 cells_list = []
 matrix = None  # 2-dimensional list [row] [col] to assign cells (or None if the spot empty)
 rotation_group = None
@@ -57,6 +59,9 @@ label = None
 playing = False
 intro = True
 dialog = False
+top10 = False
+
+top10_content = "..."
 
 intro_sprite = None
 intro_message = None

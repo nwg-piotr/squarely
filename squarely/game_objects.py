@@ -374,6 +374,56 @@ class PlayerConfirmation(pyglet.sprite.Sprite):
         self.visible = False
 
 
+class TopList(pyglet.sprite.Sprite):
+    def __init__(self, board):
+        super().__init__(image.load("images/top-list.png"))
+
+        self.scale = board.scale
+        self.x = board.columns[0]
+        self.y = board.rows[0]
+        self.visible = False
+        self.batch = common.top_list_batch
+
+        self.old_playing = False
+        self.old_intro = False
+        self.old_dialog = False
+
+        self.test = "testowy tekst"
+
+        self.label = pyglet.text.Label(
+            "initial",
+            font_name='DejaVu Sans Mono',
+            color=(255, 255, 255, 255),
+            font_size=int(24 * self.scale),
+            #width=int(board.cell_dimension * 5),
+            #height=int(board.cell_dimension * 5),
+            #multiline=True,
+            x=self.x + board.cell_dimension // 2, y=self.y + self.width - board.cell_dimension // 2,
+            anchor_x='left', anchor_y='center', batch=self.batch)
+
+    def refresh(self, text):
+        self.label.text = "new refreshed text"
+
+    def show(self):
+        self.old_playing = common.playing
+        self.old_intro = common.intro
+        self.old_dialog = common.dialog
+        common.playing = False
+        common.intro = False
+        common.dialog = False
+
+        self.visible = True
+        common.top10 = True
+
+    def hide(self):
+        common.playing = self.old_playing
+        common.intro = self.old_intro
+        common.dialog = self.old_dialog
+
+        self.visible = False
+        common.top10 = False
+
+
 class PlayerDialog(pyglet.sprite.Sprite):
     def __init__(self, window, board):
         super().__init__(image.load("images/player-dialog.png"))
