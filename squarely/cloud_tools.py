@@ -77,6 +77,34 @@ def player_delete(name, password):
         return False  # Failure
 
 
+def top_ten(password=None):
+    print("\nAsking server for scores...")
+    url = 'http://nwg.pl/puzzle/player.php?action=display&plimit=10'
+    if internet_on():
+        async_request('get', url, headers=common.headers, pwd=password, callback=lambda r, p: top_ten_result(r, p))
+
+
+def top_ten_result(result, password=None):
+    txt = result.content.decode("utf-8")
+    if txt.startswith('top_10'):
+        # print(txt[7:])
+        levels = txt[7:].split("#")
+        #print(levels)
+        level0 = levels[0].split(":")
+        level1 = levels[1].split(":")
+        level2 = levels[2].split(":")
+        level3 = levels[3].split(":")
+        level4 = levels[4].split(":")
+        level5 = levels[5].split(":")
+
+        print("level1", level0)
+        print("level2", level1)
+        print("level3", level2)
+        print("level4", level3)
+        print("level5", level4)
+        print("level6", level5)
+
+
 def player_login(name, password):
     common.player.online = common.SYNCING
     url = 'http://nwg.pl/puzzle/player.php?action=login&pname=' + name + '&ppswd=' + password

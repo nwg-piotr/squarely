@@ -184,20 +184,89 @@
 			echo "no_player_wrong_pass";
 		}
    	
-	} else if ($action == 'display'){
-		
-		if ($plimit == 0){
-			$sql = "SELECT * FROM players ORDER BY ppoints DESC, ppoints";
-		} else {
-			$sql = "SELECT * FROM players ORDER BY ppoints DESC, ppoints LIMIT $plimit";
-		}
+	} else if ($action == 'display') {
 
+		$response = "top_10#";
+
+		// Level0
+		$sql = "SELECT pname, ps0 FROM players ORDER BY ps0 ASC LIMIT $plimit";
 		$result = mysql_query( $sql, $conn );
 		$num_rows = mysql_num_rows($result);
-		
+
 		while ($row = mysql_fetch_array($result)) {
-			echo $row['pname'].",".$row['ppoints'].",".$row['placcess']."#";
-		} 
+			$score = $row['ps0'];
+			if(isset($score) && !empty($score)){
+			    $response .= $row['pname'].",".$score.":";
+			}
+		}
+		$response .= "#";
+
+		// Level 1
+		$sql = "SELECT pname, ps1 FROM players ORDER BY ps1 ASC LIMIT $plimit";
+		$result = mysql_query( $sql, $conn );
+		$num_rows = mysql_num_rows($result);
+
+		while ($row = mysql_fetch_array($result)) {
+			$score = $row['ps1'];
+			if(isset($score) && !empty($score)){
+			    $response .= $row['pname'].",".$score.":";
+			}
+		}
+		$response .= "#";
+
+		// Level 2
+		$sql = "SELECT pname, ps2 FROM players ORDER BY ps2 ASC LIMIT $plimit";
+		$result = mysql_query( $sql, $conn );
+		$num_rows = mysql_num_rows($result);
+
+		while ($row = mysql_fetch_array($result)) {
+			$score = $row['ps2'];
+			if(isset($score) && !empty($score)){
+			    $response .= $row['pname'].",".$score.":";
+			}
+		}
+		$response .= "#";
+
+		// Level 3
+		$sql = "SELECT pname, ps3 FROM players ORDER BY ps3 ASC LIMIT $plimit";
+		$result = mysql_query( $sql, $conn );
+		$num_rows = mysql_num_rows($result);
+
+		while ($row = mysql_fetch_array($result)) {
+			$score = $row['ps3'];
+			if(isset($score) && !empty($score)){
+			    $response .= $row['pname'].",".$score.":";
+			}
+		}
+		$response .= "#";
+
+		// Level 4
+		$sql = "SELECT pname, ps4 FROM players ORDER BY ps4 ASC LIMIT $plimit";
+		$result = mysql_query( $sql, $conn );
+		$num_rows = mysql_num_rows($result);
+
+		while ($row = mysql_fetch_array($result)) {
+			$score = $row['ps4'];
+			if(isset($score) && !empty($score)){
+			    $response .= $row['pname'].",".$score.":";
+			}
+		}
+		$response .= "#";
+
+		// Level 5
+		$sql = "SELECT pname, ps5 FROM players ORDER BY ps5 ASC LIMIT $plimit";
+		$result = mysql_query( $sql, $conn );
+		$num_rows = mysql_num_rows($result);
+
+		while ($row = mysql_fetch_array($result)) {
+			$score = $row['ps5'];
+			if(isset($score) && !empty($score)){
+			    $response .= $row['pname'].",".$score.":";
+			}
+		}
+		$response .= "#";
+
+		echo $response;
 	
 	} else {
 		echo "action_unknown";
