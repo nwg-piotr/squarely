@@ -826,21 +826,21 @@ class Panel(object):
             self.display_l2.image = self.img_locked
 
         if common.scores[3] is not None:
-            self.display_l3.label = self.score_label(self.display_l3, "L4: " + str(common.scores[2]))
+            self.display_l3.label = self.score_label(self.display_l3, "L4: " + str(common.scores[3]))
             self.display_l3.image = self.img_unlocked
         else:
             self.display_l3.label = self.score_label(self.display_l3, "L4:")
             self.display_l3.image = self.img_locked
 
         if common.scores[4] is not None:
-            self.display_l4.label = self.score_label(self.display_l4, "L5: " + str(common.scores[2]))
+            self.display_l4.label = self.score_label(self.display_l4, "L5: " + str(common.scores[4]))
             self.display_l4.image = self.img_unlocked
         else:
             self.display_l4.label = self.score_label(self.display_l4, "L5:")
             self.display_l4.image = self.img_locked
 
         if common.scores[5] is not None:
-            self.display_l5.label = self.score_label(self.display_l5, "L6: " + str(common.scores[2]))
+            self.display_l5.label = self.score_label(self.display_l5, "L6: " + str(common.scores[5]))
             self.display_l5.image = self.img_unlocked
         else:
             self.display_l5.label = self.score_label(self.display_l5, "L6:")
