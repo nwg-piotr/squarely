@@ -32,7 +32,7 @@
     if($action == 'login') {
    	
    	    if($agent != $vagent) {
-			// die("access_denied");
+			die("access_denied");
    	    }
 
 		// Check if user exists and password ok
@@ -83,7 +83,7 @@
 	} else if ($action == 'update') {
 		
 		if ($agent != $vagent) {
-			// die("access_denied");
+			die("access_denied");
    	    }
 
 	    // Check if user exists and password ok

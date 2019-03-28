@@ -33,7 +33,7 @@ def player_create(name, password):
     old = common.player.online
     common.player.online = common.SYNCING
     url = 'http://nwg.pl/puzzle/player.php?action=create&pname=' + name + '&ppswd=' + password
-    print(url)
+    # print(url)
     try:
         response = requests.get(url, headers=common.headers)
         print(response.content)
@@ -56,7 +56,7 @@ def player_create(name, password):
 def player_delete(name, password):
     common.player.online = common.SYNCING
     url = 'http://nwg.pl/puzzle/player.php?action=delete&pname=' + name + '&ppswd=' + password
-    print(url)
+    # print(url)
     try:
         response = requests.get(url, headers=common.headers)
         print(response.content)
