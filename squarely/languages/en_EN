@@ -33,6 +33,7 @@ player_wrong_password = Wrong password
 player_login_failed = Failed signing in
 player_offline = You must sing in first
 player_syncing = Syncing...
+player_deleting = Deleting player account...
 player_deleted = Player deleted
 player_delete_failed = Player deletion failed
 player_delete_no_player = No such player or wrong password

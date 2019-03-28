@@ -281,7 +281,6 @@ def main():
 
     @window.event
     def on_key_press(symbol, modifiers):
-        print(common.player_confirmation, common.player_dialog.is_open)
         if symbol == key.H:
             if common.summary_bar is not None:
                 common.summary_bar.show()

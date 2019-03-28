@@ -66,12 +66,15 @@ def player_delete(name, password):
 
     if response_text == "player_deleted":
         common.player_dialog.set_message(common.lang["player_deleted"])
+        return True  # Success
 
     elif response_text == "failed_deleting":
         common.player_dialog.set_message(common.lang["player_delete_failed"])
+        return False  # Failure
 
     elif response_text == 'no_player_wrong_pass':
         common.player_dialog.set_message(common.lang["player_delete_no_player"])
+        return False  # Failure
 
 
 def player_login(name, password):

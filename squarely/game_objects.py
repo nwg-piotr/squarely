@@ -19,7 +19,7 @@ import common
 from text_tools import *
 import hashlib
 import pickle
-from cloud_tools import player_create, player_login
+from cloud_tools import player_create, player_delete, player_login
 
 
 class GameBoard(object):
@@ -367,7 +367,7 @@ class PlayerConfirmation(pyglet.sprite.Sprite):
         self.scale = board.scale * 1.04
         self.visible = False
 
-    def show(self, name, password):
+    def show(self):
         self.visible = True
 
     def hide(self):
@@ -476,25 +476,34 @@ class PlayerDialog(pyglet.sprite.Sprite):
     def click(self, panel, x, y):
         if self.is_in(x, y, self.area_close):
             self.close()
+
         elif self.is_in(x, y, self.area_name):
             self.close_confirmation()
             self.pass_field.caret.visible = False
             self.name_field.caret.visible = True
             self.window.push_handlers(self.name_field.caret)  # set focus
+
         elif self.is_in(x, y, self.area_password):
             self.close_confirmation()
             self.name_field.caret.visible = False
             self.pass_field.caret.visible = True
             self.window.push_handlers(self.pass_field.caret)
+
         elif self.is_in(x, y, self.area_add):
             self.close_confirmation()
             self.new_player()
+
         elif self.is_in(x, y, self.area_delete):
-            if common.player_confirmation:
-                common.player_confirmation.show("asd", "fgh")
+            if not common.player_confirmation.visible:
+                common.player_confirmation.show()
+            else:
+                self.close_confirmation()
+                self.delete_player(panel)
+
         elif self.is_in(x, y, self.area_login):
             self.close_confirmation()
             self.login_player()
+
         elif self.is_in(x, y, self.area_logout):
             self.close_confirmation()
             self.logout_player(panel)
@@ -527,6 +536,27 @@ class PlayerDialog(pyglet.sprite.Sprite):
                 msg += " " + common.lang["player_wrong_pass"]
             self.message = msg
             self.label.text = self.message
+
+    def delete_player(self, panel):
+        name = self.name_field.document.text
+        logout = name == common.player.name  # Are we deleting the signed in player?
+        pswd = self.pass_field.document.text
+        name_ok = name.upper() != "ANONYMOUS" and len(name) >= 3
+        pass_ok = len(pswd) >= 6
+        if name_ok and pass_ok:
+            self.message = common.lang["player_deleting"]
+            if player_delete(name, hashlib.md5(pswd.encode('utf-8')).hexdigest()) and logout:  # in cloud_tools
+                self.logout_player(panel)
+        else:
+            msg = ""
+            if not name_ok:
+                msg += common.lang["player_wrong_name"]
+            if not pass_ok:
+                msg += " " + common.lang["player_wrong_pass"]
+            self.message = msg
+            self.label.text = self.message
+        if common.player.name != 'Anonymous':
+            common.player.online = common.ONLINE
 
     def login_player(self):
         name = self.name_field.document.text
