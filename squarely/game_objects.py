@@ -395,9 +395,10 @@ class TopList(pyglet.sprite.Sprite):
             font_name='DejaVu Sans Mono',
             color=(255, 255, 255, 255),
             font_size=int(24 * self.scale),
-            #width=int(board.cell_dimension * 5),
-            #height=int(board.cell_dimension * 5),
-            #multiline=True,
+            #width=500,
+            #height=500,
+            #multiline=False,
+            align="left",
             x=self.x + board.cell_dimension // 2, y=self.y + self.width - board.cell_dimension // 2,
             anchor_x='left', anchor_y='center', batch=self.batch)
 
@@ -405,6 +406,7 @@ class TopList(pyglet.sprite.Sprite):
         self.label.text = "new refreshed text"
 
     def show(self):
+        self.label.text = common.top10_content
         self.old_playing = common.playing
         self.old_intro = common.intro
         self.old_dialog = common.dialog
