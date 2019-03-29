@@ -226,6 +226,8 @@ def main():
             if panel.button_start.selected:
                 if common.player_dialog.is_open:
                     common.player_dialog.close()
+                if common.top_list.is_open:
+                    common.top_list.hide()
                 common.level = panel.selected_level
                 common.fx.play(panel, "start")
                 new_game()
