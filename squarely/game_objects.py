@@ -692,8 +692,6 @@ class Panel(object):
 
         self.img_sound = self.bcg_image(pyglet.image.load('images/btn-sound.png')).get_region(0, 0, 216, 216)
         self.img_sound_off = self.bcg_image(pyglet.image.load('images/btn-sound.png')).get_region(216, 0, 216, 216)
-        self.img_music = self.bcg_image(pyglet.image.load('images/btn-music.png')).get_region(0, 0, 216, 216)
-        self.img_music_off = self.bcg_image(pyglet.image.load('images/btn-music.png')).get_region(216, 0, 216, 216)
         self.img_settings = self.bcg_image(pyglet.image.load('images/btn-settings.png'))
         self.img_undo = self.bcg_image(pyglet.image.load('images/btn-undo.png'))
         self.img_up = self.bcg_image(pyglet.image.load('images/btn-up.png'))
