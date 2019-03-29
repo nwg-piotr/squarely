@@ -268,7 +268,7 @@ def main():
                 if common.player.name != 'Anonymous':
                     player_sync(common.player.name, common.player.password)
 
-            elif panel.button_2.selected:
+            elif panel.button_top10.selected:
                 if not common.top_list.visible:
                     top_ten_update(common.top_list.label)
                     common.top_list.show()

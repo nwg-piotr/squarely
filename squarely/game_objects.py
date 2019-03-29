@@ -703,8 +703,8 @@ class Panel(object):
         self.img_online = self.bcg_image_half(pyglet.image.load('images/btn-online.png'))
         self.img_offline = self.bcg_image_half(pyglet.image.load('images/btn-offline.png'))
         self.img_syncing = self.bcg_image_half(pyglet.image.load('images/btn-syncing.png'))
-        self.img_2 = self.bcg_image_half(pyglet.image.load('images/btn-top10.png'))
-        self.img_3 = self.bcg_image_half(pyglet.image.load('images/btn-website.png'))
+        self.img_top10 = self.bcg_image_half(pyglet.image.load('images/btn-top10.png'))
+        self.img_website = self.bcg_image_half(pyglet.image.load('images/btn-website.png'))
 
         self.img_locked = self.bcg_image(pyglet.image.load('images/locked.png'))
         self.img_unlocked = self.bcg_image(pyglet.image.load('images/unlocked.png'))
@@ -713,23 +713,23 @@ class Panel(object):
         self.img_unlocked.width = board.base
         self.img_unlocked.height = board.base / 3
 
+        self.button_music = pyglet.sprite.Sprite(self.img_music if common.rc.music else self.img_music_off)
+        self.button_music.scale = self.scale
+        self.button_music.x = self.margin
+        self.button_music.y = self.margin
+        self.button_music.batch = self.batch
+        self.button_music.area = self.button_music.x, self.button_music.y, self.button_music.x + \
+                                 self.btn_dim, self.button_music.y + self.btn_dim
+        self.button_music.selected = False
+
         self.button_sound = pyglet.sprite.Sprite(self.img_sound if common.rc.sounds else self.img_sound_off)
-        self.button_sound.x = self.margin
+        self.button_sound.x = self.margin + self.btn_dim
         self.button_sound.scale = self.scale
         self.button_sound.y = self.margin
         self.button_sound.batch = self.batch
         self.button_sound.area = self.button_sound.x, self.button_sound.y, self.button_sound.x + \
                                  self.btn_dim, self.button_sound.y + self.btn_dim
         self.button_sound.selected = False
-
-        self.button_music = pyglet.sprite.Sprite(self.img_music if common.rc.music else self.img_music_off)
-        self.button_music.scale = self.scale
-        self.button_music.x = self.margin + self.btn_dim
-        self.button_music.y = self.margin
-        self.button_music.batch = self.batch
-        self.button_music.area = self.button_music.x, self.button_music.y, self.button_music.x + \
-                                 self.btn_dim, self.button_music.y + self.btn_dim
-        self.button_music.selected = False
 
         self.button_undo = pyglet.sprite.Sprite(self.img_undo)
         self.button_undo.x = self.margin + self.btn_dim * 2
@@ -791,21 +791,21 @@ class Panel(object):
 
         self.update_user_label()  # check if it's necessary
 
-        self.button_2 = pyglet.sprite.Sprite(self.img_2)
-        self.button_2.x = self.margin + self.btn_dim * 4
-        self.button_2.y = self.margin + self.btn_dim
-        self.button_2.batch = self.batch
-        self.button_2.area = self.button_2.x, self.button_2.y, self.button_2.x + \
-                             self.btn_dim, self.button_2.y + self.btn_half
-        self.button_2.selected = False
+        self.button_top10 = pyglet.sprite.Sprite(self.img_top10)
+        self.button_top10.x = self.margin + self.btn_dim * 4
+        self.button_top10.y = self.margin + self.btn_dim
+        self.button_top10.batch = self.batch
+        self.button_top10.area = self.button_top10.x, self.button_top10.y, self.button_top10.x + \
+                                 self.btn_dim, self.button_top10.y + self.btn_half
+        self.button_top10.selected = False
 
-        self.button_3 = pyglet.sprite.Sprite(self.img_3)
-        self.button_3.x = self.margin + self.btn_dim * 5
-        self.button_3.y = self.margin + self.btn_dim
-        self.button_3.batch = self.batch
-        self.button_3.area = self.button_3.x, self.button_3.y, self.button_3.x + \
-                             self.btn_dim, self.button_3.y + self.btn_half
-        self.button_3.selected = False
+        self.button_website = pyglet.sprite.Sprite(self.img_website)
+        self.button_website.x = self.margin + self.btn_dim * 5
+        self.button_website.y = self.margin + self.btn_dim
+        self.button_website.batch = self.batch
+        self.button_website.area = self.button_website.x, self.button_website.y, self.button_website.x + \
+                                   self.btn_dim, self.button_website.y + self.btn_half
+        self.button_website.selected = False
 
         """Level score buttons"""
         self.level_display_y = self.margin * 2 + self.btn_dim * 1.5
@@ -986,8 +986,8 @@ class Panel(object):
         # Player account buttons
         self.set_selection(self.button_name, self.is_selected(x, y, self.button_name.area))
         self.set_selection(self.button_cloud, self.is_selected(x, y, self.button_cloud.area))
-        self.set_selection(self.button_2, self.is_selected(x, y, self.button_2.area))
-        self.set_selection(self.button_3, self.is_selected(x, y, self.button_3.area))
+        self.set_selection(self.button_top10, self.is_selected(x, y, self.button_top10.area))
+        self.set_selection(self.button_website, self.is_selected(x, y, self.button_website.area))
 
         if self.button_sound.selected:
             self.label.text = common.lang["panel_sounds"]
@@ -1013,9 +1013,9 @@ class Panel(object):
                 self.label.text = common.lang["player_offline"]
             elif common.player.online == common.SYNCING:
                 self.label.text = common.lang["player_syncing"]
-        elif self.button_2.selected:
+        elif self.button_top10.selected:
             self.label.text = common.lang["top_ten"]
-        elif self.button_3.selected:
+        elif self.button_website.selected:
             self.label.text = common.lang["website"]
         else:
             self.label.text = ""
