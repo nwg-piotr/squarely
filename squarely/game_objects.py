@@ -694,6 +694,7 @@ class Panel(object):
         self.img_sound_off = self.bcg_image(pyglet.image.load('images/btn-sound.png')).get_region(216, 0, 216, 216)
         self.img_music = self.bcg_image(pyglet.image.load('images/btn-music.png')).get_region(0, 0, 216, 216)
         self.img_music_off = self.bcg_image(pyglet.image.load('images/btn-music.png')).get_region(216, 0, 216, 216)
+        self.img_settings = self.bcg_image(pyglet.image.load('images/btn-settings.png'))
         self.img_undo = self.bcg_image(pyglet.image.load('images/btn-undo.png'))
         self.img_up = self.bcg_image(pyglet.image.load('images/btn-up.png'))
         self.img_down = self.bcg_image(pyglet.image.load('images/btn-down.png'))
@@ -713,14 +714,13 @@ class Panel(object):
         self.img_unlocked.width = board.base
         self.img_unlocked.height = board.base / 3
 
-        self.button_music = pyglet.sprite.Sprite(self.img_music if common.rc.music else self.img_music_off)
-        self.button_music.scale = self.scale
-        self.button_music.x = self.margin
-        self.button_music.y = self.margin
-        self.button_music.batch = self.batch
-        self.button_music.area = self.button_music.x, self.button_music.y, self.button_music.x + \
-                                 self.btn_dim, self.button_music.y + self.btn_dim
-        self.button_music.selected = False
+        self.button_settings = pyglet.sprite.Sprite(self.img_settings)
+        self.button_settings.x = self.margin
+        self.button_settings.y = self.margin
+        self.button_settings.batch = self.batch
+        self.button_settings.area = self.button_settings.x, self.button_settings.y, self.button_settings.x + \
+                                    self.btn_dim, self.button_settings.y + self.btn_dim
+        self.button_settings.selected = False
 
         self.button_sound = pyglet.sprite.Sprite(self.img_sound if common.rc.sounds else self.img_sound_off)
         self.button_sound.x = self.margin + self.btn_dim
@@ -978,7 +978,7 @@ class Panel(object):
     def check_selection(self, x, y):
         # Game control buttons
         self.set_selection(self.button_sound, self.is_selected(x, y, self.button_sound.area))
-        self.set_selection(self.button_music, self.is_selected(x, y, self.button_music.area))
+        self.set_selection(self.button_settings, self.is_selected(x, y, self.button_settings.area))
         self.set_selection(self.button_undo, self.is_selected(x, y, self.button_undo.area))
         self.set_selection(self.button_down, self.is_selected(x, y, self.button_down.area))
         self.set_selection(self.button_up, self.is_selected(x, y, self.button_up.area))
@@ -991,11 +991,8 @@ class Panel(object):
 
         if self.button_sound.selected:
             self.label.text = common.lang["panel_sounds"]
-        elif self.button_music.selected:
-            if common.avbin:
-                self.label.text = common.lang["panel_music"]
-            else:
-                self.label.text = common.lang["panel_music_missing"]
+        elif self.button_settings.selected:
+            self.label.text = common.lang["settings"]
         elif self.button_undo.selected:
             self.label.text = common.lang["panel_undo"]
         elif self.button_down.selected:
@@ -1201,7 +1198,3 @@ class RuntimeConfig(object):
         panel.button_sound.image = panel.img_sound if self.sounds else panel.img_sound_off
         print("switching sounds", self.sounds)
 
-    def switch_music(self, panel):
-        self.music = not self.music
-        panel.button_music.image = panel.img_music if self.music else panel.img_music_off
-        print("switching music", self.music)

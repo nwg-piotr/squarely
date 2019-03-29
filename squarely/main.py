@@ -246,9 +246,8 @@ def main():
                     common.fx.play(panel, "key")
                     panel.level_down()
 
-            elif panel.button_music.selected:
+            elif panel.button_settings.selected:
                 common.fx.play(panel, "key")
-                common.rc.switch_music(panel)
                 common.rc.save()
                 common.rc.load()
 
