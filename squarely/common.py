@@ -56,12 +56,14 @@ cells_deleted = False
 
 fx = None
 label = None
+
+# Game states
 playing = False
 intro = True
 dialog = False
 top10 = False
 
-top10_content = "..."
+top10_content = ""
 
 intro_sprite = None
 intro_message = None

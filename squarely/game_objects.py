@@ -26,6 +26,7 @@ class GameBoard(object):
     """
     This class calculates and holds window dimensions and placement, and all the game board related values
     """
+
     def __init__(self, cells_in_row):
 
         total_cells = cells_in_row * cells_in_row
@@ -388,25 +389,37 @@ class TopList(pyglet.sprite.Sprite):
         self.old_intro = False
         self.old_dialog = False
 
-        self.test = "testowy tekst"
+        self.is_open = False
+
+        self.close_area = self.x + self.width - board.base, self.y + self.height - board.base, self.x + self.width, self.y + self.height
 
         self.label = pyglet.text.Label(
-            "initial",
+            common.lang["top_ten_loading"],
             font_name='DejaVu Sans Mono',
             color=(255, 255, 255, 255),
             font_size=int(24 * self.scale),
-            #width=500,
-            #height=500,
-            #multiline=False,
+            width=500,
+            multiline=True,
             align="left",
             x=self.x + board.cell_dimension // 2, y=self.y + self.width - board.cell_dimension // 2,
-            anchor_x='left', anchor_y='center', batch=self.batch)
+            anchor_x='left', anchor_y='top', batch=self.batch)
+
+    def click(self, x, y):
+        if self.is_in(x, y, self.close_area):
+            self.hide()
+
+    def is_in(self, x, y, area):
+        return area[0] < x < area[2] and area[1] < y < area[3]
 
     def refresh(self, text):
-        self.label.text = "new refreshed text"
+        self.label.text = text
 
     def show(self):
+        if common.player_dialog.is_open:
+            common.player_dialog.close()
+
         self.label.text = common.top10_content
+
         self.old_playing = common.playing
         self.old_intro = common.intro
         self.old_dialog = common.dialog
@@ -415,15 +428,17 @@ class TopList(pyglet.sprite.Sprite):
         common.dialog = False
 
         self.visible = True
+        self.is_open = True
         common.top10 = True
 
     def hide(self):
         common.playing = self.old_playing
         common.intro = self.old_intro
         common.dialog = self.old_dialog
+        common.top10 = False
 
         self.visible = False
-        common.top10 = False
+        self.is_open = False
 
 
 class PlayerDialog(pyglet.sprite.Sprite):
@@ -435,6 +450,7 @@ class PlayerDialog(pyglet.sprite.Sprite):
         # we need to know what to do after the dialog is closed
         self.old_intro_state = False
         self.old_playing_state = False
+        self.old_top10_state = False
 
         self.image.width = board.base * 4
         self.image.height = board.base * 3.5
@@ -474,6 +490,8 @@ class PlayerDialog(pyglet.sprite.Sprite):
 
     def open(self):
         if not self.is_open:
+            if common.top_list.is_open:
+                common.top_list.hide()
             self.old_player_name = common.player.name
             self.name_field.update('')
             pswd = common.player.password if common.player.password is not None else ""
@@ -482,11 +500,14 @@ class PlayerDialog(pyglet.sprite.Sprite):
             self.set_message(common.lang["player_account"])
 
             self.is_open = True
+
             self.old_intro_state = common.intro
-            common.intro = False
             self.old_playing_state = common.playing
+            self.old_top10_state = common.top10
+            common.intro = False
             common.playing = False
-            common.dialog = True  # if to draw the rotating background
+            common.top10 = False
+            common.dialog = True
 
             if common.player_confirmation:
                 common.player_confirmation.hide()
@@ -496,6 +517,7 @@ class PlayerDialog(pyglet.sprite.Sprite):
             self.is_open = False
             common.intro = self.old_intro_state
             common.playing = self.old_playing_state
+            common.top10 = self.old_top10_state
             common.dialog = False
             # Change the player name if login successful (as we use the same field to show error msg and player name)
             if new_player_name:
@@ -861,7 +883,9 @@ class Panel(object):
             self.display_l5.image = self.img_locked if is_locked else self.img_unlocked
 
     def update_score_labels(self):
-        self.display_l0.label = self.score_label(self.display_l0, "L1: " + str(common.scores[0])) if common.scores[0] is not None else self.score_label(self.display_l0, "L1:")
+        self.display_l0.label = self.score_label(self.display_l0, "L1: " + str(common.scores[0])) if common.scores[
+                                                                                                         0] is not None else self.score_label(
+            self.display_l0, "L1:")
 
         if common.scores[1] is not None:
             self.display_l1.label = self.score_label(self.display_l1, "L2: " + str(common.scores[1]))
@@ -909,7 +933,7 @@ class Panel(object):
             self.button_cloud.image = self.img_offline
         elif common.player.online == common.SYNCING:
             self.button_cloud.image = self.img_syncing
-        #self.button_cloud.image = self.img_online if common.player.online else self.img_offline
+        # self.button_cloud.image = self.img_online if common.player.online else self.img_offline
 
     def score_label(self, sprite, txt):
         label = pyglet.text.Label(
@@ -1123,14 +1147,17 @@ class RuntimeConfig(object):
             self.config.read_file(f)
 
         if self.config.has_section("board"):
-            self.cells_set = self.config.getint("board", "cells_set") if self.config.has_option("board", "cells_set") else 0
+            self.cells_set = self.config.getint("board", "cells_set") if self.config.has_option("board",
+                                                                                                "cells_set") else 0
             self.background_draw = self.config.getboolean("board", "background_draw") if self.config.has_option("board",
-                                                                                                      "background_draw") else False
-            self.background_rotate = self.config.getboolean("board", "background_rotate") if self.config.has_option("board",
-                                                                                                          "background_rotate") else False
+                                                                                                                "background_draw") else False
+            self.background_rotate = self.config.getboolean("board", "background_rotate") if self.config.has_option(
+                "board",
+                "background_rotate") else False
 
         if self.config.has_section("other"):
-            self.sounds = self.config.getboolean("other", "sounds") if self.config.has_option("other", "sounds") else False
+            self.sounds = self.config.getboolean("other", "sounds") if self.config.has_option("other",
+                                                                                              "sounds") else False
             self.music = self.config.getboolean("other", "music") if self.config.has_option("other", "music") else False
 
     def save(self):
@@ -1156,14 +1183,17 @@ class RuntimeConfig(object):
             self.config.read_file(f)
 
         if self.config.has_section("board"):
-            self.cells_set = self.config.getint("board", "cells_set") if self.config.has_option("board", "cells_set") else 0
+            self.cells_set = self.config.getint("board", "cells_set") if self.config.has_option("board",
+                                                                                                "cells_set") else 0
             self.background_draw = self.config.getboolean("board", "background_draw") if self.config.has_option("board",
-                                                                                                      "background_draw") else False
-            self.background_rotate = self.config.getboolean("board", "background_rotate") if self.config.has_option("board",
-                                                                                                          "background_rotate") else False
+                                                                                                                "background_draw") else False
+            self.background_rotate = self.config.getboolean("board", "background_rotate") if self.config.has_option(
+                "board",
+                "background_rotate") else False
 
         if self.config.has_section("other"):
-            self.sounds = self.config.getboolean("other", "sounds") if self.config.has_option("other", "sounds") else False
+            self.sounds = self.config.getboolean("other", "sounds") if self.config.has_option("other",
+                                                                                              "sounds") else False
             self.music = self.config.getboolean("other", "music") if self.config.has_option("other", "music") else False
 
     def switch_sounds(self, panel):

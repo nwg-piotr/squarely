@@ -15,7 +15,7 @@ Dependencies (Arch Linux): python-pyglet, ' python-requests', optionally avbin7 
 from game_objects import *
 from tools import *
 from text_tools import *
-from cloud_tools import player_login, player_sync, top_ten
+from cloud_tools import player_login, player_sync, top_ten_update
 from pyglet.window import key
 import locale
 
@@ -83,6 +83,7 @@ def main():
     common.player_dialog = PlayerDialog(window, common.board)
     common.player_confirmation = PlayerConfirmation(common.board)
 
+    common.top10_content = common.lang["top_ten_loading"]
     common.top_list_batch = pyglet.graphics.Batch()
     common.top_list = TopList(common.board)
 
@@ -125,7 +126,7 @@ def main():
         elif common.dialog:
             intro_bcg.draw()
 
-        if common.player_dialog.is_open:
+        if common.dialog:
             common.player_dialog_batch.draw()
             if common.player_confirmation is not None and common.player_confirmation.visible:
                 common.player_confirmation.draw()
@@ -267,12 +268,16 @@ def main():
 
             elif panel.button_2.selected:
                 if not common.top_list.visible:
-                    top_ten(common.top_list.label)
+                    top_ten_update(common.top_list.label)
+                    common.top_list.show()
                 else:
                     common.top_list.hide()
 
         if common.player_dialog.is_open:
             common.player_dialog.click(panel, x, y)
+
+        if common.top_list.is_open:
+            common.top_list.click(x, y)
 
     @window.event
     def on_mouse_scroll(x, y, scroll_x, scroll_y):
@@ -321,6 +326,9 @@ def main():
             else:
                 for cell in common.board.cells_to_drop_down:
                     cell.y -= common.board.scroll_step
+
+        if common.top_list.visible:
+            common.top_list.refresh(common.top10_content)
 
         common.label = pyglet.text.Label(
             str(int(pyglet.clock.get_fps())),
