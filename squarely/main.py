@@ -19,8 +19,6 @@ from cloud_tools import player_login, player_sync, top_ten_update
 from pyglet.window import key
 import locale
 
-import datetime
-
 
 def main():
     pyglet.options['audio'] = ('openal', 'pulse', 'silent')
