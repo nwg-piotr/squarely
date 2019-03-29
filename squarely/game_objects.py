@@ -703,8 +703,8 @@ class Panel(object):
         self.img_online = self.bcg_image_half(pyglet.image.load('images/btn-online.png'))
         self.img_offline = self.bcg_image_half(pyglet.image.load('images/btn-offline.png'))
         self.img_syncing = self.bcg_image_half(pyglet.image.load('images/btn-syncing.png'))
-        self.img_2 = self.bcg_image_half(pyglet.image.load('images/btn-2.png'))
-        self.img_3 = self.bcg_image_half(pyglet.image.load('images/btn-3.png'))
+        self.img_2 = self.bcg_image_half(pyglet.image.load('images/btn-top10.png'))
+        self.img_3 = self.bcg_image_half(pyglet.image.load('images/btn-website.png'))
 
         self.img_locked = self.bcg_image(pyglet.image.load('images/locked.png'))
         self.img_unlocked = self.bcg_image(pyglet.image.load('images/unlocked.png'))
@@ -1014,9 +1014,9 @@ class Panel(object):
             elif common.player.online == common.SYNCING:
                 self.label.text = common.lang["player_syncing"]
         elif self.button_2.selected:
-            self.label.text = common.lang["nothing"]
+            self.label.text = common.lang["top_ten"]
         elif self.button_3.selected:
-            self.label.text = common.lang["nothing"]
+            self.label.text = common.lang["website"]
         else:
             self.label.text = ""
 

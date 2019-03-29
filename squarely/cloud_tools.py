@@ -78,7 +78,7 @@ def player_delete(name, password):
 
 
 def top_ten_update(password=None):
-    print("\nLoading scores...", end=" ")
+    print("Loading scores...", end=" ")
     url = 'http://nwg.pl/puzzle/player.php?action=display&plimit=10'
     if internet_on():
         async_request('get', url, headers=common.headers, pwd=password, callback=lambda r, p: top_ten_result(r, p))
@@ -225,7 +225,7 @@ def sync_needed():
 
     print("Local: ", common.player.scores)
     print("Remote: ", common.player.cloud_scores)
-    print("Do we need to sync?", needed)
+    print("Do sync?", needed)
 
     return needed
 

@@ -290,12 +290,6 @@ def main():
             if common.summary_bar is not None:
                 common.summary_bar.show()
 
-        if symbol == key.T:
-            if not common.top_list.visible:
-                common.top_list.show()
-            else:
-                common.top_list.hide()
-
     def update(dt):
         if common.intro or common.dialog or common.top10 or common.playing and common.rc.background_draw and common.rc.background_rotate:
             # We won't say "Welcome back" to anonymous players!
