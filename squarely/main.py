@@ -34,8 +34,8 @@ def main():
     common.lang = Language('en_EN')
     """Running with LC_ALL=C will return (None, None)"""
     localization = locale.getlocale()[0] if locale.getlocale()[0] is not None else 'en_EN'
-    if localization != 'en_EN':
-        overwrite_lang(localization)
+    #if localization != 'en_EN':
+    #    overwrite_lang(localization)
 
     """Create resources"""
     if os.path.isfile('images/cells-' + str(common.rc.cells_set) + '.png'):
@@ -56,6 +56,9 @@ def main():
 
     common.summary_batch = pyglet.graphics.Batch()
     common.summary_bar = SummaryBar(common.board, 0, 0)
+
+    common.settings_batch = pyglet.graphics.Batch()
+    sd = SettingsDialog(common.board)
 
     window = create_game_window(common.board)
     cursor_hand = window.get_system_mouse_cursor(window.CURSOR_HAND)
@@ -121,7 +124,7 @@ def main():
             if common.intro_message is not None:
                 common.intro_message.draw()
 
-        elif common.dialog:
+        elif common.dialog or common.settings:
             intro_bcg.draw()
 
         if common.dialog:
@@ -132,6 +135,9 @@ def main():
         if common.top10:
             intro_bcg.draw()
             common.top_list_batch.draw()
+
+        if common.settings:
+            common.settings_batch.draw()
 
     @window.event
     def on_mouse_enter(x, y):
@@ -272,6 +278,13 @@ def main():
                 else:
                     common.top_list.hide()
 
+            if panel.button_settings.selected:
+                print("------panel.button_settings.selected--------")
+                if not sd.visible:
+                    sd.show()
+                else:
+                    sd.hide()
+
         if common.player_dialog.is_open:
             common.player_dialog.click(panel, x, y)
 
@@ -290,7 +303,7 @@ def main():
                 common.summary_bar.show()
 
     def update(dt):
-        if common.intro or common.dialog or common.top10 or common.playing and common.rc.background_draw and common.rc.background_rotate:
+        if common.intro or common.dialog or common.top10 or common.settings or common.playing and common.rc.background_draw and common.rc.background_rotate:
             # We won't say "Welcome back" to anonymous players!
             if isinstance(common.intro_sprite, HelloAnimation):  # Are we still in the Hello animation?
                 common.intro_message.text = common.lang["intro_wb"] if common.player.name != 'Anonymous' else \

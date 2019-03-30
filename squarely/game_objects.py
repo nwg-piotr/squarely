@@ -388,6 +388,7 @@ class TopList(pyglet.sprite.Sprite):
         self.old_playing = False
         self.old_intro = False
         self.old_dialog = False
+        self.old_settings = False
 
         self.is_open = False
 
@@ -423,9 +424,11 @@ class TopList(pyglet.sprite.Sprite):
         self.old_playing = common.playing
         self.old_intro = common.intro
         self.old_dialog = common.dialog
+        self.old_settings = common.settings
         common.playing = False
         common.intro = False
         common.dialog = False
+        common.settings = False
 
         self.visible = True
         self.is_open = True
@@ -435,10 +438,118 @@ class TopList(pyglet.sprite.Sprite):
         common.playing = self.old_playing
         common.intro = self.old_intro
         common.dialog = self.old_dialog
+        common.settings = self.old_settings
         common.top10 = False
 
         self.visible = False
         self.is_open = False
+
+
+class SettingsDialog(object):
+    def __init__(self, board):
+        self.old_playing = False
+        self.old_intro = False
+        self.old_dialog = False
+        self.old_top10 = False
+
+        self.board = board
+
+        img_background = pyglet.image.load('images/settings-bcg.png')
+        self.img_checkbox_unchecked = pyglet.image.load('images/checkbox-unchecked.png')
+        self.img_checkbox_checked = pyglet.image.load('images/checkbox-checked.png')
+        img_go = pyglet.image.load('images/btn-go.png')
+
+        self.btn_x = board.base * 5
+        self.y_step = board.base / 2
+        self.label_x = board.base * 3
+
+        self.batch = common.settings_batch
+        self.visible = False
+
+        self.background = pyglet.sprite.Sprite(img_background)
+        self.background.scale = board.scale
+        self.background.x = board.columns[0]
+        self.background.y = board.rows[0]
+        self.background.batch = self.batch
+
+        self.draw_bcg_checkbox = pyglet.sprite.Sprite(self.img_checkbox_checked)
+        self.draw_bcg_checkbox.scale = board.scale
+        self.draw_bcg_checkbox.x = self.btn_x
+        self.draw_bcg_checkbox.y = board.rows[0] + self.y_step * 7
+        self.draw_bcg_checkbox.batch = self.batch
+        self.v_middle = self.draw_bcg_checkbox.height // 2  # should be suitable to reuse
+        self.draw_bcg_label = self.add_label(common.lang["settings_draw_background"],
+                                             self.draw_bcg_checkbox.y + self.v_middle)
+
+        self.rotate_bcg_checkbox = pyglet.sprite.Sprite(self.img_checkbox_checked)
+        self.rotate_bcg_checkbox.scale = board.scale
+        self.rotate_bcg_checkbox.x = self.btn_x
+        self.rotate_bcg_checkbox.y = board.rows[0] + self.y_step * 6
+        self.rotate_bcg_checkbox.batch = self.batch
+        self.rotate_bcg_label = self.add_label(common.lang["settings_rotate_background"],
+                                               self.rotate_bcg_checkbox.y + self.v_middle)
+
+        self.play_music_checkbox = pyglet.sprite.Sprite(self.img_checkbox_checked)
+        self.play_music_checkbox.scale = board.scale
+        self.play_music_checkbox.x = self.btn_x
+        self.play_music_checkbox.y = board.rows[0] + self.y_step * 5
+        self.play_music_checkbox.batch = self.batch
+        self.play_music_label = self.add_label(common.lang["settings_play_music"],
+                                               self.play_music_checkbox.y + self.v_middle)
+
+        self.play_jingle_checkbox = pyglet.sprite.Sprite(self.img_checkbox_checked)
+        self.play_jingle_checkbox.scale = board.scale
+        self.play_jingle_checkbox.x = self.btn_x
+        self.play_jingle_checkbox.y = board.rows[0] + self.y_step * 4
+        self.play_jingle_checkbox.batch = self.batch
+        self.play_jingle_label = self.add_label(common.lang["settings_play_jingle"],
+                                               self.play_jingle_checkbox.y + self.v_middle)
+
+        self.play_warnings_checkbox = pyglet.sprite.Sprite(self.img_checkbox_checked)
+        self.play_warnings_checkbox.scale = board.scale
+        self.play_warnings_checkbox.x = self.btn_x
+        self.play_warnings_checkbox.y = board.rows[0] + self.y_step * 3
+        self.play_warnings_checkbox.batch = self.batch
+        self.play_warnings_label = self.add_label(common.lang["settings_play_warnings"],
+                                                self.play_warnings_checkbox.y + self.v_middle)
+
+        self.password_checkbox = pyglet.sprite.Sprite(img_go)
+        self.password_checkbox.scale = board.scale
+        self.password_checkbox.x = self.btn_x
+        self.password_checkbox.y = board.rows[0] + self.y_step * 1
+        self.password_checkbox.batch = self.batch
+        self.password_label = self.add_label(common.lang["settings_new_password"],
+                                                  self.password_checkbox.y + self.v_middle)
+
+    def show(self):
+        self.old_playing = common.playing
+        self.old_intro = common.intro
+        self.old_dialog = common.dialog
+        self.old_top10 = common.top10
+        common.playing = False
+        common.intro = False
+        common.dialog = False
+        common.top10 = False
+        common.settings = True
+
+        self.visible = True
+
+    def hide(self):
+        common.playing = self.old_playing
+        common.intro = self.old_intro
+        common.dialog = self.old_dialog
+        common.top10 = self.old_top10
+        common.settings = False
+        self.visible = False
+
+    def add_label(self, text, y):
+        return pyglet.text.Label(
+            text,
+            font_name='DejaVu Sans Mono',
+            color=(220, 220, 220, 255),
+            font_size=int(38 * self.board.scale),
+            x=self.label_x, y=y,
+            anchor_x='center', anchor_y='center', batch=self.batch)
 
 
 class PlayerDialog(pyglet.sprite.Sprite):
@@ -1195,4 +1306,3 @@ class RuntimeConfig(object):
         self.sounds = not self.sounds
         panel.button_sound.image = panel.img_sound if self.sounds else panel.img_sound_off
         print("switching sounds", self.sounds)
-

@@ -35,6 +35,7 @@ intro_batch = None
 player_dialog_batch = None
 top_list_batch = None
 top_list = None
+settings_batch = None
 cells_list = []
 matrix = None  # 2-dimensional list [row] [col] to assign cells (or None if the spot empty)
 rotation_group = None
@@ -62,6 +63,7 @@ playing = False
 intro = True
 dialog = False
 top10 = False
+settings = False
 
 top10_content = ""
 
