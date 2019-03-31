@@ -18,9 +18,16 @@ from text_tools import *
 from cloud_tools import player_login, player_sync, top_ten_update
 from pyglet.window import key
 import locale
+import sys
 
 
 def main():
+    ov_lang = None
+
+    for i in range(1, len(sys.argv)):
+        if sys.argv[i] == "-lang":
+            ov_lang = sys.argv[i + 1]
+
     pyglet.options['audio'] = ('openal', 'pulse', 'silent')
 
     """OS-dependent preferences location (in Linux: ~/.config/common.app_name/)"""
@@ -33,9 +40,13 @@ def main():
     """Let's preload English dictionary and overwrite with localized values if found"""
     common.lang = Language('en_EN')
     """Running with LC_ALL=C will return (None, None)"""
-    localization = locale.getlocale()[0] if locale.getlocale()[0] is not None else 'en_EN'
-    #if localization != 'en_EN':
-    #    overwrite_lang(localization)
+    if not ov_lang:
+        localization = locale.getlocale()[0] if locale.getlocale()[0] is not None else 'en_EN'
+    else:
+        localization = ov_lang
+
+    if localization != 'en_EN':
+        overwrite_lang(localization)
 
     """Create resources"""
     if os.path.isfile('images/cells-' + str(common.rc.cells_set) + '.png'):
