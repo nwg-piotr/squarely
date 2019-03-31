@@ -465,6 +465,7 @@ class SettingsDialog(object):
 
         self.batch = common.settings_batch
         self.visible = False
+        self.is_open = False
 
         self.background = pyglet.sprite.Sprite(img_background)
         self.background.scale = board.scale
@@ -472,7 +473,7 @@ class SettingsDialog(object):
         self.background.y = board.rows[0]
         self.background.batch = self.batch
 
-        self.draw_bcg_checkbox = pyglet.sprite.Sprite(self.img_checkbox_checked)
+        self.draw_bcg_checkbox = pyglet.sprite.Sprite(self.img_checkbox_checked if common.settings.background_draw else self.img_checkbox_unchecked)
         self.draw_bcg_checkbox.scale = board.scale
         self.draw_bcg_checkbox.x = self.btn_x
         self.draw_bcg_checkbox.y = board.rows[0] + self.y_step * 7
@@ -480,16 +481,18 @@ class SettingsDialog(object):
         self.v_middle = self.draw_bcg_checkbox.height // 2  # should be suitable to reuse
         self.draw_bcg_label = self.add_label(common.lang["settings_draw_background"],
                                              self.draw_bcg_checkbox.y + self.v_middle)
+        self.draw_bcg_checkbox.area = self.draw_bcg_checkbox.x, self.draw_bcg_checkbox.y, self.draw_bcg_checkbox.x + self.draw_bcg_checkbox.width, self.draw_bcg_checkbox.y + self.draw_bcg_checkbox.height
 
-        self.rotate_bcg_checkbox = pyglet.sprite.Sprite(self.img_checkbox_checked)
+        self.rotate_bcg_checkbox = pyglet.sprite.Sprite(self.img_checkbox_checked if common.settings.background_rotate else self.img_checkbox_unchecked)
         self.rotate_bcg_checkbox.scale = board.scale
         self.rotate_bcg_checkbox.x = self.btn_x
         self.rotate_bcg_checkbox.y = board.rows[0] + self.y_step * 6
         self.rotate_bcg_checkbox.batch = self.batch
         self.rotate_bcg_label = self.add_label(common.lang["settings_rotate_background"],
                                                self.rotate_bcg_checkbox.y + self.v_middle)
+        self.rotate_bcg_checkbox.area = self.rotate_bcg_checkbox.x, self.rotate_bcg_checkbox.y, self.rotate_bcg_checkbox.x + self.rotate_bcg_checkbox.width, self.rotate_bcg_checkbox.y + self.rotate_bcg_checkbox.height
 
-        self.play_music_checkbox = pyglet.sprite.Sprite(self.img_checkbox_checked)
+        self.play_music_checkbox = pyglet.sprite.Sprite(self.img_checkbox_checked if common.settings.music else self.img_checkbox_unchecked)
         self.play_music_checkbox.scale = board.scale
         self.play_music_checkbox.x = self.btn_x
         self.play_music_checkbox.y = board.rows[0] + self.y_step * 5
@@ -497,7 +500,7 @@ class SettingsDialog(object):
         self.play_music_label = self.add_label(common.lang["settings_play_music"],
                                                self.play_music_checkbox.y + self.v_middle)
 
-        self.play_jingle_checkbox = pyglet.sprite.Sprite(self.img_checkbox_checked)
+        self.play_jingle_checkbox = pyglet.sprite.Sprite(self.img_checkbox_checked if common.settings.jingle else self.img_checkbox_unchecked)
         self.play_jingle_checkbox.scale = board.scale
         self.play_jingle_checkbox.x = self.btn_x
         self.play_jingle_checkbox.y = board.rows[0] + self.y_step * 4
@@ -505,7 +508,7 @@ class SettingsDialog(object):
         self.play_jingle_label = self.add_label(common.lang["settings_play_jingle"],
                                                self.play_jingle_checkbox.y + self.v_middle)
 
-        self.play_warnings_checkbox = pyglet.sprite.Sprite(self.img_checkbox_checked)
+        self.play_warnings_checkbox = pyglet.sprite.Sprite(self.img_checkbox_checked if common.settings.warnings else self.img_checkbox_unchecked)
         self.play_warnings_checkbox.scale = board.scale
         self.play_warnings_checkbox.x = self.btn_x
         self.play_warnings_checkbox.y = board.rows[0] + self.y_step * 3
@@ -533,6 +536,7 @@ class SettingsDialog(object):
         common.is_settings = True
 
         self.visible = True
+        self.is_open = True
 
     def hide(self):
         common.is_playing = self.old_playing
@@ -541,6 +545,7 @@ class SettingsDialog(object):
         common.top10 = self.old_top10
         common.is_settings = False
         self.visible = False
+        self.is_open = False
 
     def add_label(self, text, y):
         return pyglet.text.Label(
@@ -551,6 +556,24 @@ class SettingsDialog(object):
             x=self.label_x, y=y,
             anchor_x='center', anchor_y='center', batch=self.batch)
 
+    def is_in(self, x, y, area):
+        return area[0] < x < area[2] and area[1] < y < area[3]
+
+    def click(self, x, y):
+        if self.is_in(x, y, self.draw_bcg_checkbox.area):
+            common.settings.background_draw = not common.settings.background_draw
+            common.settings.save()
+            self.refresh()
+
+        if self.is_in(x, y, self.rotate_bcg_checkbox.area):
+            common.settings.background_rotate = not common.settings.background_rotate
+            common.settings.save()
+            self.refresh()
+
+    def refresh(self):
+        self.draw_bcg_checkbox.image = self.img_checkbox_checked if common.settings.background_draw else self.img_checkbox_unchecked
+        self.rotate_bcg_checkbox.image = self.img_checkbox_checked if common.settings.background_rotate else self.img_checkbox_unchecked
+
 
 class Settings(object):
     def __init__(self):
@@ -558,9 +581,10 @@ class Settings(object):
         self.cells_set = 0
         self.background_draw = True
         self.background_rotate = False
-        self.sounds = True
-        self.jingle = True
         self.music = True
+        self.jingle = True
+        self.warnings = True
+        self.muted = False
 
     def load(self):
         if not os.path.isfile(self.file):
@@ -572,17 +596,19 @@ class Settings(object):
         self.cells_set = settings.cells_set
         self.background_draw = settings.background_draw
         self.background_rotate = settings.background_rotate
-        self.sounds = settings.sounds
-        self.jingle = settings.jingle
         self.music = settings.music
+        self.jingle = settings.jingle
+        self.warnings = settings.music
+        self.muted = settings.muted
 
     def save(self):
         with open(self.file, 'wb') as output:
             pickle.dump(self, output, pickle.HIGHEST_PROTOCOL)
 
-    def switch_sounds(self, panel):
-        self.sounds = not self.sounds
-        panel.button_sound.image = panel.img_sound if self.sounds else panel.img_sound_off
+    def switch_muted(self, panel):
+        self.muted = not self.muted
+        panel.button_sound.image = panel.img_sound if not self.muted else panel.img_sound_off
+        self.save()
 
 
 class PlayerDialog(pyglet.sprite.Sprite):
@@ -864,7 +890,7 @@ class Panel(object):
                                     self.btn_dim, self.button_settings.y + self.btn_dim
         self.button_settings.selected = False
 
-        self.button_sound = pyglet.sprite.Sprite(self.img_sound if common.settings.sounds else self.img_sound_off)
+        self.button_sound = pyglet.sprite.Sprite(self.img_sound if not common.settings.muted else self.img_sound_off)
         self.button_sound.x = self.margin + self.btn_dim
         self.button_sound.scale = self.scale
         self.button_sound.y = self.margin
@@ -1230,7 +1256,7 @@ class Sounds(object):
             self.hello = pyglet.media.StaticSource(pyglet.media.load('sounds/hello.wav', streaming=False))
 
     def play(self, panel, fx):
-        if common.settings.sounds:
+        if not common.settings.muted:
             if fx == "key":
                 self.key.play()
             if fx == "drop":

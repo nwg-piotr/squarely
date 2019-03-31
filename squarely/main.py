@@ -70,7 +70,7 @@ def main():
     common.summary_bar = SummaryBar(common.board, 0, 0)
 
     common.settings_batch = pyglet.graphics.Batch()
-    sd = SettingsDialog(common.board)
+    settings_dialog = SettingsDialog(common.board)
 
     window = create_game_window(common.board)
     cursor_hand = window.get_system_mouse_cursor(window.CURSOR_HAND)
@@ -137,7 +137,8 @@ def main():
                 common.intro_message.draw()
 
         elif common.is_dialog or common.is_settings:
-            intro_bcg.draw()
+            if common.settings.background_draw:
+                intro_bcg.draw()
 
         if common.is_dialog:
             common.player_dialog_batch.draw()
@@ -145,7 +146,8 @@ def main():
                 common.player_confirmation.draw()
 
         if common.top10:
-            intro_bcg.draw()
+            if common.settings.background_draw:
+                intro_bcg.draw()
             common.top_list_batch.draw()
 
         if common.is_settings:
@@ -264,14 +266,14 @@ def main():
 
             elif panel.button_settings.selected:
                 common.fx.play(panel, "key")
-                if not sd.visible:
-                    sd.show()
+                if not settings_dialog.visible:
+                    settings_dialog.show()
                 else:
-                    sd.hide()
+                    settings_dialog.hide()
 
             elif panel.button_sound.selected:
                 common.fx.play(panel, "key")
-                common.settings.switch_sounds(panel)
+                common.settings.switch_muted(panel)
                 common.settings.save()
                 common.settings.load()
 
@@ -298,6 +300,9 @@ def main():
         if common.top_list.is_open:
             common.top_list.click(x, y)
 
+        if settings_dialog.is_open:
+            settings_dialog.click(x, y)
+
     @window.event
     def on_mouse_scroll(x, y, scroll_x, scroll_y):
         if common.summary_bar is not None and common.summary_bar.y > 0:
@@ -310,8 +315,8 @@ def main():
                 common.summary_bar.show()
 
     def update(dt):
-        if common.is_intro or common.is_dialog or common.top10 or common.is_settings or common.is_playing and common.settings.background_draw and common.settings.background_rotate:
-            # We won't say "Welcome back" to anonymous players!
+        if common.is_intro or common.is_dialog or common.top10 or common.is_settings or (common.is_playing and common.settings.background_draw and common.settings.background_rotate):
+            # We won't say "Welcome back" to anonymous players! todo should it be here?
             if isinstance(common.intro_sprite, HelloAnimation):  # Are we still in the Hello animation?
                 common.intro_message.text = common.lang["intro_wb"] if common.player.name != 'Anonymous' else \
                     common.lang["intro_welcome"]
