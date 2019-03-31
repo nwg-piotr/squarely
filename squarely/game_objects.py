@@ -421,24 +421,24 @@ class TopList(pyglet.sprite.Sprite):
 
         self.label.text = common.top10_content
 
-        self.old_playing = common.playing
-        self.old_intro = common.intro
-        self.old_dialog = common.dialog
-        self.old_settings = common.settings
-        common.playing = False
-        common.intro = False
-        common.dialog = False
-        common.settings = False
+        self.old_playing = common.is_playing
+        self.old_intro = common.is_intro
+        self.old_dialog = common.is_dialog
+        self.old_settings = common.is_settings
+        common.is_playing = False
+        common.is_intro = False
+        common.is_dialog = False
+        common.is_settings = False
 
         self.visible = True
         self.is_open = True
         common.top10 = True
 
     def hide(self):
-        common.playing = self.old_playing
-        common.intro = self.old_intro
-        common.dialog = self.old_dialog
-        common.settings = self.old_settings
+        common.is_playing = self.old_playing
+        common.is_intro = self.old_intro
+        common.is_dialog = self.old_dialog
+        common.is_settings = self.old_settings
         common.top10 = False
 
         self.visible = False
@@ -522,24 +522,24 @@ class SettingsDialog(object):
                                                   self.password_checkbox.y + self.v_middle)
 
     def show(self):
-        self.old_playing = common.playing
-        self.old_intro = common.intro
-        self.old_dialog = common.dialog
+        self.old_playing = common.is_playing
+        self.old_intro = common.is_intro
+        self.old_dialog = common.is_dialog
         self.old_top10 = common.top10
-        common.playing = False
-        common.intro = False
-        common.dialog = False
+        common.is_playing = False
+        common.is_intro = False
+        common.is_dialog = False
         common.top10 = False
-        common.settings = True
+        common.is_settings = True
 
         self.visible = True
 
     def hide(self):
-        common.playing = self.old_playing
-        common.intro = self.old_intro
-        common.dialog = self.old_dialog
+        common.is_playing = self.old_playing
+        common.is_intro = self.old_intro
+        common.is_dialog = self.old_dialog
         common.top10 = self.old_top10
-        common.settings = False
+        common.is_settings = False
         self.visible = False
 
     def add_label(self, text, y):
@@ -550,6 +550,39 @@ class SettingsDialog(object):
             font_size=int(38 * self.board.scale),
             x=self.label_x, y=y,
             anchor_x='center', anchor_y='center', batch=self.batch)
+
+
+class Settings(object):
+    def __init__(self):
+        self.file = common.app_dir + "/settings.pkl"
+        self.cells_set = 0
+        self.background_draw = True
+        self.background_rotate = False
+        self.sounds = True
+        self.jingle = True
+        self.music = True
+
+    def load(self):
+        if not os.path.isfile(self.file):
+            self.save()
+
+        with open(self.file, 'rb') as input_data:
+            settings = pickle.load(input_data)
+
+        self.cells_set = settings.cells_set
+        self.background_draw = settings.background_draw
+        self.background_rotate = settings.background_rotate
+        self.sounds = settings.sounds
+        self.jingle = settings.jingle
+        self.music = settings.music
+
+    def save(self):
+        with open(self.file, 'wb') as output:
+            pickle.dump(self, output, pickle.HIGHEST_PROTOCOL)
+
+    def switch_sounds(self, panel):
+        self.sounds = not self.sounds
+        panel.button_sound.image = panel.img_sound if self.sounds else panel.img_sound_off
 
 
 class PlayerDialog(pyglet.sprite.Sprite):
@@ -612,13 +645,13 @@ class PlayerDialog(pyglet.sprite.Sprite):
 
             self.is_open = True
 
-            self.old_intro_state = common.intro
-            self.old_playing_state = common.playing
+            self.old_intro_state = common.is_intro
+            self.old_playing_state = common.is_playing
             self.old_top10_state = common.top10
-            common.intro = False
-            common.playing = False
+            common.is_intro = False
+            common.is_playing = False
             common.top10 = False
-            common.dialog = True
+            common.is_dialog = True
 
             if common.player_confirmation:
                 common.player_confirmation.hide()
@@ -626,10 +659,10 @@ class PlayerDialog(pyglet.sprite.Sprite):
     def close(self, new_player_name=None):
         if self.is_open:
             self.is_open = False
-            common.intro = self.old_intro_state
-            common.playing = self.old_playing_state
+            common.is_intro = self.old_intro_state
+            common.is_playing = self.old_playing_state
             common.top10 = self.old_top10_state
-            common.dialog = False
+            common.is_dialog = False
             # Change the player name if login successful (as we use the same field to show error msg and player name)
             if new_player_name:
                 common.player.name = new_player_name
@@ -831,7 +864,7 @@ class Panel(object):
                                     self.btn_dim, self.button_settings.y + self.btn_dim
         self.button_settings.selected = False
 
-        self.button_sound = pyglet.sprite.Sprite(self.img_sound if common.rc.sounds else self.img_sound_off)
+        self.button_sound = pyglet.sprite.Sprite(self.img_sound if common.settings.sounds else self.img_sound_off)
         self.button_sound.x = self.margin + self.btn_dim
         self.button_sound.scale = self.scale
         self.button_sound.y = self.margin
@@ -1197,7 +1230,7 @@ class Sounds(object):
             self.hello = pyglet.media.StaticSource(pyglet.media.load('sounds/hello.wav', streaming=False))
 
     def play(self, panel, fx):
-        if common.rc.sounds:
+        if common.settings.sounds:
             if fx == "key":
                 self.key.play()
             if fx == "drop":

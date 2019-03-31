@@ -25,8 +25,6 @@ scores = [None, None, None, None, None, None]
 player_dialog = None
 player_confirmation = None
 
-rc = None  # RuntimeConfiguration; (to be finally replaced with pickle?)
-
 board = None
 selector = None
 cell_bitmaps = []
@@ -59,11 +57,11 @@ fx = None
 label = None
 
 # Game states
-playing = False
-intro = True
-dialog = False
+is_playing = False
+is_intro = True
+is_dialog = False
 top10 = False
-settings = False
+is_settings = False
 
 top10_content = ""
 
@@ -72,3 +70,5 @@ intro_message = None
 
 headers = {'User-Agent': 'SquarelyTheGame'}  # prevent php scripts from simple access via a browser
 message = None
+
+settings = None
