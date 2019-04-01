@@ -580,12 +580,25 @@ class SettingsDialog(object):
             cell.image = common.cell_bitmaps[cell.type]
 
     def go_btn_click(self):
-        self.password_go_btn.clicked = not self.password_go_btn.clicked
+        if self.password_go_btn.clicked:
+            print("Saving password")
+            self.hide()
+        else:
+            pswd = self.password_field.document.text
+            if len(pswd) >= 6 and not pswd == common.lang["settings_new_password"]:
+                self.password_go_btn.clicked = True
+            else:
+                self.password_field.document.text = common.lang["settings_new_password"]
+                self.window.remove_handlers(self.password_field.caret)
+                self.password_field.caret.visible = False
         self.password_go_btn.image = self.go_animation1 if self.password_go_btn.clicked else self.go_animation0
 
     def show(self):
         self.password_field.document.text = common.lang["settings_new_password"]
         self.window.remove_handlers(self.password_field.caret)
+        self.password_field.caret.visible = False
+        self.password_go_btn.clicked = False
+        self.password_go_btn.image = self.go_animation0
 
         self.old_playing = common.is_playing
         self.old_intro = common.is_intro
