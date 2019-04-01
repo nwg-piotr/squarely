@@ -459,6 +459,14 @@ class SettingsDialog(object):
         self.img_checkbox_checked = pyglet.image.load('images/checkbox-checked.png')
         img_go = pyglet.image.load('images/btn-go.png')
 
+        frames_source = image.load("images/btn-go-free.png")
+        sequence = pyglet.image.ImageGrid(frames_source, 1, 2)
+        self.go_animation0 = (pyglet.image.Animation.from_image_sequence(sequence, 0.5, True))
+
+        frames_source = image.load("images/btn-go-clicked.png")
+        sequence = pyglet.image.ImageGrid(frames_source, 1, 2)
+        self.go_animation1 = (pyglet.image.Animation.from_image_sequence(sequence, 0.5, True))
+
         self.btn_x = board.base * 5
         self.y_step = board.base / 2
         self.label_x = board.base * 3
@@ -524,14 +532,16 @@ class SettingsDialog(object):
                                                   self.play_warnings_checkbox.y + self.v_middle)
         self.play_warnings_checkbox.area = self.play_warnings_checkbox.x, self.play_warnings_checkbox.y, self.play_warnings_checkbox.x + self.play_warnings_checkbox.width, self.play_warnings_checkbox.y + self.play_warnings_checkbox.height
 
-        self.password_checkbox = pyglet.sprite.Sprite(img_go)
-        self.password_checkbox.scale = board.scale
-        self.password_checkbox.x = self.btn_x
-        self.password_checkbox.y = board.rows[0] + self.y_step * 1
-        self.password_checkbox.batch = self.batch
+        self.password_go_btn = pyglet.sprite.Sprite(self.go_animation0)
+        self.password_go_btn.scale = board.scale
+        self.password_go_btn.x = self.btn_x
+        self.password_go_btn.y = board.rows[0] + self.y_step * 1
+        self.password_go_btn.batch = self.batch
+        self.password_go_btn.area = self.password_go_btn.x, self.password_go_btn.y, self.password_go_btn.x + self.password_go_btn.width, self.password_go_btn.y + self.password_go_btn.height
+        self.password_go_btn.clicked = False
 
-        self.password_field = PassWidget(common.lang["settings_new_password"], int(board.base * 1.5), int(self.password_checkbox.y + self.password_checkbox.height // 4),
-                                     int(board.base * 3), 40 * board.scale, self.batch)
+        self.password_field = PassWidget(common.lang["settings_new_password"], int(board.base * 1.5), int(self.password_go_btn.y + self.password_go_btn.height // 4),
+                                         int(board.base * 3), 40 * board.scale, self.batch)
         self.password_field.area = self.password_field.layout.x, self.password_field.layout.y, self.password_field.layout.x + self.password_field.layout.width, self.password_field.layout.y + self.password_field.layout.height
 
         self.close_area = self.background.x + self.background.width - board.base, self.background.y + self.background.height - board.base, self.background.x + self.background.width, self.background.y + self.background.height
@@ -568,6 +578,10 @@ class SettingsDialog(object):
             common.cell_bitmaps[i] = img.get_region(i * 216, 0, 216, 216)
         for cell in common.cells_list:
             cell.image = common.cell_bitmaps[cell.type]
+
+    def go_btn_click(self):
+        self.password_go_btn.clicked = not self.password_go_btn.clicked
+        self.password_go_btn.image = self.go_animation1 if self.password_go_btn.clicked else self.go_animation0
 
     def show(self):
         self.password_field.document.text = common.lang["settings_new_password"]
@@ -647,6 +661,9 @@ class SettingsDialog(object):
             self.window.push_handlers(self.password_field.caret)
             if self.password_field.document.text == common.lang["settings_new_password"]:
                 self.password_field.document.text = ""
+
+        if self.is_in(x, y, self.password_go_btn.area):
+            self.go_btn_click()
 
         if self.is_in(x, y, self.close_area):
             self.hide()
