@@ -445,12 +445,13 @@ class TopList(pyglet.sprite.Sprite):
 
 
 class SettingsDialog(object):
-    def __init__(self, board):
+    def __init__(self, window, board):
         self.old_playing = False
         self.old_intro = False
         self.old_dialog = False
         self.old_top10 = False
 
+        self.window = window
         self.board = board
 
         img_background = pyglet.image.load('images/settings-bcg.png')
@@ -528,8 +529,10 @@ class SettingsDialog(object):
         self.password_checkbox.x = self.btn_x
         self.password_checkbox.y = board.rows[0] + self.y_step * 1
         self.password_checkbox.batch = self.batch
-        self.password_label = self.add_label(common.lang["settings_new_password"],
-                                             self.password_checkbox.y + self.v_middle)
+
+        self.password_field = PassWidget(common.lang["settings_new_password"], int(board.base * 1.5), int(self.password_checkbox.y + self.password_checkbox.height // 4),
+                                     int(board.base * 3), 40 * board.scale, self.batch)
+        self.password_field.area = self.password_field.layout.x, self.password_field.layout.y, self.password_field.layout.x + self.password_field.layout.width, self.password_field.layout.y + self.password_field.layout.height
 
         self.close_area = self.background.x + self.background.width - board.base, self.background.y + self.background.height - board.base, self.background.x + self.background.width, self.background.y + self.background.height
 
@@ -567,6 +570,9 @@ class SettingsDialog(object):
             cell.image = common.cell_bitmaps[cell.type]
 
     def show(self):
+        self.password_field.document.text = common.lang["settings_new_password"]
+        self.window.remove_handlers(self.password_field.caret)
+
         self.old_playing = common.is_playing
         self.old_intro = common.is_intro
         self.old_dialog = common.is_dialog
@@ -636,6 +642,11 @@ class SettingsDialog(object):
             common.settings.save()
             self.update_cells_bitmaps(self)
             self.refresh()
+
+        if self.is_in(x, y, self.password_field.area):
+            self.window.push_handlers(self.password_field.caret)
+            if self.password_field.document.text == common.lang["settings_new_password"]:
+                self.password_field.document.text = ""
 
         if self.is_in(x, y, self.close_area):
             self.hide()

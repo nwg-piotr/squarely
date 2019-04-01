@@ -69,12 +69,12 @@ def main():
     common.summary_batch = pyglet.graphics.Batch()
     common.summary_bar = SummaryBar(common.board, 0, 0)
 
-    common.settings_batch = pyglet.graphics.Batch()
-    settings_dialog = SettingsDialog(common.board)
-
     window = create_game_window(common.board)
     cursor_hand = window.get_system_mouse_cursor(window.CURSOR_HAND)
     cursor_default = window.get_system_mouse_cursor(window.CURSOR_DEFAULT)
+
+    common.settings_batch = pyglet.graphics.Batch()
+    settings_dialog = SettingsDialog(window, common.board)
 
     common.intro_batch = pyglet.graphics.Batch()
     intro_bcg = IntroRotator(common.board)
