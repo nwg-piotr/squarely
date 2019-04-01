@@ -552,12 +552,19 @@ class SettingsDialog(object):
                 img = pyglet.image.load("images/cells-" + str(i) + ".png").get_texture()
                 img.width = 216 * 6
                 img.height = 216
-                print("adding img")
                 previews.append(img)
                 i += 1
             else:
                 found = False
         return previews
+
+    @staticmethod
+    def update_cells_bitmaps(self):
+        img = image.load("images/cells-" + str(common.settings.cells_set) + ".png")
+        for i in range(8):
+            common.cell_bitmaps[i] = img.get_region(i * 216, 0, 216, 216)
+        for cell in common.cells_list:
+            cell.image = common.cell_bitmaps[cell.type]
 
     def show(self):
         self.old_playing = common.is_playing
@@ -627,6 +634,7 @@ class SettingsDialog(object):
                 common.settings.cells_set = 0
             self.cells_preview.image = self.previews[common.settings.cells_set]
             common.settings.save()
+            self.update_cells_bitmaps(self)
             self.refresh()
 
         if self.is_in(x, y, self.close_area):

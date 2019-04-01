@@ -383,6 +383,8 @@ def new_game():
 
     common.summary_bar.hide()
     common.is_intro = False
+    common.is_dialog = False
+    common.is_top10 = False
     common.is_playing = True
     common.summary_bar.y = 0  # To mark that it has not yet been shown since the game started (still keeps old values!)
 
