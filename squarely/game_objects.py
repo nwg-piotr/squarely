@@ -580,6 +580,7 @@ class SettingsDialog(object):
             cell.image = common.cell_bitmaps[cell.type]
 
     def go_btn_click(self):
+        self.password_field.caret.visible = True
         if self.password_go_btn.clicked:
             print("Saving password")
             self.hide()
@@ -674,6 +675,7 @@ class SettingsDialog(object):
             self.window.push_handlers(self.password_field.caret)
             if self.password_field.document.text == common.lang["settings_new_password"]:
                 self.password_field.document.text = ""
+                self.password_field.caret.visible = True
 
         if self.is_in(x, y, self.password_go_btn.area):
             self.go_btn_click()
