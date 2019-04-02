@@ -29,19 +29,19 @@ class GameBoard(object):
     def __init__(self, cells_in_row):
 
         total_cells = cells_in_row * cells_in_row
-        print("total_cells = " + str(total_cells))
+        # print("total_cells = " + str(total_cells))
 
         full_groups_capacity = cells_in_row * cells_in_row // 36
-        print("full_groups_capacity = " + str(full_groups_capacity))
+        # print("full_groups_capacity = " + str(full_groups_capacity))
 
         cells_to_fit_as_full_groups = full_groups_capacity * 36
-        print("cells_to_fit_as_full_groups = " + str(cells_to_fit_as_full_groups))
+        # print("cells_to_fit_as_full_groups = " + str(cells_to_fit_as_full_groups))
 
         cells_left = total_cells - cells_to_fit_as_full_groups
-        print("cells_left = " + str(cells_left))
+        # print("cells_left = " + str(cells_left))
 
         groups_to_repeat = int(cells_left / 3)
-        print("groups_to_repeat = " + str(groups_to_repeat))
+        # print("groups_to_repeat = " + str(groups_to_repeat))
 
         self.cell_resources = []
 
@@ -50,7 +50,7 @@ class GameBoard(object):
         for i in range(groups_to_repeat):
             self.cell_resources[i] = self.cell_resources[i] + 3
 
-        print("cell_resources = " + str(self.cell_resources) + "\n")
+        # print("cell_resources = " + str(self.cell_resources) + "\n")
 
         platform = pyglet.window.get_platform()
         display = platform.get_default_display()
@@ -94,8 +94,8 @@ class GameBoard(object):
         self.sel_2 = None
         self.sel_3 = None
 
-        print("Rows: " + str(self.rows))
-        print("Columns: " + str(self.columns) + "\n")
+        # print("Rows: " + str(self.rows))
+        # print("Columns: " + str(self.columns) + "\n")
 
         self.selection_made = False
 
@@ -146,11 +146,9 @@ class Cell(pyglet.sprite.Sprite):
 
     def mark_to_delete(self):
         self.to_delete = True
-        # self.opacity = 70
 
     def clear_to_delete(self):
         self.to_delete = False
-        # self.opacity = 255
 
 
 class Selector(pyglet.sprite.Sprite):
@@ -249,7 +247,7 @@ class SummaryBar(pyglet.sprite.Sprite):
 class RotationGroup(pyglet.sprite.Sprite):
     def __init__(self, board):
 
-        super().__init__(self.join_images(board))
+        super().__init__(self.join_images(self, board))
 
         self.image.anchor_x = self.image.width // 2
         self.image.anchor_y = self.image.height // 2
@@ -264,6 +262,7 @@ class RotationGroup(pyglet.sprite.Sprite):
 
         self.rotation = 0
 
+    @staticmethod
     def join_images(self, board):
         img0 = pyglet.image.load("images/cell-empty.png")
         img1 = pyglet.image.load("images/cell-empty.png")
@@ -400,9 +399,10 @@ class TopList(pyglet.sprite.Sprite):
             anchor_x='left', anchor_y='top', batch=self.batch)
 
     def click(self, x, y):
-        if self.is_in(x, y, self.close_area):
+        if self.is_in(self, x, y, self.close_area):
             self.hide()
 
+    @staticmethod
     def is_in(self, x, y, area):
         return area[0] < x < area[2] and area[1] < y < area[3]
 
@@ -523,7 +523,8 @@ class SettingsDialog(object):
         self.password_go_btn.area = self.password_go_btn.x, self.password_go_btn.y, self.password_go_btn.x + self.password_go_btn.width, self.password_go_btn.y + self.password_go_btn.height
         self.password_go_btn.clicked = False
 
-        self.password_field = PassWidget(common.lang["settings_new_password"], int(board.base * 1.5), int(self.password_go_btn.y + self.password_go_btn.height // 4),
+        self.password_field = PassWidget(common.lang["settings_new_password"], int(board.base * 1.5),
+                                         int(self.password_go_btn.y + self.password_go_btn.height // 4),
                                          int(board.base * 3.5), 40 * board.scale, self.batch)
         self.password_field.area = self.password_field.layout.x, self.password_field.layout.y, self.password_field.layout.x + self.password_field.layout.width, self.password_field.layout.y + self.password_field.layout.height
 
@@ -605,36 +606,37 @@ class SettingsDialog(object):
             x=self.label_x, y=y,
             anchor_x='center', anchor_y='center', batch=self.batch)
 
+    @staticmethod
     def is_in(self, x, y, area):
         return area[0] < x < area[2] and area[1] < y < area[3]
 
     def click(self, x, y):
-        if self.is_in(x, y, self.draw_bcg_checkbox.area):
+        if self.is_in(self, x, y, self.draw_bcg_checkbox.area):
             common.settings.background_draw = not common.settings.background_draw
             common.settings.save()
             self.refresh()
 
-        if self.is_in(x, y, self.rotate_bcg_checkbox.area):
+        if self.is_in(self, x, y, self.rotate_bcg_checkbox.area):
             common.settings.background_rotate = not common.settings.background_rotate
             common.settings.save()
             self.refresh()
 
-        if self.is_in(x, y, self.play_music_checkbox.area):
+        if self.is_in(self, x, y, self.play_music_checkbox.area):
             common.settings.play_music = not common.settings.play_music
             common.settings.save()
             self.refresh()
 
-        if self.is_in(x, y, self.play_fx_checkbox.area):
+        if self.is_in(self, x, y, self.play_fx_checkbox.area):
             common.settings.play_fx = not common.settings.play_fx
             common.settings.save()
             self.refresh()
 
-        if self.is_in(x, y, self.play_warnings_checkbox.area):
+        if self.is_in(self, x, y, self.play_warnings_checkbox.area):
             common.settings.play_warnings = not common.settings.play_warnings
             common.settings.save()
             self.refresh()
 
-        if self.is_in(x, y, self.cells_preview.area):
+        if self.is_in(self, x, y, self.cells_preview.area):
             if common.settings.cells_set < len(self.previews) - 1:
                 common.settings.cells_set += 1
             else:
@@ -644,16 +646,16 @@ class SettingsDialog(object):
             self.update_cells_bitmaps(self)
             self.refresh()
 
-        if self.is_in(x, y, self.password_field.area) and common.player.name != "Anonymous":
+        if self.is_in(self, x, y, self.password_field.area) and common.player.name != "Anonymous":
             self.window.push_handlers(self.password_field.caret)
             if self.password_field.document.text == common.lang["settings_new_password"]:
                 self.password_field.document.text = ""
                 self.password_field.caret.visible = True
 
-        if self.is_in(x, y, self.password_go_btn.area):
+        if self.is_in(self, x, y, self.password_go_btn.area):
             self.go_btn_click()
 
-        if self.is_in(x, y, self.close_area):
+        if self.is_in(self, x, y, self.close_area):
             self.hide()
 
     def refresh(self):
@@ -844,66 +846,68 @@ class PlayerDialog(pyglet.sprite.Sprite):
                 common.player.online = common.ONLINE
         common.game_state.restore()
 
+    @staticmethod
     def is_in(self, x, y, area):
         return area[0] < x < area[2] and area[1] < y < area[3]
 
     def refresh_label(self, x, y):
-        if self.is_in(x, y, self.area_add):
+        if self.is_in(self, x, y, self.area_add):
             self.label.text = common.lang["player_add"]
-        elif self.is_in(x, y, self.area_delete):
+        elif self.is_in(self, x, y, self.area_delete):
             self.label.text = common.lang["player_delete"]
-        elif self.is_in(x, y, self.area_login):
+        elif self.is_in(self, x, y, self.area_login):
             self.label.text = common.lang["player_login"]
-        elif self.is_in(x, y, self.area_logout):
+        elif self.is_in(self, x, y, self.area_logout):
             self.label.text = common.lang["player_logout"]
-        elif self.is_in(x, y, self.area_password):
+        elif self.is_in(self, x, y, self.area_password):
             self.label.text = common.lang["player_password"]
-        elif self.is_in(x, y, self.area_name):
+        elif self.is_in(self, x, y, self.area_name):
             self.label.text = common.lang["player_name"]
-        elif self.is_in(x, y, self.area_close):
+        elif self.is_in(self, x, y, self.area_close):
             self.label.text = common.lang["close"]
         else:
             self.label.text = self.message
 
     def click(self, panel, x, y):
-        if self.is_in(x, y, self.area_close):
+        if self.is_in(self, x, y, self.area_close):
             self.close()
 
-        elif self.is_in(x, y, self.area_name):
-            self.close_confirmation()
+        elif self.is_in(self, x, y, self.area_name):
+            self.close_confirmation(self)
             self.pass_field.caret.visible = False
             self.name_field.caret.visible = True
             self.window.push_handlers(self.name_field.caret)  # set focus
 
-        elif self.is_in(x, y, self.area_password):
-            self.close_confirmation()
+        elif self.is_in(self, x, y, self.area_password):
+            self.close_confirmation(self)
             self.name_field.caret.visible = False
             self.pass_field.caret.visible = True
             self.window.push_handlers(self.pass_field.caret)
 
-        elif self.is_in(x, y, self.area_add):
-            self.close_confirmation()
+        elif self.is_in(self, x, y, self.area_add):
+            self.close_confirmation(self)
             self.new_player()
 
-        elif self.is_in(x, y, self.area_delete):
+        elif self.is_in(self, x, y, self.area_delete):
             if not common.player_confirmation.visible:
                 common.player_confirmation.show()
             else:
-                self.close_confirmation()
+                self.close_confirmation(self)
                 self.delete_player(panel)
 
-        elif self.is_in(x, y, self.area_login):
-            self.close_confirmation()
+        elif self.is_in(self, x, y, self.area_login):
+            self.close_confirmation(self)
             self.login_player()
 
-        elif self.is_in(x, y, self.area_logout):
-            self.close_confirmation()
+        elif self.is_in(self, x, y, self.area_logout):
+            self.close_confirmation(self)
             self.logout_player(panel)
 
         else:
-            self.close_confirmation()
+            self.close_confirmation(self)
             self.set_message(common.lang["player_account"])
 
+    @staticmethod
     def close_confirmation(self):
         if common.player_confirmation and common.player_confirmation.visible:
             common.player_confirmation.hide()
@@ -1280,6 +1284,7 @@ class Panel(object):
         elif which == 5:
             self.display_l5.color = (255, 100, 0)
 
+    @staticmethod
     def set_selection(self, button, value):
         if value:
             button.selected = True
@@ -1288,22 +1293,23 @@ class Panel(object):
             button.selected = value
             button.color = 255, 255, 255
 
+    @staticmethod
     def is_selected(self, x, y, area):
         return area[0] < x < area[2] and area[1] < y < area[3]
 
     def check_selection(self, x, y):
         # Game control buttons
-        self.set_selection(self.button_sound, self.is_selected(x, y, self.button_sound.area))
-        self.set_selection(self.button_settings, self.is_selected(x, y, self.button_settings.area))
-        self.set_selection(self.button_undo, self.is_selected(x, y, self.button_undo.area))
-        self.set_selection(self.button_down, self.is_selected(x, y, self.button_down.area))
-        self.set_selection(self.button_up, self.is_selected(x, y, self.button_up.area))
-        self.set_selection(self.button_start, self.is_selected(x, y, self.button_start.area))
+        self.set_selection(self, self.button_sound, self.is_selected(self, x, y, self.button_sound.area))
+        self.set_selection(self, self.button_settings, self.is_selected(self, x, y, self.button_settings.area))
+        self.set_selection(self, self.button_undo, self.is_selected(self, x, y, self.button_undo.area))
+        self.set_selection(self, self.button_down, self.is_selected(self, x, y, self.button_down.area))
+        self.set_selection(self, self.button_up, self.is_selected(self, x, y, self.button_up.area))
+        self.set_selection(self, self.button_start, self.is_selected(self, x, y, self.button_start.area))
         # Player account buttons
-        self.set_selection(self.button_name, self.is_selected(x, y, self.button_name.area))
-        self.set_selection(self.button_cloud, self.is_selected(x, y, self.button_cloud.area))
-        self.set_selection(self.button_top10, self.is_selected(x, y, self.button_top10.area))
-        self.set_selection(self.button_website, self.is_selected(x, y, self.button_website.area))
+        self.set_selection(self, self.button_name, self.is_selected(self, x, y, self.button_name.area))
+        self.set_selection(self, self.button_cloud, self.is_selected(self, x, y, self.button_cloud.area))
+        self.set_selection(self, self.button_top10, self.is_selected(self, x, y, self.button_top10.area))
+        self.set_selection(self, self.button_website, self.is_selected(self, x, y, self.button_website.area))
 
         if self.button_sound.selected:
             self.label.text = common.lang["panel_sounds"]

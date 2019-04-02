@@ -73,7 +73,7 @@ def main():
     The player_load() function returns True if player exists: set the hello message accordingly.
     """
     hello_msg = common.lang["intro_wb"] if player_load() else common.lang["intro_welcome"]
-    print(common.player.name, common.player.scores)
+    # print(common.player.name, common.player.scores)
 
     """The GameBoard class calculates and holds many values used by other classes and MUST be instantiated first"""
     common.board = GameBoard(6 + common.level * 3)  # 6 + n * 3
