@@ -26,7 +26,17 @@ def main():
 
     for i in range(1, len(sys.argv)):
         if sys.argv[i] == "-lang":
-            ov_lang = sys.argv[i + 1]
+            try:
+                ov_lang = sys.argv[i + 1]
+            except IndexError:
+                print("Missing argument: locale language code\n")
+
+        if sys.argv[i] == "-dev":
+            try:
+                common.dev_mode = hashlib.md5(sys.argv[i + 1].encode('utf-8')).hexdigest() == '6adb36112738e6a2b462106043c60351'
+                print("dev_mode", common.dev_mode)
+            except IndexError:
+                print("Missing argument\n")
 
     pyglet.options['audio'] = ('openal', 'pulse', 'silent')
 

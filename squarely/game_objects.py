@@ -1334,7 +1334,7 @@ class Panel(object):
             self.label.text = ""
 
     def level_up(self):
-        if self.selected_level < common.level_max and common.player.scores[self.selected_level]:
+        if self.selected_level < common.level_max and common.player.scores[self.selected_level] or common.dev_mode:
             self.selected_level += 1
             txt = str(6 + self.selected_level * 3)
             self.border_size_txt = txt + "x" + txt
