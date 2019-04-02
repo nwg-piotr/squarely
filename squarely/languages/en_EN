@@ -41,6 +41,7 @@ settings = Settings
 settings_draw_background = Draw background
 settings_rotate_background = Rotate background in-game
 settings_play_music = Play music
+setting_music_unavailable = Can't play music, need avbin
 settings_play_jingle = Play FX
 settings_play_warnings = Play warnings
 settings_new_password = new password (6+ chars)

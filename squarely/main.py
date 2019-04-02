@@ -28,6 +28,7 @@ def main():
         if sys.argv[i] == "-lang":
             try:
                 ov_lang = sys.argv[i + 1]
+                print("Locale forced: " + ov_lang)
             except IndexError:
                 print("Missing argument: locale language code\n")
 

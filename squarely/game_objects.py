@@ -486,12 +486,15 @@ class SettingsDialog(object):
         self.rotate_bcg_checkbox.area = self.rotate_bcg_checkbox.x, self.rotate_bcg_checkbox.y, self.rotate_bcg_checkbox.x + self.rotate_bcg_checkbox.width, self.rotate_bcg_checkbox.y + self.rotate_bcg_checkbox.height
 
         self.play_music_checkbox = pyglet.sprite.Sprite(
-            self.img_checkbox_checked if common.settings.play_music else self.img_checkbox_unchecked)
+            self.img_checkbox_checked if common.settings.play_music and common.avbin else self.img_checkbox_unchecked)
+        if not common.avbin:
+            self.play_music_checkbox.opacity = 50
         self.play_music_checkbox.scale = board.scale
         self.play_music_checkbox.x = self.btn_x
         self.play_music_checkbox.y = board.rows[0] + self.y_step * 5
         self.play_music_checkbox.batch = self.batch
-        self.play_music_label = self.add_label(common.lang["settings_play_music"],
+        lbl = common.lang["settings_play_music"] if common.avbin else common.lang["setting_music_unavailable"]
+        self.play_music_label = self.add_label(lbl,
                                                self.play_music_checkbox.y + self.v_middle)
         self.play_music_checkbox.area = self.play_music_checkbox.x, self.play_music_checkbox.y, self.play_music_checkbox.x + self.play_music_checkbox.width, self.play_music_checkbox.y + self.play_music_checkbox.height
 
@@ -621,7 +624,7 @@ class SettingsDialog(object):
             common.settings.save()
             self.refresh()
 
-        if self.is_in(self, x, y, self.play_music_checkbox.area):
+        if self.is_in(self, x, y, self.play_music_checkbox.area) and common.avbin:
             common.settings.play_music = not common.settings.play_music
             common.settings.save()
             self.refresh()
@@ -1406,7 +1409,8 @@ class Sounds(object):
             self.hello = pyglet.media.StaticSource(pyglet.media.load('sounds/hello.ogg', streaming=False))
             common.avbin = True
         except:
-            print("The avbin library not installed or doesn't work: soundtrack turned off :(")
+            print("avbin library missing or doesn't work, music turned off\n")
+            common.settings.play_music = False
             self.hello = pyglet.media.StaticSource(pyglet.media.load('sounds/hello.wav', streaming=False))
 
     def play(self, panel, fx):

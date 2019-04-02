@@ -41,6 +41,7 @@ settings = Ustawienia
 settings_draw_background = Rysuj tło
 settings_rotate_background = Obracaj tło podczas gry
 settings_play_music = Odtwarzaj muzykę
+setting_music_unavailable = Muzyka niedostępna, brak avbin
 settings_play_jingle = Odtwarzaj efekty
 settings_play_warnings = Odtwarzaj ostrzeżenia
 settings_new_password = nowe hasło (6+ znaków)
