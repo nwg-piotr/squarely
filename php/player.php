@@ -20,6 +20,7 @@
     $ps4 = $_GET['ps4'];
     $ps5 = $_GET['ps5'];
     $plimit = $_GET['plimit'];
+    $pnewpass = $_GET['pnewpass'];
 
     if ($action != 'display') {
         if ($pname == "" or $ppswd == "") {
@@ -268,6 +269,46 @@
 
 		echo $response;
 	
+	} else if($action == 'password') {
+
+   	    if($agent != $vagent) {
+			die("access_denied");
+   	    }
+
+		// Check if user exists and password ok
+        $sql = "SELECT * FROM players WHERE pname = '$pname' AND ppswd = '$ppswd'";
+   	    $result = mysql_query( $sql, $conn );
+
+   	    if (mysql_num_rows($result) > 0) {
+
+            // player & password ok, set new password
+            $sql = "UPDATE players SET ppswd = '$pnewpass' WHERE pname = '$pname' AND ppswd = '$ppswd'";
+            $res = mysql_query( $sql, $conn );
+
+            if($result) {
+
+                echo "password_changed";
+
+            } else {
+
+                echo "password_unchanged";
+            }
+
+        } else {
+
+            // Check if at least the user exists
+            $sql = "SELECT * FROM players WHERE pname = '$pname'";
+            $result = mysql_query( $sql, $conn );
+
+            if (mysql_num_rows($result) > 0) {
+                // User exist, wrong password
+                die("wrong_pswd");
+            } else {
+                // User not found
+                die("no_such_player");
+            }
+        }
+
 	} else {
 		echo "action_unknown";
 	}

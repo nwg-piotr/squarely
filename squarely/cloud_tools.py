@@ -135,6 +135,30 @@ def top_ten_result(result, password=None):
         common.top10_content = txt
 
 
+def player_password(name, password, new_password):
+    common.player.online = common.SYNCING
+    url = 'http://nwg.pl/puzzle/player.php?action=password&pname=' + name + '&ppswd=' + password + '&pnewpass=' + new_password
+    #print(url)
+    if internet_on():
+        async_request('get', url, headers=common.headers, pwd=new_password, callback=lambda r, p: password_result(r, p))
+    else:
+        common.player.online = common.OFFLINE
+
+
+def password_result(result, new_password):
+    txt = result.content.decode("utf-8")
+    print(txt)
+
+    if txt.startswith('password_changed'):
+        common.player.password = new_password
+
+        with open(common.player_filename, 'wb') as output:
+            pickle.dump(common.player, output, pickle.HIGHEST_PROTOCOL)
+
+        if common.settings_dialog.is_open:
+            common.settings_dialog.hide()
+
+
 def player_login(name, password):
     common.player.online = common.SYNCING
     url = 'http://nwg.pl/puzzle/player.php?action=login&pname=' + name + '&ppswd=' + password

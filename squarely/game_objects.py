@@ -18,7 +18,7 @@ import common
 from text_tools import *
 import hashlib
 import pickle
-from cloud_tools import player_create, player_delete, player_login
+from cloud_tools import player_create, player_delete, player_login, player_password
 
 
 class GameBoard(object):
@@ -437,7 +437,6 @@ class SettingsDialog(object):
         img_background = pyglet.image.load('images/settings-bcg.png')
         self.img_checkbox_unchecked = pyglet.image.load('images/checkbox-unchecked.png')
         self.img_checkbox_checked = pyglet.image.load('images/checkbox-checked.png')
-        img_go = pyglet.image.load('images/btn-go.png')
 
         frames_source = image.load("images/btn-go-free.png")
         sequence = pyglet.image.ImageGrid(frames_source, 1, 2)
@@ -446,6 +445,10 @@ class SettingsDialog(object):
         frames_source = image.load("images/btn-go-clicked.png")
         sequence = pyglet.image.ImageGrid(frames_source, 1, 2)
         self.go_animation1 = (pyglet.image.Animation.from_image_sequence(sequence, 0.5, True))
+
+        frames_source = image.load("images/btn-go-sync.png")
+        sequence = pyglet.image.ImageGrid(frames_source, 1, 2)
+        self.go_animation2 = (pyglet.image.Animation.from_image_sequence(sequence, 0.5, True))
 
         self.btn_x = board.base * 5
         self.y_step = board.base / 2
@@ -562,17 +565,19 @@ class SettingsDialog(object):
     def go_btn_click(self):
         self.password_field.caret.visible = True
         if self.password_go_btn.clicked:
-            print("Saving password")
-            self.hide()
+            self.password_go_btn.image = self.go_animation2
+            pswd = self.password_field.document.text
+            player_password(common.player.name, common.player.password, hashlib.md5(pswd.encode('utf-8')).hexdigest())
         else:
             pswd = self.password_field.document.text
             if len(pswd) >= 6 and not pswd == common.lang["settings_new_password"]:
                 self.password_go_btn.clicked = True
+                self.password_go_btn.image = self.go_animation1
             else:
                 self.password_field.document.text = common.lang["settings_new_password"]
                 self.window.remove_handlers(self.password_field.caret)
                 self.password_field.caret.visible = False
-        self.password_go_btn.image = self.go_animation1 if self.password_go_btn.clicked else self.go_animation0
+                self.password_go_btn.image = self.go_animation0
 
     def show(self):
         self.password_field.document.text = common.lang["settings_new_password"]
