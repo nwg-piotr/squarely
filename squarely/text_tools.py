@@ -66,6 +66,7 @@ class PassWidget(object):
 
         self.layout.x = x
         self.layout.y = y
+        self.area = None
 
         # Rectangular outline
         #pad = 10

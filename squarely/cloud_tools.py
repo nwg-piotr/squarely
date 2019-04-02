@@ -178,7 +178,8 @@ def login_result(result, password):
         if synchronize:
             player_sync(name, password)
 
-        common.player_dialog.close(name)
+        if common.player_dialog.is_open:
+            common.player_dialog.close(name)
 
     else:
         common.player.online = common.OFFLINE

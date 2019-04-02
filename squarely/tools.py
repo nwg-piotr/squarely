@@ -209,7 +209,7 @@ def mark_and_delete(board, panel):
             common.summary_bar.show()
 
         if cells_left == 0:
-            common.is_playing = False
+            common.game_state.playing = False
             player_save_results(panel)
             player_load()
 
@@ -427,7 +427,7 @@ def player_save_results(panel):
         common.player.scores[common.level] = common.scores[common.level]
         player_save()
 
-    common.is_intro = True
+    common.game_state.intro = True
     if unlocked:
         if unlocked < 7:
             common.fx.play(panel, "unlocked")

@@ -38,6 +38,8 @@ def main():
     common.settings = Settings()
     common.settings.load()
 
+    common.game_state = GameState()
+
     """Let's preload English dictionary and overwrite with localized values if found"""
     common.lang = Language('en_EN')
     """Running with LC_ALL=C will return (None, None)"""
@@ -74,7 +76,7 @@ def main():
     cursor_default = window.get_system_mouse_cursor(window.CURSOR_DEFAULT)
 
     common.settings_batch = pyglet.graphics.Batch()
-    settings_dialog = SettingsDialog(window, common.board)
+    common.settings_dialog = SettingsDialog(window, common.board)
 
     common.intro_batch = pyglet.graphics.Batch()
     intro_bcg = IntroRotator(common.board)
@@ -100,7 +102,7 @@ def main():
     common.top_list_batch = pyglet.graphics.Batch()
     common.top_list = TopList(common.board)
 
-    if common.is_intro:
+    if common.game_state.intro:
         intro_hello(hello_msg)
         common.fx.play(panel, "hello")
 
@@ -112,7 +114,7 @@ def main():
         if common.label is not None:
             common.label.draw()
 
-        if common.is_playing:
+        if common.game_state.playing:
             if common.settings.background_draw:
                 intro_bcg.draw()
 
@@ -129,28 +131,28 @@ def main():
             if common.summary_bar is not None and common.summary_bar.visible:
                 common.summary_bar.draw()
 
-        elif common.is_intro:
+        elif common.game_state.intro:
             common.intro_batch.draw()
             if common.intro_sprite is not None:
                 common.intro_sprite.draw()
             if common.intro_message is not None:
                 common.intro_message.draw()
 
-        elif common.is_dialog or common.is_settings:
+        elif common.game_state.account or common.game_state.settings:
             if common.settings.background_draw:
                 intro_bcg.draw()
 
-        if common.is_dialog:
+        if common.game_state.account:
             common.player_dialog_batch.draw()
             if common.player_confirmation is not None and common.player_confirmation.visible:
                 common.player_confirmation.draw()
 
-        if common.top10:
+        if common.game_state.top10:
             if common.settings.background_draw:
                 intro_bcg.draw()
             common.top_list_batch.draw()
 
-        if common.is_settings:
+        if common.game_state.settings:
             common.settings_batch.draw()
 
     @window.event
@@ -222,7 +224,7 @@ def main():
     def on_mouse_release(x, y, button, modifiers):
         common.cells_deleted = False
 
-        if common.cursor_in_board and common.is_playing:
+        if common.cursor_in_board and common.game_state.playing:
             if common.board.selection_made:
                 if button == pyglet.window.mouse.LEFT:
                     common.fx.play(panel, "rotate")
@@ -266,10 +268,10 @@ def main():
 
             elif panel.button_settings.selected:
                 common.fx.play(panel, "key")
-                if not settings_dialog.visible:
-                    settings_dialog.show()
+                if not common.settings_dialog.visible:
+                    common.settings_dialog.show()
                 else:
-                    settings_dialog.hide()
+                    common.settings_dialog.hide()
 
             elif panel.button_sound.selected:
                 common.fx.play(panel, "key")
@@ -300,8 +302,8 @@ def main():
         if common.top_list.is_open:
             common.top_list.click(x, y)
 
-        if settings_dialog.is_open:
-            settings_dialog.click(x, y)
+        if common.settings_dialog.is_open:
+            common.settings_dialog.click(x, y)
 
     @window.event
     def on_mouse_scroll(x, y, scroll_x, scroll_y):
@@ -315,7 +317,7 @@ def main():
                 common.summary_bar.show()
 
     def update(dt):
-        if common.is_intro or common.is_dialog or common.top10 or common.is_settings or (common.is_playing and common.settings.background_draw and common.settings.background_rotate):
+        if common.game_state.intro or common.game_state.account or common.game_state.top10 or common.game_state.settings or (common.game_state.playing and common.settings.background_draw and common.settings.background_rotate):
             # We won't say "Welcome back" to anonymous players! todo should it be here?
             if isinstance(common.intro_sprite, HelloAnimation):  # Are we still in the Hello animation?
                 common.intro_message.text = common.lang["intro_wb"] if common.player.name != 'Anonymous' else \
@@ -382,10 +384,10 @@ def new_game():
     common.scores[common.level] = 0
 
     common.summary_bar.hide()
-    common.is_intro = False
-    common.is_dialog = False
-    common.is_top10 = False
-    common.is_playing = True
+    common.game_state.intro = False
+    common.game_state.account = False
+    common.game_state.top10 = False
+    common.game_state.playing = True
     common.summary_bar.y = 0  # To mark that it has not yet been shown since the game started (still keeps old values!)
 
 

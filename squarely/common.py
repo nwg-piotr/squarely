@@ -24,6 +24,7 @@ scores = [None, None, None, None, None, None]
 
 player_dialog = None
 player_confirmation = None
+settings_dialog = None
 
 board = None
 selector = None
@@ -57,11 +58,7 @@ fx = None
 label = None
 
 # Game states
-is_playing = False
-is_intro = True
-is_dialog = False
-top10 = False
-is_settings = False
+game_state = None
 
 top10_content = ""
 

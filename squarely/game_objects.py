@@ -384,11 +384,6 @@ class TopList(pyglet.sprite.Sprite):
         self.visible = False
         self.batch = common.top_list_batch
 
-        self.old_playing = False
-        self.old_intro = False
-        self.old_dialog = False
-        self.old_settings = False
-
         self.is_open = False
 
         self.close_area = self.x + self.width - board.base, self.y + self.height - board.base, self.x + self.width, self.y + self.height
@@ -415,30 +410,15 @@ class TopList(pyglet.sprite.Sprite):
         self.label.text = text
 
     def show(self):
-        if common.player_dialog.is_open:
-            common.player_dialog.close()
+        common.game_state.set_top10()
 
         self.label.text = common.top10_content
 
-        self.old_playing = common.is_playing
-        self.old_intro = common.is_intro
-        self.old_dialog = common.is_dialog
-        self.old_settings = common.is_settings
-        common.is_playing = False
-        common.is_intro = False
-        common.is_dialog = False
-        common.is_settings = False
-
         self.visible = True
         self.is_open = True
-        common.top10 = True
 
     def hide(self):
-        common.is_playing = self.old_playing
-        common.is_intro = self.old_intro
-        common.is_dialog = self.old_dialog
-        common.is_settings = self.old_settings
-        common.top10 = False
+        common.game_state.restore()
 
         self.visible = False
         self.is_open = False
@@ -541,7 +521,7 @@ class SettingsDialog(object):
         self.password_go_btn.clicked = False
 
         self.password_field = PassWidget(common.lang["settings_new_password"], int(board.base * 1.5), int(self.password_go_btn.y + self.password_go_btn.height // 4),
-                                         int(board.base * 3), 40 * board.scale, self.batch)
+                                         int(board.base * 3.5), 40 * board.scale, self.batch)
         self.password_field.area = self.password_field.layout.x, self.password_field.layout.y, self.password_field.layout.x + self.password_field.layout.width, self.password_field.layout.y + self.password_field.layout.height
 
         self.close_area = self.background.x + self.background.width - board.base, self.background.y + self.background.height - board.base, self.background.x + self.background.width, self.background.y + self.background.height
@@ -601,25 +581,13 @@ class SettingsDialog(object):
         self.password_go_btn.clicked = False
         self.password_go_btn.image = self.go_animation0
 
-        self.old_playing = common.is_playing
-        self.old_intro = common.is_intro
-        self.old_dialog = common.is_dialog
-        self.old_top10 = common.top10
-        common.is_playing = False
-        common.is_intro = False
-        common.is_dialog = False
-        common.top10 = False
-        common.is_settings = True
+        common.game_state.set_settings()
 
         self.visible = True
         self.is_open = True
 
     def hide(self):
-        common.is_playing = self.old_playing
-        common.is_intro = self.old_intro
-        common.is_dialog = self.old_dialog
-        common.top10 = self.old_top10
-        common.is_settings = False
+        common.game_state.restore()
         self.visible = False
         self.is_open = False
 
@@ -727,6 +695,77 @@ class Settings(object):
         self.save()
 
 
+class GameState(object):
+    def __init__(self):
+        self.playing = False
+        self.intro = True
+        self.account = False
+        self.top10 = False
+        self.settings = False
+
+        self.old_playing = False
+        self.old_intro = False
+        self.old_account = False
+        self.old_top10 = False
+        self.old_settings = False
+
+    def save(self):
+        self.old_playing = self.playing
+        self.old_intro = self.intro
+        self.old_account = self.account
+        self.old_top10 = self.top10
+        self.old_settings = self.settings
+
+    def restore(self):
+        self.playing = self.old_playing
+        self.intro = self.old_intro
+        self.account = self.old_account
+        self.top10 = self.old_top10
+        self.settings = self.old_settings
+
+    def set_account(self):
+        if common.settings_dialog.is_open:
+            common.settings_dialog.hide()
+        if common.top_list.visible:
+            common.top_list.hide()
+
+        self.top10 = False
+        self.settings = False
+        self.save()
+
+        self.account = True
+        self.playing = False
+        self.intro = False
+
+    def set_top10(self):
+        if common.player_dialog.is_open:
+            common.player_dialog.close()
+        if common.settings_dialog.is_open:
+            common.settings_dialog.hide()
+
+        self.account = False
+        self.settings = False
+        self.save()
+
+        self.top10 = True
+        self.playing = False
+        self.intro = False
+
+    def set_settings(self):
+        if common.top_list.is_open:
+            common.top_list.hide()
+        if common.player_dialog.is_open:
+            common.player_dialog.close()
+
+        self.account = False
+        self.top10 = False
+        self.save()
+
+        self.settings = True
+        self.playing = False
+        self.intro = False
+
+
 class PlayerDialog(pyglet.sprite.Sprite):
     def __init__(self, window, board):
         super().__init__(image.load("images/player-dialog.png"))
@@ -759,7 +798,7 @@ class PlayerDialog(pyglet.sprite.Sprite):
             common.lang["player_account"],
             font_name='DejaVu Sans Mono',
             color=(255, 255, 255, 255),
-            font_size=int(12 * self.scale),
+            font_size=int(16 * self.scale),
             x=self.base_square * 3, y=self.y - self.base_square // 2,
             anchor_x='center', anchor_y='center', batch=self.batch)
 
@@ -776,24 +815,15 @@ class PlayerDialog(pyglet.sprite.Sprite):
 
     def open(self):
         if not self.is_open:
-            if common.top_list.is_open:
-                common.top_list.hide()
+
             self.old_player_name = common.player.name
             self.name_field.update('')
-            pswd = common.player.password if common.player.password is not None else ""
             self.pass_field.update('')
 
             self.set_message(common.lang["player_account"])
 
             self.is_open = True
-
-            self.old_intro_state = common.is_intro
-            self.old_playing_state = common.is_playing
-            self.old_top10_state = common.top10
-            common.is_intro = False
-            common.is_playing = False
-            common.top10 = False
-            common.is_dialog = True
+            common.game_state.set_account()
 
             if common.player_confirmation:
                 common.player_confirmation.hide()
@@ -801,16 +831,13 @@ class PlayerDialog(pyglet.sprite.Sprite):
     def close(self, new_player_name=None):
         if self.is_open:
             self.is_open = False
-            common.is_intro = self.old_intro_state
-            common.is_playing = self.old_playing_state
-            common.top10 = self.old_top10_state
-            common.is_dialog = False
             # Change the player name if login successful (as we use the same field to show error msg and player name)
             if new_player_name:
                 common.player.name = new_player_name
             else:
                 common.player.name = self.old_player_name
                 common.player.online = common.ONLINE
+        common.game_state.restore()
 
     def is_in(self, x, y, area):
         return area[0] < x < area[2] and area[1] < y < area[3]
