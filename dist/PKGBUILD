@@ -13,8 +13,8 @@ source=("https://github.com/nwg-piotr/squarely/raw/master/dist/squarely-0.1.tar.
         "https://github.com/nwg-piotr/squarely/raw/master/dist/squarely.svg"
         "https://github.com/nwg-piotr/squarely/raw/master/dist/squarely.desktop")
 
-md5sums=('6f2d84aacb50bc5542f759dcdf4be2fa'
-         'd01226f9182bde2fe012b59e001a00ab'
+md5sums=('b369aab2a4f7e5d4a11d5c9d41109e95'
+         '8a910f0a5ecf156cc6856bd9b636143d'
          '88a50e4643759356702b5a96e0635edc'
          '795bf57c86be1a38812ec7b4716d8729')
 
