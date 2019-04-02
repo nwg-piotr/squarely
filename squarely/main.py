@@ -122,7 +122,7 @@ def main():
         window.clear()
         panel.draw()
 
-        if common.label is not None:
+        if common.fps and common.label is not None:
             common.label.draw()
 
         if common.game_state.playing:
@@ -326,6 +326,8 @@ def main():
         if symbol == key.H:
             if common.summary_bar is not None:
                 common.summary_bar.show()
+        if symbol == key.F:
+            common.fps = not common.fps
 
     def update(dt):
         if common.game_state.intro or common.game_state.account or common.game_state.top10 or common.game_state.settings or (common.game_state.playing and common.settings.background_draw and common.settings.background_rotate):
@@ -395,6 +397,14 @@ def new_game():
     common.scores[common.level] = 0
 
     common.summary_bar.hide()
+
+    if common.settings_dialog.is_open:
+        common.settings_dialog.hide()
+    if common.top_list.visible:
+        common.top_list.hide()
+    if common.player_dialog.is_open:
+        common.player_dialog.close()
+
     common.game_state.intro = False
     common.game_state.account = False
     common.game_state.top10 = False

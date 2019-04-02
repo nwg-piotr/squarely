@@ -15,6 +15,7 @@ SYNCING = 1
 ONLINE = 2
 
 dev_mode = False
+fps = False
 
 lang = None  # language dictionary
 avbin = False  # being set True if playing intro sound in ogg format does not crash

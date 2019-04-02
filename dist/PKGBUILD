@@ -8,15 +8,15 @@ url="https://github.com/nwg-piotr/squarely"
 license=('GPL3')
 depends=('python>=3.6' 'python-setuptools' 'python-pyglet' 'python-requests' )
 optdepends=('avbin7: for compressed sound playback')
-source=("https://github.com/nwg-piotr/obhud/raw/master/dist/obhud-0.2.1.tar.gz"
-        "https://github.com/nwg-piotr/obhud/raw/master/dist/squarely"
-        "https://github.com/nwg-piotr/obhud/raw/master/dist/squarely.svg"
-        "https://github.com/nwg-piotr/obhud/raw/master/dist/squarely.desktop")
+source=("https://github.com/nwg-piotr/squarely/raw/master/dist/squarely-0.1.tar.gz"
+        "https://github.com/nwg-piotr/squarely/raw/master/dist/squarely"
+        "https://github.com/nwg-piotr/squarely/raw/master/dist/squarely.svg"
+        "https://github.com/nwg-piotr/squarely/raw/master/dist/squarely.desktop")
 
-md5sums=('4f55d17214ca1da63649df51f392e166'
-         '89995467e1d46692720d5331b8d444ac'
-         '8f3afd928dd1cdbfa5252cf614e392a4'
-         '6c9b537c6f32d3047a2b691d8ef600a7')
+md5sums=('6f2d84aacb50bc5542f759dcdf4be2fa'
+         'd01226f9182bde2fe012b59e001a00ab'
+         '88a50e4643759356702b5a96e0635edc'
+         '795bf57c86be1a38812ec7b4716d8729')
 
 package() {
   install -D -m 755 squarely \
@@ -24,7 +24,7 @@ package() {
   install -D -m 755 squarely.desktop \
  	 "$pkgdir"/usr/share/applications/squarely.desktop
   install -D -m 644 squarely.svg \
- 	 "$pkgdir"/usr/share/one-more-cheese/squarely.svg
+ 	 "$pkgdir"/usr/share/squarely/squarely.svg
   cd "$srcdir/$pkgname-$pkgver"
   python setup.py install --root="$pkgdir/" --optimize=1
 }
