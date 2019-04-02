@@ -30,7 +30,7 @@ def main():
                 ov_lang = sys.argv[i + 1]
                 print("Locale forced: " + ov_lang)
             except IndexError:
-                print("Missing argument: locale language code\n")
+                print("Missing argument: locale language code")
 
         if sys.argv[i] == "-dev":
             try:
@@ -115,7 +115,7 @@ def main():
 
     if common.game_state.intro:
         intro_hello(hello_msg)
-        common.fx.play(panel, "hello")
+        common.fx.play("hello")
 
     @window.event
     def on_draw():
@@ -238,7 +238,7 @@ def main():
         if common.cursor_in_board and common.game_state.playing:
             if common.board.selection_made:
                 if button == pyglet.window.mouse.LEFT:
-                    common.fx.play(panel, "rotate")
+                    common.fx.play("rotate")
                     backup(common.board)
                     common.rotation_group = RotationGroup(common.board)
                     common.rotation_direction = "left"
@@ -246,7 +246,7 @@ def main():
                     common.board.selection_made = False
 
                 elif button == pyglet.window.mouse.RIGHT:
-                    common.fx.play(panel, "rotate")
+                    common.fx.play("rotate")
                     backup(common.board)
                     common.rotation_group = RotationGroup(common.board)
                     common.rotation_direction = "right"
@@ -260,32 +260,32 @@ def main():
                 if common.top_list.is_open:
                     common.top_list.hide()
                 common.level = panel.selected_level
-                common.fx.play(panel, "start")
+                common.fx.play("start")
                 new_game()
                 mark_and_delete(common.board, panel)
 
             elif panel.button_undo.selected:
-                common.fx.play(panel, "undo")
+                common.fx.play("undo")
                 restore(common.board)
 
             elif panel.button_up.selected:
-                common.fx.play(panel, "key")
+                common.fx.play("key")
                 panel.level_up()
 
             elif panel.button_down.selected:
                 if panel.selected_level > 0:
-                    common.fx.play(panel, "key")
+                    common.fx.play("key")
                     panel.level_down()
 
             elif panel.button_settings.selected:
-                common.fx.play(panel, "key")
+                common.fx.play("key")
                 if not common.settings_dialog.visible:
                     common.settings_dialog.show()
                 else:
                     common.settings_dialog.hide()
 
             elif panel.button_sound.selected:
-                common.fx.play(panel, "key")
+                common.fx.play("key")
                 common.settings.switch_muted(panel)
                 common.settings.save()
                 common.settings.load()
@@ -350,7 +350,7 @@ def main():
             common.scroll_counter += common.board.scroll_step
             if common.scroll_counter >= common.board.cell_dimension:
                 cells_dropped(common.board)
-                common.fx.play(panel, "drop")
+                common.fx.play("drop")
                 deselect_all_cells()
                 clear_to_delete(common.board)
                 mark_and_delete(common.board, panel)

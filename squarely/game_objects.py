@@ -577,6 +577,7 @@ class SettingsDialog(object):
             if len(pswd) >= 6 and not pswd == common.lang["settings_new_password"]:
                 self.password_go_btn.clicked = True
                 self.password_go_btn.image = self.go_animation1
+                common.fx.play("warning")
             else:
                 self.password_field.document.text = common.lang["settings_new_password"]
                 self.window.remove_handlers(self.password_field.caret)
@@ -1413,26 +1414,28 @@ class Sounds(object):
             common.settings.play_music = False
             self.hello = pyglet.media.StaticSource(pyglet.media.load('sounds/hello.wav', streaming=False))
 
-    def play(self, panel, fx):
+    def play(self, fx):
         if not common.settings.muted:
-            if fx == "key":
-                self.key.play()
-            if fx == "drop":
-                self.drop.play()
-            if fx == "rotate":
-                self.rotate.play()
-            if fx == "undo":
-                self.undo.play()
-            if fx == "hello":
-                self.hello.play()
-            if fx == "warning":
+            if common.settings.play_fx:
+                if fx == "key":
+                    self.key.play()
+                if fx == "drop":
+                    self.drop.play()
+                if fx == "rotate":
+                    self.rotate.play()
+                if fx == "undo":
+                    self.undo.play()
+                if fx == "hello":
+                    self.hello.play()
+                if fx == "start":
+                    self.start.play()
+                if fx == "level":
+                    self.level.play()
+                if fx == "unlocked":
+                    self.unlocked.play()
+
+            if fx == "warning" and common.settings.play_warnings:
                 self.warning.play()
-            if fx == "start":
-                self.start.play()
-            if fx == "level":
-                self.level.play()
-            if fx == "unlocked":
-                self.unlocked.play()
 
 
 class Player(object):

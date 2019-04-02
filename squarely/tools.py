@@ -205,7 +205,7 @@ def mark_and_delete(board, panel):
             common.summary_bar.new(common.board, summary_row)
             common.summary_bar.refresh(common.summary[0], common.summary[1], common.summary[2],common.summary[3], common.summary[4], common.summary[5])
             if warn:
-                common.fx.play(panel, "warning")
+                common.fx.play("warning")
             common.summary_bar.show()
 
         if cells_left == 0:
@@ -430,13 +430,13 @@ def player_save_results(panel):
     common.game_state.intro = True
     if unlocked:
         if unlocked < 7:
-            common.fx.play(panel, "unlocked")
+            common.fx.play("unlocked")
             intro_level_unlocked(unlocked)  # Next level unlocked, notify!
         else:
-            common.fx.play(panel, "unlocked")
+            common.fx.play("unlocked")
             intro_sunglasses()  # No new level to unlock
     else:
-        common.fx.play(panel, "level")
+        common.fx.play("level")
         intro_level_finished(common.level + 1, common.scores[common.level])  # Just show the result
 
     # Save to the cloud IF ANY BETTER RESULT ACHIEVED
