@@ -3,8 +3,8 @@ from setuptools import setup
 setup(
     name='squarely',
     version='0.1',
-    packages=[''],
-    package_dir={'': 'squarely'},
+    packages=['squarely'],
+    include_package_data=True,
     url='http://nwg.pl/squarely',
     license='GPL3',
     author='Piotr Miller',

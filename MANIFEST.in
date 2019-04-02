@@ -1,0 +1,3 @@
+recursive-include squarely/images *
+recursive-include squarely/languages *
+recursive-include squarely/sounds *
