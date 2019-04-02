@@ -440,7 +440,7 @@ def player_save_results(panel):
         intro_level_finished(common.level + 1, common.scores[common.level])  # Just show the result
 
     # Save to the cloud IF ANY BETTER RESULT ACHIEVED
-    if sync_needed():
+    if common.player.name != "Anonymous" and sync_needed():
         player_sync(common.player.name, common.player.password)
 
 

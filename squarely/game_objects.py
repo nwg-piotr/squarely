@@ -644,7 +644,7 @@ class SettingsDialog(object):
             self.update_cells_bitmaps(self)
             self.refresh()
 
-        if self.is_in(x, y, self.password_field.area):
+        if self.is_in(x, y, self.password_field.area) and common.player.name != "Anonymous":
             self.window.push_handlers(self.password_field.caret)
             if self.password_field.document.text == common.lang["settings_new_password"]:
                 self.password_field.document.text = ""
@@ -1334,7 +1334,7 @@ class Panel(object):
             self.label.text = ""
 
     def level_up(self):
-        if self.selected_level < common.level_max:
+        if self.selected_level < common.level_max and common.player.scores[self.selected_level]:
             self.selected_level += 1
             txt = str(6 + self.selected_level * 3)
             self.border_size_txt = txt + "x" + txt
