@@ -130,7 +130,7 @@ def top_ten_result(result, password=None):
 
         txt = common.lang["top_ten"].upper() + ":\n\n" + output_l0 + "\n\n" + output_l1 + "\n\n" + output_l2 + "\n\n" + output_l3 + "\n\n" + output_l4 + "\n\n" + output_l5 + "\n\n"
 
-        # It would be cool to update the TopList spite here, but we cen not do if on the async thread :/
+        # It would be cool to update the TopList spite here, but we can not do if on the async thread :/
         # We need an intermediary variable.
         common.top10_content = txt
 
@@ -187,7 +187,7 @@ def login_result(result, password):
             except ValueError:
                 common.player.cloud_scores.append(None)
 
-        # update and save player credentials: we'll need them to update scores
+        # update player credentials: we'll need them to update scores
         common.player.name = name
         common.player.password = password
 
@@ -207,8 +207,8 @@ def login_result(result, password):
 
     else:
         common.player.online = common.OFFLINE
-        # For some mysterious reason the label.text can not be updated from here (crashes),
-        # so we won't use the set_message method. The label will stay out od date until mouse moved :(
+        # As we are on another thread, the label.text can not be updated from here (crashes).
+        # We're unable to use the set_message method, so the label will stay out od date until mouse moved :(
         if txt == 'no_such_player':
             common.player_dialog.message = common.lang["player_no_such"]
         elif txt == 'wrong_pswd':

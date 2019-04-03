@@ -980,6 +980,14 @@ class PlayerDialog(pyglet.sprite.Sprite):
         pass_ok = len(pswd) >= 6
         if name_ok and pass_ok:
             self.set_message(common.lang["player_logging_in"].format(name))
+            # Now, if we're logging in as another player, we need to clear local scores first.
+            # Otherwise we'll mix up 2 players while attempting to resolve conflicts between local and remote results!
+            # This should not be the case while auto-login performed on the game start.
+            if name != common.player.name:
+                print("Signing in as another player")
+                common.player.scores = [None, None, None, None, None, None]
+            else:
+                print("Signing in as the same player")
             player_login(name, hashlib.md5(pswd.encode('utf-8')).hexdigest())  # in cloud_tools
         else:
             msg = ""
