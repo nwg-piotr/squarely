@@ -64,6 +64,8 @@ class GameBoard(object):
             23 = source cell margin
         """
         self.scale = self.window_width / (216 * cells_in_row + 23 * 2)
+        # To scale inter-level animations properly we need the cells_in-row-independent scale
+        self.base_scale = self.window_width / (216 * 6 + 23 * 2)
 
         self.window_pos_x = int((screen.width - self.window_width) / 2)
         self.window_pos_y = int((screen.height - self.window_height) / 2)
@@ -313,7 +315,7 @@ class Lost(pyglet.sprite.Sprite):
         self.image.anchor_y = self.image.height // 2
         self.x = board.base * 3
         self.y = board.base * 5
-        self.scale = board.scale
+        self.scale = board.base_scale
 
 
 class UnlockAnimation(pyglet.sprite.Sprite):
@@ -326,7 +328,7 @@ class UnlockAnimation(pyglet.sprite.Sprite):
 
         self.x = board.margin + board.base
         self.y = board.margin + board.base * 3
-        self.scale = board.scale * 2
+        self.scale = board.base_scale * 2
 
 
 class FinishedAnimation(pyglet.sprite.Sprite):
@@ -339,7 +341,7 @@ class FinishedAnimation(pyglet.sprite.Sprite):
 
         self.x = board.margin + board.base
         self.y = board.margin + board.base * 3
-        self.scale = board.scale * 2
+        self.scale = board.base_scale * 2
 
 
 class HelloAnimation(pyglet.sprite.Sprite):
@@ -352,7 +354,7 @@ class HelloAnimation(pyglet.sprite.Sprite):
 
         self.x = board.margin + board.base
         self.y = board.margin + board.base * 3
-        self.scale = board.scale * 2
+        self.scale = board.base_scale * 2
 
 
 class SunglassesAnimation(pyglet.sprite.Sprite):
@@ -365,7 +367,7 @@ class SunglassesAnimation(pyglet.sprite.Sprite):
 
         self.x = board.margin + board.base
         self.y = board.margin + board.base * 3
-        self.scale = board.scale * 2
+        self.scale = board.base_scale * 2
 
 
 class PlayerConfirmation(pyglet.sprite.Sprite):
