@@ -210,6 +210,7 @@ def mark_and_delete(board, panel):
                 common.fx.play("warning")
             common.summary_bar.show()
 
+        """Can we still play?"""
         # Do we still have a cell in row 1 to be able to rotate?
         if cells_left == len(board.columns):
             common.game_lost = True
@@ -217,18 +218,22 @@ def mark_and_delete(board, panel):
                 if cell:
                     common.game_lost = False
             if common.game_lost:
-                print("CAN'T ROTATE")
+                print("Can't rotate")
 
         # Check if we have a gap in row 0
         for i in range(1, len(common.matrix[0]) - 1):
             prev_cell = common.matrix[0][i - 1]
             cell = common.matrix[0][i]
-            next_cell = common.matrix[0][i + 1]
-            if not cell:
-                if prev_cell and next_cell:
-                    common.game_lost = True
-                    print("GAP IN ROW 0", i)
+            if not cell:  # this cell is empty
+                if prev_cell:  # and the previous in the row is full
+                    # check if any full cell on the right exists
+                    for j in range(i, len(common.matrix[0])):
+                        if common.matrix[0][j]:  # full cell found
+                            print("Gap in row 0")
+                            common.game_lost = True
+                            break
 
+        """Game finished successfully?"""
         if cells_left == 0:
             common.game_state.playing = False
             player_save_results(panel)
