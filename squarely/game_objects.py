@@ -303,6 +303,19 @@ class IntroRotator(pyglet.sprite.Sprite):
         self.batch = common.intro_batch
 
 
+class Lost(pyglet.sprite.Sprite):
+    def __init__(self, board):
+        super().__init__(image.load("images/you-lost.png"))
+
+        self.image.width = board.base * 4
+        self.image.height = board.base * 4
+        self.image.anchor_x = self.image.width // 2
+        self.image.anchor_y = self.image.height // 2
+        self.x = board.base * 3
+        self.y = board.base * 5
+        self.scale = board.scale
+
+
 class UnlockAnimation(pyglet.sprite.Sprite):
     def __init__(self, board):
         frames_source = image.load("images/unlock-frames.png")

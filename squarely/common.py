@@ -60,8 +60,8 @@ cells_deleted = False
 fx = None
 label = None
 
-# Game states
 game_state = None
+game_lost = False
 
 top10_content = ""
 

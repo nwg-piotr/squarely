@@ -201,12 +201,33 @@ def mark_and_delete(board, panel):
             else:
                 common.summary.append(str(left) + ":(")
                 warn = True
+                common.game_lost = True
+
         if summary_row is not None and common.cells_deleted:
             common.summary_bar.new(common.board, summary_row)
             common.summary_bar.refresh(common.summary[0], common.summary[1], common.summary[2],common.summary[3], common.summary[4], common.summary[5])
             if warn:
                 common.fx.play("warning")
             common.summary_bar.show()
+
+        # Do we still have a cell in row 1 to be able to rotate?
+        if cells_left == len(board.columns):
+            common.game_lost = True
+            for cell in common.matrix[1]:
+                if cell:
+                    common.game_lost = False
+            if common.game_lost:
+                print("CAN'T ROTATE")
+
+        # Check if we have a gap in row 0
+        for i in range(1, len(common.matrix[0]) - 1):
+            prev_cell = common.matrix[0][i - 1]
+            cell = common.matrix[0][i]
+            next_cell = common.matrix[0][i + 1]
+            if not cell:
+                if prev_cell and next_cell:
+                    common.game_lost = True
+                    print("GAP IN ROW 0", i)
 
         if cells_left == 0:
             common.game_state.playing = False
@@ -369,6 +390,8 @@ def backup(board):
 
 def restore(board):
     if common.backup_matrix is not None:
+        common.game_lost = False
+
         idx = 0  # Position on the list we stored cell attributes to
         for row in range(board.cells_in_row):
             for col in range(board.cells_in_row):

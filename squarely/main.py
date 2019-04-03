@@ -92,6 +92,8 @@ def main():
     common.intro_batch = pyglet.graphics.Batch()
     intro_bcg = IntroRotator(common.board)
 
+    you_lost = Lost(common.board)
+
     panel = Panel(common.board)  # Control panel class. Let's pre-select the first not-yet-finished level
     for i in range(len(common.player.scores)):
         if common.player.scores[i] is None:
@@ -128,6 +130,8 @@ def main():
         if common.game_state.playing:
             if common.settings.background_draw:
                 intro_bcg.draw()
+                if common.game_lost:
+                    you_lost.draw()
 
             if common.cells_batch is not None:
                 common.cells_batch.draw()
@@ -385,6 +389,7 @@ def create_game_window(board):
 
 
 def new_game():
+    common.game_lost = False
     player_load()
     for i in range(len(common.cells_list)):
         common.cells_list[i].delete()
