@@ -210,7 +210,7 @@ def mark_and_delete(board, panel):
                 common.fx.play("warning")
             common.summary_bar.show()
 
-        """Can we still play?"""
+        """Can we still win?"""
         # Do we still have a cell in row 1 to be able to rotate?
         if cells_left == len(board.columns):
             common.game_lost = True
