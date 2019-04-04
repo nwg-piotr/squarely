@@ -239,6 +239,9 @@ def main():
     def on_mouse_release(x, y, button, modifiers):
         common.cells_deleted = False
 
+        if button == pyglet.window.mouse.MIDDLE and common.summary_bar is not None and common.summary_bar.y > 0:
+            common.summary_bar.show()
+
         if common.cursor_in_board and common.game_state.playing:
             if common.board.selection_made:
                 if button == pyglet.window.mouse.LEFT:
