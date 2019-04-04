@@ -9,5 +9,6 @@ setup(
     license='GPL3',
     author='Piotr Miller',
     author_email='nwg.piotr@gmail.com',
-    description='Puzzle game that uses the Pyglet library'
+    description='Puzzle game that uses the Pyglet library',
+    install_requires=['pyglet', 'requests']
 )
