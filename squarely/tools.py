@@ -257,7 +257,7 @@ def mark_and_delete(board, panel):
                 if cell:
                     common.game_lost = False
             if common.game_lost:
-                print("Can't rotate")
+                print("GAME LOST: can't rotate")
 
         # Check if we have a gap in row 0
         for i in range(1, len(common.matrix[0]) - 1):
@@ -268,9 +268,19 @@ def mark_and_delete(board, panel):
                     # check if any full cell on the right exists
                     for j in range(i, len(common.matrix[0])):
                         if common.matrix[0][j]:  # full cell found
-                            print("Gap in row 0")
+                            print("GAME LOST: gap in row 0")
                             common.game_lost = True
                             break
+
+        # Also if we less than 3 columns not empty, the game is lost
+        cnt = 0
+        for col in range(board.cells_in_row):
+            if common.matrix[0][col]:
+                cnt += 1
+        if cnt < 3:
+            print("GAME LOST: less than 3 columns left")
+            common.game_lost = True
+
 
         """Game finished successfully?"""
         if cells_left == 0:
