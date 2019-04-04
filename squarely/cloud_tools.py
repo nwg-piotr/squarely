@@ -252,7 +252,7 @@ def sync_needed():
 
     print("Local: ", common.player.scores)
     print("Remote: ", common.player.cloud_scores)
-    print("Do sync?", needed)
+    print("Upload to the server?", needed)
 
     return needed
 
