@@ -134,7 +134,7 @@ def rotate_selection_left(board, panel):
 
 
 def check_matrix(board):
-    print("Checking matrix...", end=" ")
+    # print("Checking matrix...", end=" ")
     correct = True
     errors = []
     # Iterate through the cells list
@@ -146,9 +146,19 @@ def check_matrix(board):
                     correct = False
                     errors.append((cell.row, cell.col))
     if not correct:
-        print("Errors:", errors)
+        print("*** Deja vu *** Matrix Error:", errors)
+        # Restore broken matrix
+        for row in range(board.cells_in_row):
+            for col in range(board.cells_in_row):
+                common.matrix[row][col] = None  # We need to clear all cells first
+        # Iterate through the list of all cells
+        for cell in common.cells_list:
+            # visible == False is our deletion marker
+            if cell.visible:
+                common.matrix[cell.row][cell.col] = cell
     else:
-        print("OK")
+        pass
+        # print("OK")
 
 
 def clear_to_delete(board):
@@ -196,6 +206,10 @@ def mark_and_delete(board, panel):
             for col in range(board.cells_in_row):
                 if common.matrix[r][col] is not None:
                     if common.matrix[r][col].to_delete:
+                        # We do not need to make the cell invisible here, but we need to be able to recognize deleted
+                        # cells in case something went wrong, and we'd need to restore broken matrix. Let the visibility
+                        # be our deletion marker (EXPERIMENTAL)
+                        common.matrix[r][col].visible = False
                         common.matrix[r][col].batch = None
                         common.matrix[r][col] = None
 
@@ -413,7 +427,7 @@ def backup(board):
             common.backup_matrix[row][col] = cell
             values = None  # also store None, to preserve the list order
             if cell is not None:
-                values = cell.row, cell.col, cell.x, cell.y, cell.selected, cell.to_delete
+                values = cell.row, cell.col, cell.x, cell.y, cell.selected, cell.to_delete, cell.visible
             common.backup_values.append(values)
 
 
@@ -435,6 +449,7 @@ def restore(board):
                     cell.y = values[3]
                     cell.selected = values[4]
                     cell.to_delete = values[5]
+                    cell.visible = values[6]
                 idx += 1
         common.backup_matrix = None
         common.scores[common.level] -= 1
