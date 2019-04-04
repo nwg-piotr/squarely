@@ -11,5 +11,6 @@ the cells and unlock the next level. Next board size will be `n+3 x n+3`.
 
 A lot of work still left to do. See the current development state in action: https://youtu.be/HKVKCkCKqgU
 
-The game is being developed on Arch Linux witch [Pycharm Community Edition](https://www.jetbrains.com/pycharm/download), 
-and it's highly unlikely to work standalone at the moment. To give it a try, clone the project in PyCharm.
+The game is being developed on Arch Linux with [Pycharm Community Edition](https://www.jetbrains.com/pycharm/download).
+The PKGBUILD file and/or the testing package you'll find in the `dist` folder. No packages for other Linux 
+distributions available at the moment, but you can always clone the project to give it a try.
