@@ -134,19 +134,23 @@ def rotate_selection_left(board, panel):
 
 
 def check_matrix(board):
-    # print("Checking matrix...", end=" ")
+    """
+    This is an attempt to prevent the bug which happens once in hundreds / thousands clicks:
+    after rotation a (single) cell's row and column do not correspond to the values stored in the Matrix
+    - the cell appears in wrong place. Steps to reproduce: unknown. Ale we can do is to fix the broken Matrix.
+    """
     correct = True
     errors = []
-    # Iterate through the cells list
+    # Iterate through the matrix
     for row in range(board.cells_in_row):
         for col in range(board.cells_in_row):
             cell = common.matrix[row][col]
             if cell:
                 if cell.row != row or cell.col != col:
                     correct = False
-                    errors.append((cell.row, cell.col))
+                    errors.append((cell.row, cell.col))  # todo We could break here: 1 error is more than enough
     if not correct:
-        print("*** Deja vu *** Matrix Error:", errors)
+        print("*** Deja vu *** Matrix error:", errors)
         # Restore broken matrix
         for row in range(board.cells_in_row):
             for col in range(board.cells_in_row):
@@ -156,9 +160,6 @@ def check_matrix(board):
             # visible == False is our deletion marker
             if cell.visible:
                 common.matrix[cell.row][cell.col] = cell
-    else:
-        pass
-        # print("OK")
 
 
 def clear_to_delete(board):
