@@ -7,9 +7,9 @@ least 3 cells, can be rotated left or right (left/right mouse click), 90 degrees
 same type, arranged in a horizontal row, disappear. All the cells above fall down. The game objective is to destroy all 
 the cells and unlock the next level. Next board size will be `n+3 x n+3`.
 
-![screen](http://nwg.pl/squarely/wiki/screen.png)
+![screen](http://nwg.pl/squarely/wiki/screen1.png)
 
-A lot of work still left to do. See the current development state in action: https://youtu.be/IVEoVfDqq8Y
+A lot of work still left to do. See the current development state in action: https://youtu.be/HKVKCkCKqgU
 
 The game is being developed on Arch Linux witch [Pycharm Community Edition](https://www.jetbrains.com/pycharm/download), 
 and it's highly unlikely to work standalone at the moment. To give it a try, clone the project in PyCharm.
