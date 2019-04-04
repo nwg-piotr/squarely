@@ -98,6 +98,9 @@ def rotate_selection_right(board, panel):
         common.rotation_group.rotation += 10
     else:
         selection_rotated_right(board)
+
+        check_matrix(board)
+
         common.rotation_direction = None
 
         for cell in cells_being_rotated(board):
@@ -117,6 +120,9 @@ def rotate_selection_left(board, panel):
         common.rotation_group.rotation -= 10
     else:
         selection_rotated_left(board)
+
+        check_matrix(board)
+
         common.rotation_direction = None
 
         for cell in cells_being_rotated(board):
@@ -125,6 +131,24 @@ def rotate_selection_left(board, panel):
 
         clear_to_delete(board)
         mark_and_delete(board, panel)
+
+
+def check_matrix(board):
+    print("Checking matrix...", end=" ")
+    correct = True
+    errors = []
+    # Iterate through the cells list
+    for row in range(board.cells_in_row):
+        for col in range(board.cells_in_row):
+            cell = common.matrix[row][col]
+            if cell:
+                if cell.row != row or cell.col != col:
+                    correct = False
+                    errors.append((cell.row, cell.col))
+    if not correct:
+        print("Errors:", errors)
+    else:
+        print("OK")
 
 
 def clear_to_delete(board):

@@ -233,7 +233,9 @@ def sync_needed():
         if local and remote:
             if remote < local:
                 local = remote  # just update the local value
-                common.scores[i] = local  # and also update the temporary list
+                print("updating local value")
+                common.scores[i] = local  # also update the temporary list
+                common.player.scores[i] = local  # and the player scores
             elif local < remote:
                 needed = True  # Let's sync local scores to the cloud when ready
                 print("Sync: local < remote ")
