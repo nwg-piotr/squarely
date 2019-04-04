@@ -281,7 +281,6 @@ def mark_and_delete(board, panel):
             print("GAME LOST: less than 3 columns left")
             common.game_lost = True
 
-
         """Game finished successfully?"""
         if cells_left == 0:
             common.game_state.playing = False
