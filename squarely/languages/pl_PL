@@ -22,6 +22,7 @@ player_login = Zaloguj
 player_logout = Wyloguj
 player_wrong_name = Nazwa: 3+ znaków
 player_wrong_pass = Hasło: 6+ znaków
+player_wrong_credentials = Błędne dane gracza
 player_created = Utworzono konto gracza
 player_exists = Takie konto już istnieje
 player_creating = Tworzenie konta gracza...

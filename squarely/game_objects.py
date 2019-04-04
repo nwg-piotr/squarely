@@ -841,7 +841,8 @@ class PlayerDialog(pyglet.sprite.Sprite):
 
     def open(self):
         if not self.is_open:
-
+            self.name_field.caret.visible = False
+            self.pass_field.caret.visible = False
             self.old_player_name = common.player.name
             self.name_field.update('')
             self.pass_field.update('')
@@ -909,7 +910,10 @@ class PlayerDialog(pyglet.sprite.Sprite):
 
         elif self.is_in(self, x, y, self.area_delete):
             if not common.player_confirmation.visible:
-                common.player_confirmation.show()
+                if self.name_ok(self) and self.pass_ok(self):
+                    common.player_confirmation.show()
+                else:
+                    self.set_message(common.lang["player_wrong_credentials"])
             else:
                 self.close_confirmation(self)
                 self.delete_player(panel)
@@ -935,19 +939,27 @@ class PlayerDialog(pyglet.sprite.Sprite):
         self.message = msg
         self.label.text = self.message
 
+    @staticmethod
+    def name_ok(self):
+        name = self.name_field.document.text
+        return name.upper() != "ANONYMOUS" and len(name) >= 3
+
+    @staticmethod
+    def pass_ok(self):
+        pswd = self.pass_field.document.text
+        return len(pswd) >= 6
+
     def new_player(self):
         name = self.name_field.document.text
         pswd = self.pass_field.document.text
-        name_ok = name.upper() != "ANONYMOUS" and len(name) >= 3
-        pass_ok = len(pswd) >= 6
-        if name_ok and pass_ok:
+        if self.name_ok(self) and self.pass_ok(self):
             self.message = common.lang["player_creating"]
             player_create(name, hashlib.md5(pswd.encode('utf-8')).hexdigest())  # in cloud_tools
         else:
             msg = ""
-            if not name_ok:
+            if not self.name_ok(self):
                 msg += common.lang["player_wrong_name"]
-            if not pass_ok:
+            if not self.pass_ok(self):
                 msg += " " + common.lang["player_wrong_pass"]
             self.message = msg
             self.label.text = self.message

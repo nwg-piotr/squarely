@@ -30,6 +30,7 @@ player_logging_in = Signing in player {}
 player_logged_in = Player {} signed in
 player_no_such = No such player
 player_wrong_password = Wrong password
+player_wrong_credentials = Wrong player credentials
 player_login_failed = Failed signing in
 player_offline = You must sing in first
 player_syncing = Syncing...
