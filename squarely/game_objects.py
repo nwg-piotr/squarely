@@ -998,6 +998,7 @@ class PlayerDialog(pyglet.sprite.Sprite):
             if name != common.player.name:
                 print("Signing in as another player")
                 common.player.scores = [None, None, None, None, None, None]
+                common.scores = [None, None, None, None, None, None]
             else:
                 print("Signing in as the same player")
             player_login(name, hashlib.md5(pswd.encode('utf-8')).hexdigest())  # in cloud_tools
