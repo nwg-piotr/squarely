@@ -45,13 +45,13 @@ def main():
                 print("Missing argument\n")
 
     if common.rc.force_lang:
-        print('rc: lang = ' + common.rc.force_lang)
+        print('force_lang', common.rc.force_lang)
     if common.rc.debug_mode:
-        print('rc: debug mode on')
+        print('debug_mode', common.rc.debug_mode)
     if common.rc.safe_mode:
-        print('rc: safe mode on')
+        print('safe_mode', common.rc.safe_mode)
     if common.rc.dev_mode:
-        print('arg: developer mode on!')
+        print('dev_mode', common.rc.dev_mode)
 
     pyglet.options['audio'] = ('openal', 'pulse', 'silent')
     
@@ -344,6 +344,23 @@ def main():
         if symbol == key.F:
             common.rc.show_fps = not common.rc.show_fps
             common.rc.save()
+        if symbol == key.ESCAPE:
+            if common.player_dialog.is_open:
+                common.player_dialog.close()
+                return True
+
+            if common.top_list.visible:
+                common.top_list.hide()
+                return True
+
+            if common.settings_dialog.visible:
+                common.settings_dialog.hide()
+                return True
+
+            if common.game_state.playing:
+                common.game_state.playing = False
+                common.game_state.intro = True
+                return True
 
     def update(dt):
         if common.game_state.intro or common.game_state.account or common.game_state.top10 or common.game_state.settings or (common.game_state.playing and common.settings.background_draw and common.settings.background_rotate):
