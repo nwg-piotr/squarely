@@ -31,7 +31,6 @@ def main():
     common.rc.load()
     if common.rc.force_lang:
         print('rc: lang = ' + common.rc.force_lang)
-    ov_lang = None
 
     for i in range(1, len(sys.argv)):
         if sys.argv[i] == "-lang":
