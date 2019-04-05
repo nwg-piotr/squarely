@@ -259,7 +259,8 @@ def mark_and_delete(board, panel):
                 if cell:
                     common.game_lost = False
             if common.game_lost:
-                print("GAME LOST: can't rotate")
+                if common.rc.debug_mode:
+                    print("GAME LOST: can't rotate")
 
         # Check if we have a gap in row 0
         for i in range(1, len(common.matrix[0]) - 1):
@@ -270,7 +271,8 @@ def mark_and_delete(board, panel):
                     # check if any full cell on the right exists
                     for j in range(i, len(common.matrix[0])):
                         if common.matrix[0][j]:  # full cell found
-                            print("GAME LOST: gap in row 0")
+                            if common.rc.debug_mode:
+                                print("GAME LOST: gap in row 0")
                             common.game_lost = True
                             break
 
@@ -280,7 +282,8 @@ def mark_and_delete(board, panel):
             if common.matrix[0][col]:
                 cnt += 1
         if cnt < 3:
-            print("GAME LOST: less than 3 columns left")
+            if common.rc.debug_mode:
+                print("GAME LOST: less than 3 columns left")
             common.game_lost = True
 
         """Game finished successfully?"""
@@ -332,10 +335,12 @@ def selection_rotated_left(board):
         board.sel_3.move_left(board)
     else:
         if board.sel_0 is None:
-            print("board.sel_0 should never be None!")
+            if common.rc.debug_mode:
+                print("board.sel_0 should never be None!")
 
         elif board.sel_1 is None:
-            print("board.sel_1 should never be None!")
+            if common.rc.debug_mode:
+                print("board.sel_1 should never be None!")
 
         elif board.sel_2 is None:
             clear_at = board.sel_0.row, board.sel_0.col
@@ -364,10 +369,12 @@ def selection_rotated_right(board):
         board.sel_3.move_down(board)
     else:
         if board.sel_0 is None:
-            print("board.sel_0 should never be None!")
+            if common.rc.debug_mode:
+                print("board.sel_0 should never be None!")
 
         elif board.sel_1 is None:
-            print("board.sel_1 should never be None!")
+            if common.rc.debug_mode:
+                print("board.sel_1 should never be None!")
 
         elif board.sel_2 is None:
             clear_at = board.sel_3.row, board.sel_3.col

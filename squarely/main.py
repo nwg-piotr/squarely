@@ -29,8 +29,6 @@ def main():
 
     common.rc = RuntimeConfig()
     common.rc.load()
-    if common.rc.force_lang:
-        print('rc: lang = ' + common.rc.force_lang)
 
     for i in range(1, len(sys.argv)):
         if sys.argv[i] == "-lang":
@@ -43,9 +41,17 @@ def main():
         if sys.argv[i] == "-dev":
             try:
                 common.rc.dev_mode = hashlib.md5(sys.argv[i + 1].encode('utf-8')).hexdigest() == '6adb36112738e6a2b462106043c60351'
-                print("dev_mode", common.rc.dev_mode)
             except IndexError:
                 print("Missing argument\n")
+
+    if common.rc.force_lang:
+        print('rc: lang = ' + common.rc.force_lang)
+    if common.rc.debug_mode:
+        print('rc: debug mode on')
+    if common.rc.safe_mode:
+        print('rc: safe mode on')
+    if common.rc.dev_mode:
+        print('arg: developer mode on!')
 
     pyglet.options['audio'] = ('openal', 'pulse', 'silent')
     
@@ -77,7 +83,6 @@ def main():
     The player_load() function returns True if player exists: set the hello message accordingly.
     """
     hello_msg = common.lang["intro_wb"] if player_load() else common.lang["intro_welcome"]
-    # print(common.player.name, common.player.scores)
 
     """The GameBoard class calculates and holds many values used by other classes and MUST be instantiated first"""
     common.board = GameBoard(6 + common.level * 3)  # 6 + n * 3

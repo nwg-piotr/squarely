@@ -33,10 +33,12 @@ def player_create(name, password):
     old = common.player.online
     common.player.online = common.SYNCING
     url = 'http://nwg.pl/puzzle/player.php?action=create&pname=' + name + '&ppswd=' + password
-    # print(url)
+    if common.rc.debug_mode:
+        print(url)
     try:
         response = requests.get(url, headers=common.headers)
-        print(response.content)
+        if common.rc.debug_mode:
+            print(response.content)
         response_text = response.text
     except requests.exceptions.RequestException as e:
         response_text = "Error: " + str(e)
@@ -56,10 +58,12 @@ def player_create(name, password):
 def player_delete(name, password):
     common.player.online = common.SYNCING
     url = 'http://nwg.pl/puzzle/player.php?action=delete&pname=' + name + '&ppswd=' + password
-    # print(url)
+    if common.rc.debug_mode:
+        print(url)
     try:
         response = requests.get(url, headers=common.headers)
-        print(response.content)
+        if common.rc.debug_mode:
+            print(response.content)
         response_text = response.text
     except requests.exceptions.RequestException as e:
         response_text = "Error: " + str(e)
@@ -138,7 +142,10 @@ def top_ten_result(result, password=None):
 def player_password(name, password, new_password):
     common.player.online = common.SYNCING
     url = 'http://nwg.pl/puzzle/player.php?action=password&pname=' + name + '&ppswd=' + password + '&pnewpass=' + new_password
-    #print(url)
+    if common.rc.debug_mode:
+        if common.rc.debug_mode:
+            if common.rc.debug_mode:
+                print(url)
     if internet_on():
         async_request('get', url, headers=common.headers, pwd=new_password, callback=lambda r, p: password_result(r, p))
     else:
@@ -147,7 +154,8 @@ def player_password(name, password, new_password):
 
 def password_result(result, new_password):
     txt = result.content.decode("utf-8")
-    print(txt)
+    if common.rc.debug_mode:
+        print(txt)
 
     if txt.startswith('password_changed'):
         common.player.password = new_password
@@ -162,7 +170,8 @@ def password_result(result, new_password):
 def player_login(name, password):
     common.player.online = common.SYNCING
     url = 'http://nwg.pl/puzzle/player.php?action=login&pname=' + name + '&ppswd=' + password
-    #print(url)
+    if common.rc.debug_mode:
+        print(url)
     if internet_on():
         async_request('get', url, headers=common.headers, pwd=password, callback=lambda r, p: login_result(r, p))
     else:
@@ -171,7 +180,8 @@ def player_login(name, password):
 
 def login_result(result, password):
     txt = result.content.decode("utf-8")
-    print(txt)
+    if common.rc.debug_mode:
+        print(txt)
 
     if txt.startswith('login_ok'):
         common.player.online = common.ONLINE
@@ -233,12 +243,14 @@ def sync_needed():
         if local and remote:
             if remote < local:
                 local = remote  # just update the local value
-                print("updating local value")
+                if common.rc.debug_mode:
+                    print("updating local value")
                 common.scores[i] = local  # also update the temporary list
                 common.player.scores[i] = local  # and the player scores
             elif local < remote:
                 needed = True  # Let's sync local scores to the cloud when ready
-                print("Sync: local < remote ")
+                if common.rc.debug_mode:
+                    print("Sync: local < remote ")
 
         # In case we have no local value:
         if remote and not local:  # we have None local value locally, remote counterpart present
@@ -248,11 +260,13 @@ def sync_needed():
 
         if local and not remote:  # we have a local value, remote counterpart absent
             needed = True
-            print("Sync: local and not remote ")
+            if common.rc.debug_mode:
+                print("Sync: local and not remote ")
 
-    print("Local: ", common.player.scores)
-    print("Remote: ", common.player.cloud_scores)
-    print("Upload to the server?", needed)
+    if common.rc.debug_mode:
+        print("Local: ", common.player.scores)
+        print("Remote: ", common.player.cloud_scores)
+        print("Upload to the server?", needed)
 
     return needed
 
@@ -279,12 +293,14 @@ def player_sync(name, password):
 
 def sync_result(result, password):
     txt = result.content.decode("utf-8")
-    print(txt)
+    if common.rc.debug_mode:
+        print(txt)
     if txt == 'scores_updated' or txt == 'no_result':
         common.player.online = common.ONLINE
     else:
         common.player.online = common.OFFLINE
-        print("COULD NOT SYNC")
+        if common.rc.debug_mode:
+            print("Could not sync")
 
 
 def async_request(method, *args, callback=None, pwd=None, timeout=15, **kwargs):
@@ -312,6 +328,7 @@ def internet_on(host="8.8.8.8", port=53, timeout=3):
             common.player.online = common.ONLINE
         return True
     except Exception as e:
-        print(e)
+        if common.rc.debug_mode:
+            print('Couldnt resolve host 8.8.8.8', e)
         common.player.online = common.OFFLINE
         return False

@@ -29,19 +29,24 @@ class GameBoard(object):
     def __init__(self, cells_in_row):
 
         total_cells = cells_in_row * cells_in_row
-        # print("total_cells = " + str(total_cells))
+        if common.rc.debug_mode:
+            print("total_cells = " + str(total_cells))
 
         full_groups_capacity = cells_in_row * cells_in_row // 36
-        # print("full_groups_capacity = " + str(full_groups_capacity))
+        if common.rc.debug_mode:
+            print("full_groups_capacity = " + str(full_groups_capacity))
 
         cells_to_fit_as_full_groups = full_groups_capacity * 36
-        # print("cells_to_fit_as_full_groups = " + str(cells_to_fit_as_full_groups))
+        if common.rc.debug_mode:
+            print("cells_to_fit_as_full_groups = " + str(cells_to_fit_as_full_groups))
 
         cells_left = total_cells - cells_to_fit_as_full_groups
-        # print("cells_left = " + str(cells_left))
+        if common.rc.debug_mode:
+            print("cells_left = " + str(cells_left))
 
         groups_to_repeat = int(cells_left / 3)
-        # print("groups_to_repeat = " + str(groups_to_repeat))
+        if common.rc.debug_mode:
+            print("groups_to_repeat = " + str(groups_to_repeat))
 
         self.cell_resources = []
 
@@ -50,7 +55,8 @@ class GameBoard(object):
         for i in range(groups_to_repeat):
             self.cell_resources[i] = self.cell_resources[i] + 3
 
-        # print("cell_resources = " + str(self.cell_resources) + "\n")
+        if common.rc.debug_mode:
+            print("cell_resources = " + str(self.cell_resources))
 
         platform = pyglet.window.get_platform()
         display = platform.get_default_display()
@@ -96,8 +102,9 @@ class GameBoard(object):
         self.sel_2 = None
         self.sel_3 = None
 
-        # print("Rows: " + str(self.rows))
-        # print("Columns: " + str(self.columns) + "\n")
+        if common.rc.debug_mode:
+            print("Rows: " + str(self.rows))
+            print("Columns: " + str(self.columns))
 
         self.selection_made = False
 
@@ -1060,11 +1067,14 @@ class PlayerDialog(pyglet.sprite.Sprite):
             # Otherwise we'll mix up 2 players while attempting to resolve conflicts between local and remote results!
             # This should not be the case while auto-login performed on the game start.
             if name != common.player.name:
-                print("Signing in as another player")
+                if common.rc.debug_mode:
+                    print("Signing in as another player")
                 common.player.scores = [None, None, None, None, None, None]
                 common.scores = [None, None, None, None, None, None]
             else:
-                print("Signing in as the same player")
+                if common.rc.debug_mode:
+                    print("Signing in as the same player")
+
             player_login(name, hashlib.md5(pswd.encode('utf-8')).hexdigest())  # in cloud_tools
         else:
             msg = ""
@@ -1510,7 +1520,7 @@ class Sounds(object):
             self.hello = pyglet.media.StaticSource(pyglet.media.load('sounds/hello.ogg', streaming=False))
             common.avbin = True
         except:
-            print("avbin library missing or doesn't work, music turned off\n")
+            print("avbin library missing or doesn't work, music turned off")
             common.settings.play_music = False
             self.hello = pyglet.media.StaticSource(pyglet.media.load('sounds/hello.wav', streaming=False))
 
