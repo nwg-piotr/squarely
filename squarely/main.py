@@ -22,29 +22,33 @@ import sys
 
 
 def main():
+    """OS-dependent preferences location (in Linux: ~/.config/common.app_name/)"""
+    common.app_dir = pyglet.resource.get_settings_path(common.app_name)
+    if not os.path.exists(common.app_dir):
+        os.makedirs(common.app_dir)
+
+    common.rc = RuntimeConfig()
+    common.rc.load()
+    if common.rc.force_lang:
+        print('rc: lang = ' + common.rc.force_lang)
     ov_lang = None
 
     for i in range(1, len(sys.argv)):
         if sys.argv[i] == "-lang":
             try:
-                ov_lang = sys.argv[i + 1]
-                print("Locale forced: " + ov_lang)
+                common.rc.force_lang = sys.argv[i + 1]
+                print("arg: lang = " + common.rc.force_lang)
             except IndexError:
                 print("Missing argument: locale language code")
 
         if sys.argv[i] == "-dev":
             try:
-                common.dev_mode = hashlib.md5(sys.argv[i + 1].encode('utf-8')).hexdigest() == '6adb36112738e6a2b462106043c60351'
-                print("dev_mode", common.dev_mode)
+                common.rc.dev_mode = hashlib.md5(sys.argv[i + 1].encode('utf-8')).hexdigest() == '6adb36112738e6a2b462106043c60351'
+                print("dev_mode", common.rc.dev_mode)
             except IndexError:
                 print("Missing argument\n")
 
     pyglet.options['audio'] = ('openal', 'pulse', 'silent')
-
-    """OS-dependent preferences location (in Linux: ~/.config/common.app_name/)"""
-    common.app_dir = pyglet.resource.get_settings_path(common.app_name)
-    if not os.path.exists(common.app_dir):
-        os.makedirs(common.app_dir)
     
     common.settings = Settings()
     common.settings.load()
@@ -54,10 +58,10 @@ def main():
     """Let's preload English dictionary and overwrite with localized values if found"""
     common.lang = Language('en_EN')
     """Running with LC_ALL=C will return (None, None)"""
-    if not ov_lang:
+    if not common.rc.force_lang:
         localization = locale.getlocale()[0] if locale.getlocale()[0] is not None else 'en_EN'
     else:
-        localization = ov_lang
+        localization = common.rc.force_lang
 
     if localization != 'en_EN':
         overwrite_lang(localization)
@@ -124,7 +128,7 @@ def main():
         window.clear()
         panel.draw()
 
-        if common.fps and common.label is not None:
+        if common.rc.show_fps and common.label is not None:
             common.label.draw()
 
         if common.game_state.playing:
@@ -334,7 +338,8 @@ def main():
             if common.summary_bar is not None:
                 common.summary_bar.show()
         if symbol == key.F:
-            common.fps = not common.fps
+            common.rc.show_fps = not common.rc.show_fps
+            common.rc.save()
 
     def update(dt):
         if common.game_state.intro or common.game_state.account or common.game_state.top10 or common.game_state.settings or (common.game_state.playing and common.settings.background_draw and common.settings.background_rotate):

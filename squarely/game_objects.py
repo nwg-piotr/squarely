@@ -685,6 +685,69 @@ class SettingsDialog(object):
         self.play_warnings_checkbox.image = self.img_checkbox_checked if common.settings.play_warnings else self.img_checkbox_unchecked
 
 
+class RuntimeConfig(object):
+    def __init__(self):
+        self.file = common.app_dir + "/squarelyrc"
+
+        self.force_lang = ''
+        self.dev_mode = False
+        self.debug_mode = False
+        self.safe_mode = False
+        self.show_fps = False
+
+    def load(self):
+        config = configparser.ConfigParser(allow_no_value=True)
+        if os.path.isfile(self.file):
+            with open(self.file) as f:
+                config.read_file(f)
+        else:
+            print("Runtime configuration file not found, creating...")
+            self.save()
+
+        with open(self.file) as f:
+            config.read_file(f)
+
+        if config.has_section('runtime'):
+            options = config.options('runtime')
+            for option in options:
+                if option == 'force_lang':
+                    try:
+                        lang = config.get('runtime', 'force_lang')
+                        if lang:
+                            self.force_lang = lang
+                    except ValueError:
+                        print("RuntimeConfig incorrect value: force_lang")
+                if option == 'debug_mode':
+                    try:
+                        self.debug_mode = config.getboolean('runtime', 'debug_mode')
+                    except ValueError:
+                        print("RuntimeConfig incorrect value: debug_mode = True | False")
+                if option == 'safe_mode':
+                    try:
+                        self.safe_mode = config.getboolean('runtime', 'safe_mode')
+                    except ValueError:
+                        print("RuntimeConfig incorrect value: safe_mode = True | False")
+                if option == 'show_fps':
+                    try:
+                        self.show_fps = config.getboolean('runtime', 'show_fps')
+                    except ValueError:
+                        print("RuntimeConfig incorrect value: safe_mode = True | False")
+
+    def save(self):
+        config = configparser.ConfigParser(allow_no_value=True)
+        config.add_section('runtime')
+
+        config.set('runtime', '# Delete the file and restart to restore defaults')
+        config.set('runtime', 'force_lang', self.force_lang)
+        config.set('runtime', 'debug_mode', str(self.debug_mode))
+        config.set('runtime', 'safe_mode', str(self.safe_mode))
+
+        config.set('runtime', 'show_fps', str(self.show_fps))  # The only value being changed with UI
+
+        with open(self.file, 'w') as output:
+            config.write(output)
+
+
 class Settings(object):
     def __init__(self):
         self.file = common.app_dir + "/settings.pkl"
@@ -1380,7 +1443,7 @@ class Panel(object):
             self.label.text = ""
 
     def level_up(self):
-        if self.selected_level < common.level_max and common.player.scores[self.selected_level] or common.dev_mode:
+        if self.selected_level < common.level_max and common.player.scores[self.selected_level] or rc.dev_mode:
             self.selected_level += 1
             txt = str(6 + self.selected_level * 3)
             self.border_size_txt = txt + "x" + txt

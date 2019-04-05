@@ -14,8 +14,11 @@ OFFLINE = 0
 SYNCING = 1
 ONLINE = 2
 
-dev_mode = False
-fps = False
+safe_mode = False
+debug_mode = False
+show_fps = False
+
+rc = None  # RuntimeConfig (instead of arguments)
 
 lang = None  # language dictionary
 avbin = False  # being set True if playing intro sound in ogg format does not crash

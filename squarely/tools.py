@@ -99,7 +99,8 @@ def rotate_selection_right(board, panel):
     else:
         selection_rotated_right(board)
 
-        check_matrix(board)
+        if common.rc.safe_mode:
+            check_matrix(board)
 
         common.rotation_direction = None
 
@@ -121,7 +122,8 @@ def rotate_selection_left(board, panel):
     else:
         selection_rotated_left(board)
 
-        check_matrix(board)
+        if common.rc.safe_mode:
+            check_matrix(board)
 
         common.rotation_direction = None
 
