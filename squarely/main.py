@@ -281,7 +281,7 @@ def main():
                 mark_and_delete(common.board, panel)
 
             elif panel.button_undo.selected:
-                common.fx.play("undo")
+                #common.fx.play("undo")
                 restore(common.board)
 
             elif panel.button_up.selected:

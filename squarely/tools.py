@@ -286,6 +286,9 @@ def mark_and_delete(board, panel):
                 print("GAME LOST: less than 3 columns left")
             common.game_lost = True
 
+        if common.game_lost:
+            common.fx.play("warning")
+
         """Game finished successfully?"""
         if cells_left == 0:
             common.game_state.playing = False
@@ -453,6 +456,7 @@ def backup(board):
 def restore(board):
     if common.backup_matrix is not None:
         common.game_lost = False
+        common.fx.play("undo")
 
         idx = 0  # Position on the list we stored cell attributes to
         for row in range(board.cells_in_row):
