@@ -9,7 +9,7 @@ the cells and unlock the next level. Next board size will be `n+3 x n+3`.
 
 ![screen](http://nwg.pl/squarely/wiki/screen1.png)
 
-A lot of work still left to do. See the current development state in action: https://youtu.be/HKVKCkCKqgU
+Some work still left to do. See the current development state in action: https://youtu.be/kkd3cE-pYDI
 
 The game is being developed on Arch Linux with [Pycharm Community Edition](https://www.jetbrains.com/pycharm/download).
 The PKGBUILD file and/or the testing package you'll find in the `dist` folder. No packages for other Linux 
