@@ -19,6 +19,7 @@ from cloud_tools import player_login, player_sync, top_ten_update
 from pyglet.window import key
 import locale
 import sys
+import webbrowser
 
 
 def main():
@@ -321,6 +322,10 @@ def main():
                     common.top_list.show()
                 else:
                     common.top_list.hide()
+
+            elif panel.button_website.selected:
+                url = "http://nwg.pl/squarely"
+                webbrowser.open_new_tab(url)
 
         if common.player_dialog.is_open:
             common.player_dialog.click(panel, x, y)
