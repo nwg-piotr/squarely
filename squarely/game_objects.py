@@ -647,8 +647,15 @@ class SettingsDialog(object):
             common.settings.save()
             self.refresh()
 
-        if self.is_in(self, x, y, self.play_music_checkbox.area) and common.avbin:
-            common.settings.play_music = not common.settings.play_music
+        if self.is_in(self, x, y, self.play_music_checkbox.area) and common.avbin and common.music:
+            if common.settings.play_music:
+                common.settings.play_music = False
+                if common.music.playing:
+                    common.music.pause()
+            else:
+                common.settings.play_music = True
+                common.music.play()
+
             common.settings.save()
             self.refresh()
 

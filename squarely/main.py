@@ -282,7 +282,11 @@ def main():
                 if common.top_list.is_open:
                     common.top_list.hide()
                 common.level = panel.selected_level
-                common.music.volume = 0.4
+
+                if common.avbin and common.music and common.music.playing:
+                    common.music.pause()
+
+                #common.music.volume = 0.4
                 common.fx.play("start")
                 new_game()
                 mark_and_delete(common.board, panel)
@@ -372,7 +376,11 @@ def main():
             if common.game_state.playing or isinstance(common.intro_sprite, FinishedAnimation) or isinstance(
                     common.intro_sprite, UnlockAnimation) or isinstance(common.intro_sprite, SunglassesAnimation):
                 common.game_state.playing = False
-                common.music.volume = 1
+
+                if common.avbin and common.music and common.settings.play_music:
+                    common.music.play()
+
+                # common.music.volume = 1
                 common.game_state.intro = True
                 intro_hello(hello_msg)
                 return True
