@@ -127,12 +127,9 @@ def main():
 
     if common.game_state.intro:
         intro_hello(hello_msg)
-        # common.fx.play("hello")
 
     common.music = Music()
     common.music.play()
-
-    # common.music.volume = 0.4
 
     @window.event
     def on_draw():
@@ -286,13 +283,11 @@ def main():
                 if common.avbin and common.music and common.music.playing:
                     common.music.pause()
 
-                #common.music.volume = 0.4
                 common.fx.play("start")
                 new_game()
                 mark_and_delete(common.board, panel)
 
             elif panel.button_undo.selected:
-                # common.fx.play("undo")
                 restore(common.board)
 
             elif panel.button_up.selected:
@@ -380,7 +375,6 @@ def main():
                 if common.avbin and common.music and common.settings.play_music:
                     common.music.play()
 
-                # common.music.volume = 1
                 common.game_state.intro = True
                 intro_hello(hello_msg)
                 return True
