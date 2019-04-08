@@ -561,20 +561,21 @@ def update_levels_display(panel):
 def intro_label(board, message):
     label = pyglet.text.Label(
         message,
-        width=int(board.cell_dimension * 3),
+        width=int(board.base * 3),
         multiline=True,
         align='center',
         color=(255, 255, 255, 255),
         font_name='DejaVu Sans Mono',
-        font_size=36 * board.scale,
-        x=board.columns[3], y=board.rows[2],
+        font_size=36 * board.base_scale,
+        x=board.base * 3, y=board.base * 4,
         anchor_x='center', anchor_y='center')
     return label
 
 
-def intro_hello(message):
+def intro_hello(message=None):
     common.intro_sprite = HelloAnimation(common.board)
-    common.intro_message = intro_label(common.board, message)
+    if message:
+        common.intro_message = intro_label(common.board, message)
 
 
 def intro_level_unlocked(level):

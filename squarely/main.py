@@ -41,7 +41,8 @@ def main():
 
         if sys.argv[i] == "-dev":
             try:
-                common.rc.dev_mode = hashlib.md5(sys.argv[i + 1].encode('utf-8')).hexdigest() == '6adb36112738e6a2b462106043c60351'
+                common.rc.dev_mode = hashlib.md5(
+                    sys.argv[i + 1].encode('utf-8')).hexdigest() == '6adb36112738e6a2b462106043c60351'
             except IndexError:
                 print("Missing argument\n")
 
@@ -55,7 +56,7 @@ def main():
         print('dev_mode', common.rc.dev_mode)
 
     pyglet.options['audio'] = ('openal', 'pulse', 'silent')
-    
+
     common.settings = Settings()
     common.settings.load()
 
@@ -126,13 +127,12 @@ def main():
 
     if common.game_state.intro:
         intro_hello(hello_msg)
-        #common.fx.play("hello")
+        # common.fx.play("hello")
 
-    if common.avbin:
-        common.music = Music()
-
+    common.music = Music()
     common.music.play()
-    #common.music.volume = 0.4
+
+    # common.music.volume = 0.4
 
     @window.event
     def on_draw():
@@ -288,7 +288,7 @@ def main():
                 mark_and_delete(common.board, panel)
 
             elif panel.button_undo.selected:
-                #common.fx.play("undo")
+                # common.fx.play("undo")
                 restore(common.board)
 
             elif panel.button_up.selected:
@@ -369,14 +369,17 @@ def main():
                 common.settings_dialog.hide()
                 return True
 
-            if common.game_state.playing:
+            if common.game_state.playing or isinstance(common.intro_sprite, FinishedAnimation) or isinstance(
+                    common.intro_sprite, UnlockAnimation) or isinstance(common.intro_sprite, SunglassesAnimation):
                 common.game_state.playing = False
                 common.music.volume = 1
                 common.game_state.intro = True
+                intro_hello(hello_msg)
                 return True
 
     def update(dt):
-        if common.game_state.intro or common.game_state.account or common.game_state.top10 or common.game_state.settings or (common.game_state.playing and common.settings.background_draw and common.settings.background_rotate):
+        if common.game_state.intro or common.game_state.account or common.game_state.top10 or common.game_state.settings or (
+                common.game_state.playing and common.settings.background_draw and common.settings.background_rotate):
             # We won't say "Welcome back" to anonymous players! todo should it be here?
             if isinstance(common.intro_sprite, HelloAnimation):  # Are we still in the Hello animation?
                 common.intro_message.text = common.lang["intro_wb"] if common.player.name != 'Anonymous' else \
