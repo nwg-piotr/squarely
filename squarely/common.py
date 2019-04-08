@@ -24,6 +24,8 @@ player_filename = 'player.pkl'
 player = None
 scores = [None, None, None, None, None, None]
 
+music = None
+
 player_dialog = None
 player_confirmation = None
 settings_dialog = None

@@ -1548,6 +1548,30 @@ class Sounds(object):
                 self.warning.play()
 
 
+class Music(pyglet.media.Player):
+    def __init__(self):
+        super().__init__()
+        try:
+            """As this sound is being played first, let's check if the avbin library works"""
+            if not common.settings.play_music:
+                sound = pyglet.media.StaticSource(pyglet.media.load('sounds/hello.ogg', streaming=False))
+                common.avbin = True
+                self.queue(sound)
+            else:
+                sound = pyglet.media.StaticSource(pyglet.media.load('sounds/main-track.ogg', streaming=True))
+
+                looper = pyglet.media.SourceGroup(sound.audio_format, None)
+                looper.loop = True
+                looper.queue(sound)
+
+                self.queue(looper)
+        except:
+            print("avbin library missing or doesn't work, music turned off")
+            common.settings.play_music = False
+            sound = pyglet.media.StaticSource(pyglet.media.load('sounds/hello.wav', streaming=False))
+            self.queue(sound)
+
+
 class Player(object):
     def __init__(self, name, password, scores):
         self.name = name

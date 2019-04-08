@@ -126,7 +126,13 @@ def main():
 
     if common.game_state.intro:
         intro_hello(hello_msg)
-        common.fx.play("hello")
+        #common.fx.play("hello")
+
+    if common.avbin:
+        common.music = Music()
+
+    common.music.play()
+    #common.music.volume = 0.4
 
     @window.event
     def on_draw():
@@ -276,6 +282,7 @@ def main():
                 if common.top_list.is_open:
                     common.top_list.hide()
                 common.level = panel.selected_level
+                common.music.volume = 0.4
                 common.fx.play("start")
                 new_game()
                 mark_and_delete(common.board, panel)
@@ -364,6 +371,7 @@ def main():
 
             if common.game_state.playing:
                 common.game_state.playing = False
+                common.music.volume = 1
                 common.game_state.intro = True
                 return True
 
