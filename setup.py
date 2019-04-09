@@ -2,13 +2,13 @@ from setuptools import setup
 
 setup(
     name='squarely',
-    version='0.1',
+    version='0.9',
     packages=['squarely'],
     include_package_data=True,
-    url='http://nwg.pl/squarely',
+    url='https://github.com/nwg-piotr/squarely',
     license='GPL3',
     author='Piotr Miller',
     author_email='nwg.piotr@gmail.com',
-    description='Puzzle game that uses the Pyglet library',
+    description='Puzzle game written in Python using the pyglet library',
     install_requires=['pyglet', 'requests']
 )

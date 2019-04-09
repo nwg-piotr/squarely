@@ -2,7 +2,7 @@
 pkgname=('squarely')
 pkgver=0.1
 pkgrel=11
-pkgdesc="Puzzle game written in Python with Pyglet"
+pkgdesc="Puzzle game written in Python using the pyglet library"
 arch=('i686' 'x86_64')
 url="https://github.com/nwg-piotr/squarely"
 license=('GPL3')
