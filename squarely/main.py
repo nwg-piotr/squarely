@@ -131,6 +131,8 @@ def main():
     common.music = Music()
     if not common.settings.muted and common.settings.play_music:
         common.music.play()
+    elif common.settings.play_fx:
+        common.fx.play("hello")
 
     @window.event
     def on_draw():
