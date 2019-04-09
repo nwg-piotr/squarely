@@ -129,7 +129,8 @@ def main():
         intro_hello(hello_msg)
 
     common.music = Music()
-    common.music.play()
+    if not common.settings.muted and common.settings.play_music:
+        common.music.play()
 
     @window.event
     def on_draw():
@@ -372,7 +373,7 @@ def main():
                     common.intro_sprite, UnlockAnimation) or isinstance(common.intro_sprite, SunglassesAnimation):
                 common.game_state.playing = False
 
-                if common.avbin and common.music and common.settings.play_music:
+                if common.avbin and common.music and common.settings.play_music and not common.settings.muted:
                     common.music.play()
 
                 common.game_state.intro = True

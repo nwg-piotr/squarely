@@ -654,7 +654,8 @@ class SettingsDialog(object):
                     common.music.pause()
             else:
                 common.settings.play_music = True
-                common.music.play()
+                if not common.game_state.old_playing:
+                    common.music.play()
 
             common.settings.save()
             self.refresh()
@@ -796,6 +797,13 @@ class Settings(object):
     def switch_muted(self, panel):
         self.muted = not self.muted
         panel.button_sound.image = panel.img_sound if not self.muted else panel.img_sound_off
+        if common.music:
+            if self.muted:
+                if common.music.playing:
+                    common.music.pause()
+            else:
+                if common.settings.play_music:
+                    common.music.play()
         self.save()
 
 
