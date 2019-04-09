@@ -1101,6 +1101,8 @@ class PlayerDialog(pyglet.sprite.Sprite):
             self.label.text = self.message
 
     def logout_player(self, panel):
+        panel.selected_level = 0
+        panel.highlight_level(0)
         common.player.online = common.OFFLINE
         self.close("Anonymous")
         common.scores = [None, None, None, None, None, None]
@@ -1469,7 +1471,7 @@ class Panel(object):
             self.label.text = ""
 
     def level_up(self):
-        if self.selected_level < common.level_max and common.player.scores[self.selected_level] or rc.dev_mode:
+        if self.selected_level < common.level_max and common.player.scores[self.selected_level] or common.rc.dev_mode:
             self.selected_level += 1
             txt = str(6 + self.selected_level * 3)
             self.border_size_txt = txt + "x" + txt
@@ -1529,7 +1531,6 @@ class Sounds(object):
         self.warning = pyglet.media.StaticSource(pyglet.media.load('sounds/warning.wav', streaming=False))
         self.start = pyglet.media.StaticSource(pyglet.media.load('sounds/start.wav', streaming=False))
         self.level = pyglet.media.StaticSource(pyglet.media.load('sounds/level.wav', streaming=False))
-        self.unlocked = pyglet.media.StaticSource(pyglet.media.load('sounds/unlocked.wav', streaming=False))
         try:
             """As this sound is being played first, let's check if the avbin library works"""
             self.hello = pyglet.media.StaticSource(pyglet.media.load('sounds/hello.ogg', streaming=False))
@@ -1556,8 +1557,6 @@ class Sounds(object):
                     self.start.play()
                 if fx == "level":
                     self.level.play()
-                if fx == "unlocked":
-                    self.unlocked.play()
 
             if fx == "warning" and common.settings.play_warnings:
                 self.warning.play()

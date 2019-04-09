@@ -520,10 +520,10 @@ def player_save_results(panel):
     common.game_state.intro = True
     if unlocked:
         if unlocked < 7:
-            common.fx.play("unlocked")
+            common.fx.play("level")
             intro_level_unlocked(unlocked)  # Next level unlocked, notify!
         else:
-            common.fx.play("unlocked")
+            common.fx.play("level")
             intro_sunglasses()  # No new level to unlock
     else:
         common.fx.play("level")
