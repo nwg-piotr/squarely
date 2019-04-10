@@ -1,19 +1,19 @@
 # Maintainer: Piotr Miller <nwg.piotr@gmail.com>
 pkgname=('squarely')
-pkgver=0.1
-pkgrel=11
+pkgver=0.9
+pkgrel=1
 pkgdesc="Puzzle game written in Python using the pyglet library"
 arch=('i686' 'x86_64')
 url="https://github.com/nwg-piotr/squarely"
 license=('GPL3')
-depends=('python>=3.6' 'python-setuptools' 'python-pyglet' 'python-requests' )
+depends=('python' 'python-setuptools' 'python-pyglet' 'python-requests' )
 optdepends=('avbin7: for compressed sound playback')
-source=("https://github.com/nwg-piotr/squarely/raw/master/dist/squarely-0.1.tar.gz"
+source=("https://github.com/nwg-piotr/squarely/raw/master/dist/squarely-0.9.tar.gz"
         "https://github.com/nwg-piotr/squarely/raw/master/dist/squarely"
         "https://github.com/nwg-piotr/squarely/raw/master/dist/squarely.svg"
         "https://github.com/nwg-piotr/squarely/raw/master/dist/squarely.desktop")
 
-md5sums=('04a086201e42dd0a6ccdf07a9c66df18'
+md5sums=('4b6cfbf3983bbbb23c14679c7be74f7a'
          '8a910f0a5ecf156cc6856bd9b636143d'
          'a87a406cab2e66a0efaba87deffa2175'
          '795bf57c86be1a38812ec7b4716d8729')
