@@ -12,5 +12,5 @@ the cells and unlock the next level. Next board size will be `n+3 x n+3`.
 Some work still left to do. See the current development state in action: https://youtu.be/kkd3cE-pYDI
 
 The game is being developed on Arch Linux with [Pycharm Community Edition](https://www.jetbrains.com/pycharm/download).
-The PKGBUILD file and/or the testing package you'll find in the `dist` folder. No packages for other Linux 
-distributions available at the moment, but you can always clone the project to give it a try.
+The beta [squarely](https://aur.archlinux.org/packages/squarely) package is available in AUR. No packages for other 
+Linux distributions are available at the moment, but you can always clone the project to give it a try.
