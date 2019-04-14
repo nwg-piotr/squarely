@@ -83,60 +83,22 @@ def player_delete(name, password):
 
 def top_ten_update(password=None):
     print("Loading scores...", end=" ")
-    url = 'http://nwg.pl/puzzle/player.php?action=display&plimit=10'
+    url = 'http://nwg.pl/puzzle/top.php'
     if internet_on():
         async_request('get', url, headers=common.headers, pwd=password, callback=lambda r, p: top_ten_result(r, p))
 
 
 def top_ten_result(result, password=None):
     txt = result.content.decode("utf-8")
-    if txt.startswith('top_10'):
-        levels = txt[7:].split("#")
-        level0 = levels[0][:-1].split(":")
-        level1 = levels[1][:-1].split(":")
-        level2 = levels[2][:-1].split(":")
-        level3 = levels[3][:-1].split(":")
-        level4 = levels[4][:-1].split(":")
-        level5 = levels[5][:-1].split(":")
+    if txt.startswith('top_ten'):
+        data = txt.split("#")
+        output = common.lang["top_ten"] + ":\n\n"
+        for i in range(1, len(data)):
+            output += data[i] + "\n"
 
-        output_l0 = common.lang["level"] + " 1: \n"
-        for i in range(len(level0)):
-            elements = level0[i].split(",")
-            output_l0 += str(i + 1) + ". " + elements[0] + " (" + str(elements[1]) + ") "
-
-        output_l1 = common.lang["level"] + " 2: \n"
-        for i in range(len(level1)):
-            elements = level1[i].split(",")
-            output_l1 += str(i + 1) + ". " + elements[0] + " (" + str(elements[1]) + ") "
-
-        output_l2 = common.lang["level"] + " 3: \n"
-        for i in range(len(level2)):
-            elements = level2[i].split(",")
-            output_l2 += str(i + 1) + ". " + elements[0] + " (" + str(elements[1]) + ") "
-
-        output_l3 = common.lang["level"] + " 4: \n"
-        for i in range(len(level3)):
-            elements = level3[i].split(",")
-            output_l3 += str(i + 1) + ". " + elements[0] + " (" + str(elements[1]) + ") "
-
-        output_l4 = common.lang["level"] + " 5: \n"
-        for i in range(len(level4)):
-            elements = level4[i].split(",")
-            output_l4 += str(i + 1) + ". " + elements[0] + " (" + str(elements[1]) + ") "
-
-        output_l5 = common.lang["level"] + " 6: \n"
-        for i in range(len(level5)):
-            elements = level5[i].split(",")
-            if len(elements) > 1:
-                output_l5 += str(i + 1) + ". " + elements[0] + " (" + str(elements[1]) + ") "
-
-        print("Done!")
-
-        txt = common.lang["top_ten"].upper() + ":\n\n" + output_l0 + "\n\n" + output_l1 + "\n\n" + output_l2 + "\n\n" + output_l3 + "\n\n" + output_l4 + "\n\n" + output_l5 + "\n\n"
-
-        # It would be cool to update the TopList spite here, but we can not do if on the async thread :/
+        # It would be cool to update the TopList sprite here, but we can not do if on the async thread :/
         # We need an intermediary variable.
-        common.top10_content = txt
+        common.top10_content = output
 
 
 def player_password(name, password, new_password):

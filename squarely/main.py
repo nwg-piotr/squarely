@@ -181,6 +181,7 @@ def main():
             if common.settings.background_draw:
                 intro_bcg.draw()
             common.top_list_batch.draw()
+            common.top_list.draw_website_label()
 
         if common.game_state.settings:
             common.settings_batch.draw()

@@ -19,6 +19,7 @@ from text_tools import *
 import hashlib
 import pickle
 from cloud_tools import player_create, player_delete, player_login, player_password
+import webbrowser
 
 
 class GameBoard(object):
@@ -408,21 +409,39 @@ class TopList(pyglet.sprite.Sprite):
         self.is_open = False
 
         self.close_area = self.x + self.width - board.base, self.y + self.height - board.base, self.x + self.width, self.y + self.height
+        self.website_area = self.x + board.base, self.y + board.base // 2, self.x + board.base * 5, self.y + board.base
 
         self.label = pyglet.text.Label(
             common.lang["top_ten_loading"],
             font_name='DejaVu Sans Mono',
             color=(255, 255, 255, 255),
-            font_size=int(24 * self.scale),
+            font_size=int(36 * self.scale),
             width=500,
             multiline=True,
             align="left",
-            x=self.x + board.cell_dimension // 2, y=self.y + self.width - board.cell_dimension // 2,
+            x=self.x + board.base // 2, y=self.y + self.width - board.base // 2,
             anchor_x='left', anchor_y='top', batch=self.batch)
+
+        self.website_label = pyglet.text.Label(
+            common.lang["top_ten_more"],
+            font_name='DejaVu Sans Mono',
+            color=(170, 170, 214, 255),
+            font_size=int(30 * self.scale),
+            x=self.x + board.base * 3, y=self.y + board.base * 0.75,
+            anchor_x='center', anchor_y='center')
 
     def click(self, x, y):
         if self.is_in(self, x, y, self.close_area):
             self.hide()
+        elif self.is_in(self, x, y, self.website_area):
+            if common.player.name != "Anonymous":
+                url = "http://nwg.pl/squarely/index.php?player=" + common.player.name
+            else:
+                url = "http://nwg.pl/squarely"
+            webbrowser.open_new_tab(url)
+
+    def draw_website_label(self):
+        self.website_label.draw()
 
     @staticmethod
     def is_in(self, x, y, area):
