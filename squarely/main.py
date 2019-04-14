@@ -125,6 +125,9 @@ def main():
     common.top_list_batch = pyglet.graphics.Batch()
     common.top_list = TopList(common.board)
 
+    common.about_batch = pyglet.graphics.Batch()
+    common.about = About(common.board)
+
     if common.game_state.intro:
         intro_hello(hello_msg)
 
@@ -182,6 +185,11 @@ def main():
                 intro_bcg.draw()
             common.top_list_batch.draw()
             common.top_list.draw_website_label()
+
+        if common.game_state.about:
+            if common.settings.background_draw:
+                intro_bcg.draw()
+            common.about_batch.draw()
 
         if common.game_state.settings:
             common.settings_batch.draw()
@@ -333,9 +341,11 @@ def main():
                 else:
                     common.top_list.hide()
 
-            elif panel.button_website.selected:
-                url = "http://nwg.pl/squarely"
-                webbrowser.open_new_tab(url)
+            elif panel.button_about.selected:
+                if not common.about.visible:
+                    common.about.show()
+                else:
+                    common.about.hide()
 
         if common.player_dialog.is_open:
             common.player_dialog.click(panel, x, y)
@@ -345,6 +355,9 @@ def main():
 
         if common.settings_dialog.is_open:
             common.settings_dialog.click(x, y)
+
+        if common.about.is_open:
+            common.about.click(x, y)
 
     @window.event
     def on_mouse_scroll(x, y, scroll_x, scroll_y):
@@ -368,6 +381,10 @@ def main():
                 common.top_list.hide()
                 return True
 
+            if common.about.visible:
+                common.about.hide()
+                return True
+
             if common.settings_dialog.visible:
                 common.settings_dialog.hide()
                 return True
@@ -384,7 +401,8 @@ def main():
                 return True
 
     def update(dt):
-        if common.game_state.intro or common.game_state.account or common.game_state.top10 or common.game_state.settings or (
+        if common.game_state.intro or common.game_state.account or common.game_state.top10 or common.game_state.about \
+                or common.game_state.settings or (
                 common.game_state.playing and common.settings.background_draw and common.settings.background_rotate):
             # We won't say "Welcome back" to anonymous players! todo should it be here?
             if isinstance(common.intro_sprite, HelloAnimation):  # Are we still in the Hello animation?
@@ -460,6 +478,8 @@ def new_game():
         common.top_list.hide()
     if common.player_dialog.is_open:
         common.player_dialog.close()
+    if common.about.visible:
+        common.about.hide()
 
     common.game_state.intro = False
     common.game_state.account = False

@@ -89,6 +89,7 @@ def top_ten_update(password=None):
 
 
 def top_ten_result(result, password=None):
+    print(" Done")
     txt = result.content.decode("utf-8")
     if txt.startswith('top_ten'):
         data = txt.split("#")

@@ -1,5 +1,16 @@
 # While adding own translation, leave all {} untouched!
 [lang]
+about_description = Squarely is a game written in Python with the pyglet library.
+about_copyright = Copyright © 2019 Piotr Miller
+about_license = This program is free software. You can redistribute it and/or modify it under the terms of the GNU General Public License version 3.0, as published by the Free Software Foundation.
+about_site = Project site: https://github.com/nwg-piotr/squarely
+about_objective = Rotate groups to arrange 3 or more cells of same type horizontally and destroy them. The objective is to clear the board in as few moves as possible.
+about_controls = Game controls
+about_mouse = Left / right click: rotate
+about_bar = Middle click / scroll / H key: show summary bar
+about_escape = Escape - exit dialog / exit the game
+about_fps = F - switch FPS display
+about_check_site = Check the project site to learn about possible runtime configuration.
 panel_music = Music on/off
 panel_music_missing = avbin library missing
 panel_sounds = Sounds on/off
@@ -49,7 +60,7 @@ settings_new_password = new password (6+ chars)
 top_ten = Top 10 Players
 top_ten_loading = Loading Top 10...
 top_ten_more = More one the website
-website = Website
+about = About the game
 close = Close
 level = Level
 nothing = Nothing yet

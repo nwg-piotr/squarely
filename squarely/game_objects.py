@@ -20,6 +20,7 @@ import hashlib
 import pickle
 from cloud_tools import player_create, player_delete, player_login, player_password
 import webbrowser
+import pkg_resources
 
 
 class GameBoard(object):
@@ -465,6 +466,73 @@ class TopList(pyglet.sprite.Sprite):
         self.is_open = False
 
 
+class About(pyglet.sprite.Sprite):
+    def __init__(self, board):
+        super().__init__(image.load("images/about.png"))
+
+        self.name_ver = common.app_name
+        try:
+            self.version = pkg_resources.require(common.app_name)[0].version
+            self.name_ver += " " + self.version
+        except Exception:
+            pass
+        print(self.name_ver)
+
+        self.scale = board.scale
+        self.x = board.columns[0]
+        self.y = board.rows[0]
+        self.visible = False
+        self.batch = common.about_batch
+
+        self.is_open = False
+
+        self.close_area = self.x + self.width - board.base, self.y + self.height - board.base, self.x + self.width, self.y + self.height
+
+        self.label = pyglet.text.Label(
+            common.lang["about_description"],
+            font_name='DejaVu Sans Mono',
+            color=(255, 255, 255, 255),
+            font_size=int(24 * self.scale),
+            width=500,
+            multiline=True,
+            align="left",
+            x=self.x + board.base // 2, y=self.y + self.width - board.base // 2,
+            anchor_x='left', anchor_y='top', batch=self.batch)
+
+    def click(self, x, y):
+        if self.is_in(self, x, y, self.close_area):
+            self.hide()
+
+    @staticmethod
+    def is_in(self, x, y, area):
+        return area[0] < x < area[2] and area[1] < y < area[3]
+
+    def show(self):
+        common.game_state.set_about()
+
+        self.label.text = self.name_ver + "\n\n"
+        self.label.text += common.lang["about_description"] + "\n\n"
+        self.label.text += common.lang["about_copyright"] + "\n\n"
+        self.label.text += common.lang["about_license"] + "\n\n"
+        self.label.text += common.lang["about_site"] + "\n\n"
+        self.label.text += common.lang["about_objective"] + "\n\n"
+        self.label.text += common.lang["about_controls"] + ":\n\n"
+        self.label.text += common.lang["about_mouse"] + "\n"
+        self.label.text += common.lang["about_bar"] + "\n"
+        self.label.text += common.lang["about_escape"] + "\n"
+        self.label.text += common.lang["about_fps"] + "\n\n"
+        self.label.text += common.lang["about_check_site"]
+
+        self.visible = True
+        self.is_open = True
+
+    def hide(self):
+        common.game_state.restore()
+
+        self.visible = False
+        self.is_open = False
+
+
 class SettingsDialog(object):
     def __init__(self, window, board):
         self.old_playing = False
@@ -833,12 +901,14 @@ class GameState(object):
         self.account = False
         self.top10 = False
         self.settings = False
+        self.about = False
 
         self.old_playing = False
         self.old_intro = False
         self.old_account = False
         self.old_top10 = False
         self.old_settings = False
+        self.old_about = False
 
     def save(self):
         self.old_playing = self.playing
@@ -846,6 +916,7 @@ class GameState(object):
         self.old_account = self.account
         self.old_top10 = self.top10
         self.old_settings = self.settings
+        self.old_about = self.about
 
     def restore(self):
         self.playing = self.old_playing
@@ -853,15 +924,19 @@ class GameState(object):
         self.account = self.old_account
         self.top10 = self.old_top10
         self.settings = self.old_settings
+        self.about = self.old_about
 
     def set_account(self):
         if common.settings_dialog.is_open:
             common.settings_dialog.hide()
         if common.top_list.visible:
             common.top_list.hide()
+        if common.about.visible:
+            common.about.hide()
 
         self.top10 = False
         self.settings = False
+        self.account = False
         self.save()
 
         self.account = True
@@ -873,12 +948,32 @@ class GameState(object):
             common.player_dialog.close()
         if common.settings_dialog.is_open:
             common.settings_dialog.hide()
+        if common.about.visible:
+            common.about.hide()
 
         self.account = False
         self.settings = False
+        self.about = False
         self.save()
 
         self.top10 = True
+        self.playing = False
+        self.intro = False
+
+    def set_about(self):
+        if common.player_dialog.is_open:
+            common.player_dialog.close()
+        if common.settings_dialog.is_open:
+            common.settings_dialog.hide()
+        if common.top_list.is_open:
+            common.top_list.hide()
+
+        self.account = False
+        self.settings = False
+        self.top10 = False
+        self.save()
+
+        self.about = True
         self.playing = False
         self.intro = False
 
@@ -887,9 +982,12 @@ class GameState(object):
             common.top_list.hide()
         if common.player_dialog.is_open:
             common.player_dialog.close()
+        if common.about.is_open:
+            common.about.hide()
 
         self.account = False
         self.top10 = False
+        self.about = False
         self.save()
 
         self.settings = True
@@ -1175,7 +1273,7 @@ class Panel(object):
         self.img_offline = self.bcg_image_half(pyglet.image.load('images/btn-offline.png'))
         self.img_syncing = self.bcg_image_half(pyglet.image.load('images/btn-syncing.png'))
         self.img_top10 = self.bcg_image_half(pyglet.image.load('images/btn-top10.png'))
-        self.img_website = self.bcg_image_half(pyglet.image.load('images/btn-website.png'))
+        self.img_about = self.bcg_image_half(pyglet.image.load('images/btn-about.png'))
 
         self.img_locked = self.bcg_image(pyglet.image.load('images/locked.png'))
         self.img_unlocked = self.bcg_image(pyglet.image.load('images/unlocked.png'))
@@ -1269,13 +1367,13 @@ class Panel(object):
                                  self.btn_dim, self.button_top10.y + self.btn_half
         self.button_top10.selected = False
 
-        self.button_website = pyglet.sprite.Sprite(self.img_website)
-        self.button_website.x = self.margin + self.btn_dim * 5
-        self.button_website.y = self.margin + self.btn_dim
-        self.button_website.batch = self.batch
-        self.button_website.area = self.button_website.x, self.button_website.y, self.button_website.x + \
-                                   self.btn_dim, self.button_website.y + self.btn_half
-        self.button_website.selected = False
+        self.button_about = pyglet.sprite.Sprite(self.img_about)
+        self.button_about.x = self.margin + self.btn_dim * 5
+        self.button_about.y = self.margin + self.btn_dim
+        self.button_about.batch = self.batch
+        self.button_about.area = self.button_about.x, self.button_about.y, self.button_about.x + \
+                                 self.btn_dim, self.button_about.y + self.btn_half
+        self.button_about.selected = False
 
         """Level score buttons"""
         self.level_display_y = self.margin * 2 + self.btn_dim * 1.5
@@ -1459,7 +1557,7 @@ class Panel(object):
         self.set_selection(self, self.button_name, self.is_selected(self, x, y, self.button_name.area))
         self.set_selection(self, self.button_cloud, self.is_selected(self, x, y, self.button_cloud.area))
         self.set_selection(self, self.button_top10, self.is_selected(self, x, y, self.button_top10.area))
-        self.set_selection(self, self.button_website, self.is_selected(self, x, y, self.button_website.area))
+        self.set_selection(self, self.button_about, self.is_selected(self, x, y, self.button_about.area))
 
         if self.button_sound.selected:
             self.label.text = common.lang["panel_sounds"]
@@ -1484,8 +1582,8 @@ class Panel(object):
                 self.label.text = common.lang["player_syncing"]
         elif self.button_top10.selected:
             self.label.text = common.lang["top_ten"]
-        elif self.button_website.selected:
-            self.label.text = common.lang["website"]
+        elif self.button_about.selected:
+            self.label.text = common.lang["about"]
         else:
             self.label.text = ""
 
