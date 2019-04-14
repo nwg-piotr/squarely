@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='squarely',
-    version='0.9',
+    version='0.9-3',
     packages=['squarely'],
     include_package_data=True,
     url='https://github.com/nwg-piotr/squarely',
