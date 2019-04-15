@@ -15,10 +15,10 @@ See the gameplay on YouTube: https://youtu.be/kkd3cE-pYDI
 
 ## Controls:
 
-- left / right click: rotate a group left or right
-- middle click | scroller | H key: display the summary bar
-- Escape key: exit current dialog / exit the game
-- F key: turn FPS display on/off
+- left / right click: rotate a group left or right;
+- middle click | scroller | H key: display the summary bar;
+- Escape key: exit current dialog / exit the game;
+- F key: turn FPS display on/off.
 
 ## Optional argument:
 
@@ -26,7 +26,7 @@ See the gameplay on YouTube: https://youtu.be/kkd3cE-pYDI
 
 ## Runtime configuration:
 
-You may edit the `~/.config/squarely/squarelyrc` to set some more things:
+You may edit the `~/.config/squarely/squarelyrc` file to set some more things:
 
 ```text
 [runtime]
