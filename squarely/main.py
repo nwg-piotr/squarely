@@ -19,7 +19,6 @@ from cloud_tools import player_login, player_sync, top_ten_update
 from pyglet.window import key
 import locale
 import sys
-import webbrowser
 
 
 def main():
@@ -452,7 +451,10 @@ def create_game_window(board):
     window.width = board.window_width
     window.height = board.window_height
     window.set_location(board.window_pos_x, board.window_pos_y)
-    window.set_caption("squarely")
+    window.set_caption(common.app_name)
+    icon1 = pyglet.image.load('images/16x16.png')
+    icon2 = pyglet.image.load('images/32x32.png')
+    window.set_icon(icon1, icon2)
 
     return window
 
