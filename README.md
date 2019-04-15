@@ -40,6 +40,5 @@ show_fps = False
 - `safe_mode`: tries to revert a board misbehaviour that happens when loosing animation frames; turn on on less 
 powerful machines.
 
-Other files in the `~/.config/squarely` folder store local data of the player currently signed in and preferences.
+Other files in the `~/.config/squarely` folder store local data of the player currently signed in, and preferences.
 Deletion of the `player.pkl` file results in signing the player out. All the scores should be safe on the server.
-
