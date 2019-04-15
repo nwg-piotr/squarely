@@ -1,7 +1,7 @@
 # squarely
-Having nothing better to do, I decided to give a try to pyglet [pyglet](https://bitbucket.org/pyglet/pyglet) library, 
-and the result was this puzzle game. It's currently in beta development stage, available for testing in Arch Linux 
-AUR repository as [squarely](https://aur.archlinux.org/packages/squarely).
+Having nothing better to do, I decided to give a try to the [pyglet](https://bitbucket.org/pyglet/pyglet) library, 
+and the result was this puzzle game. It's currently in beta development stage, available for testing as 
+[squarely](https://aur.archlinux.org/packages/squarely) in Arch Linux AUR repository.
 
 
 The game board consists of 6 types of cells in `6 + n * 3` columns x `6 + n * 3`. Each 2 x 2 group, if contains at 
