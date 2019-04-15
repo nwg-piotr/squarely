@@ -19,6 +19,7 @@ from cloud_tools import player_login, player_sync, top_ten_update
 from pyglet.window import key
 import locale
 import sys
+import platform
 
 
 def main():
@@ -54,7 +55,8 @@ def main():
     if common.rc.dev_mode:
         print('dev_mode', common.rc.dev_mode)
 
-    pyglet.options['audio'] = ('openal', 'pulse', 'silent')
+    if platform.system() == 'Linux':
+        pyglet.options['audio'] = ('openal', 'pulse', 'silent')
 
     common.settings = Settings()
     common.settings.load()
