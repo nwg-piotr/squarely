@@ -1026,7 +1026,7 @@ class PlayerDialog(pyglet.sprite.Sprite):
         self.label = pyglet.text.Label(
             common.lang["player_account"],
             font_name='DejaVu Sans Mono',
-            color=(255, 255, 255, 255),
+            color=(220, 220, 220, 255),
             font_size=int(16 * self.scale),
             x=self.base_square * 3, y=self.y - self.base_square // 2,
             anchor_x='center', anchor_y='center', batch=self.batch)
@@ -1289,6 +1289,7 @@ class Panel(object):
         self.button_settings.area = self.button_settings.x, self.button_settings.y, self.button_settings.x + \
                                     self.btn_dim, self.button_settings.y + self.btn_dim
         self.button_settings.selected = False
+        self.button_settings.opacity = 160
 
         self.button_sound = pyglet.sprite.Sprite(self.img_sound if not common.settings.muted else self.img_sound_off)
         self.button_sound.x = self.margin + self.btn_dim
@@ -1298,6 +1299,7 @@ class Panel(object):
         self.button_sound.area = self.button_sound.x, self.button_sound.y, self.button_sound.x + \
                                  self.btn_dim, self.button_sound.y + self.btn_dim
         self.button_sound.selected = False
+        self.button_sound.opacity = 160
 
         self.button_undo = pyglet.sprite.Sprite(self.img_undo)
         self.button_undo.x = self.margin + self.btn_dim * 2
@@ -1306,6 +1308,7 @@ class Panel(object):
         self.button_undo.area = self.button_undo.x, self.button_undo.y, self.button_undo.x + \
                                 self.btn_dim, self.button_undo.y + self.btn_dim
         self.button_undo.selected = False
+        self.button_undo.opacity = 160
 
         self.button_down = pyglet.sprite.Sprite(self.img_down)
         self.button_down.x = self.margin + self.btn_dim * 3
@@ -1314,6 +1317,7 @@ class Panel(object):
         self.button_down.area = self.button_down.x, self.button_down.y, self.button_down.x + \
                                 self.btn_dim, self.button_down.y + self.btn_dim
         self.button_down.selected = False
+        self.button_down.opacity = 160
 
         self.button_up = pyglet.sprite.Sprite(self.img_up)
         self.button_up.x = self.margin + self.btn_dim * 4
@@ -1322,6 +1326,7 @@ class Panel(object):
         self.button_up.area = self.button_up.x, self.button_up.y, self.button_up.x + \
                               self.btn_dim, self.button_up.y + self.btn_dim
         self.button_up.selected = False
+        self.button_up.opacity = 160
 
         self.button_start = pyglet.sprite.Sprite(self.img_start)
         self.button_start.x = self.margin + self.btn_dim * 5
@@ -1330,6 +1335,7 @@ class Panel(object):
         self.button_start.area = self.button_start.x, self.button_start.y, self.button_start.x + \
                                  self.btn_dim, self.button_start.y + self.btn_dim
         self.button_start.selected = False
+        self.button_start.opacity = 160
 
         self.button_name = pyglet.sprite.Sprite(self.img_text)
         self.button_name.x = self.margin
@@ -1338,11 +1344,12 @@ class Panel(object):
         self.button_name.area = self.button_name.x, self.button_name.y, self.button_name.x + \
                                 self.btn_dim * 3, self.button_name.y + self.btn_half
         self.button_name.selected = False
+        self.button_name.opacity = 160
 
         self.button_name.label = pyglet.text.Label(
             common.player.name,
             font_name='DejaVu Sans Mono',
-            color=(87, 87, 120, 255),
+            color=(87, 87, 120, 160),
             font_size=int(34 * self.scale),
             x=self.button_name.x + self.button_name.image.width // 2,
             y=self.button_name.y + self.button_name.image.height // 2,
@@ -1356,6 +1363,7 @@ class Panel(object):
                                  self.btn_dim, self.button_cloud.y + self.btn_half
         self.button_cloud.selected = False
         self.button_cloud.online = False
+        self.button_cloud.opacity = 160
 
         self.update_user_label()  # check if it's necessary
 
@@ -1366,6 +1374,7 @@ class Panel(object):
         self.button_top10.area = self.button_top10.x, self.button_top10.y, self.button_top10.x + \
                                  self.btn_dim, self.button_top10.y + self.btn_half
         self.button_top10.selected = False
+        self.button_top10.opacity = 160
 
         self.button_about = pyglet.sprite.Sprite(self.img_about)
         self.button_about.x = self.margin + self.btn_dim * 5
@@ -1374,6 +1383,7 @@ class Panel(object):
         self.button_about.area = self.button_about.x, self.button_about.y, self.button_about.x + \
                                  self.btn_dim, self.button_about.y + self.btn_half
         self.button_about.selected = False
+        self.button_about.opacity = 160
 
         """Level score buttons"""
         self.level_display_y = self.margin * 2 + self.btn_dim * 1.5
@@ -1536,7 +1546,7 @@ class Panel(object):
     def set_selection(self, button, value):
         if value:
             button.selected = True
-            button.color = 255, 100, 0
+            button.color = 0, 190, 255
         else:
             button.selected = value
             button.color = 255, 255, 255
