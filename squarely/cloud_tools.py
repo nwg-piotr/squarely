@@ -287,8 +287,8 @@ def internet_on(host="8.8.8.8", port=53, timeout=3):
     try:
         socket.setdefaulttimeout(timeout)
         socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
-        if common.player.name != 'Anonymous':
-            common.player.online = common.ONLINE
+        if common.player.name == 'Anonymous':
+            common.player.online = common.OFFLINE
         return True
     except Exception as e:
         if common.rc.debug_mode:
