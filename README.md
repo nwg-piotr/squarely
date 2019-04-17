@@ -9,9 +9,9 @@ least 3 cells, can be rotated left or right (left/right mouse click), 90 degrees
 same type, arranged in a horizontal row, disappear. All the cells above fall down. The game objective is to destroy all 
 the cells and unlock the next level. Next board size will be `n+3 x n+3`.
 
-![screen](http://nwg.pl/squarely/wiki/screen1.png)
+![screen](http://nwg.pl/squarely/wiki/l1.png)
 
-See the gameplay on YouTube: https://youtu.be/kkd3cE-pYDI
+See the gameplay on YouTube: https://youtu.be/ZaYMBqo60Qk
 
 ## Controls:
 
