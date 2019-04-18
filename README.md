@@ -42,3 +42,11 @@ powerful machines.
 
 Other files in the `~/.config/squarely` folder store local data of the player currently signed in, and preferences.
 Deletion of the `player.pkl` file results in signing the player out. All the scores should be safe on the server.
+
+## Dependencies
+
+- python>=3.6;
+- python-requests;
+- python-pyglet;
+- openal;
+- avbin: optionally - to play music; Arch Linux: the AUR `avbin` package crashes, `avbin7` works well.
