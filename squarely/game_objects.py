@@ -1109,7 +1109,7 @@ class PlayerDialog(pyglet.sprite.Sprite):
 
         elif self.is_in(self, x, y, self.area_add):
             self.close_confirmation(self)
-            self.new_player()
+            self.new_player(panel)
 
         elif self.is_in(self, x, y, self.area_delete):
             if not common.player_confirmation.visible:
@@ -1152,11 +1152,15 @@ class PlayerDialog(pyglet.sprite.Sprite):
         pswd = self.pass_field.document.text
         return len(pswd) >= 6
 
-    def new_player(self):
+    def new_player(self, panel):
         name = self.name_field.document.text
         pswd = self.pass_field.document.text
         if self.name_ok(self) and self.pass_ok(self):
             self.message = common.lang["player_creating"]
+
+            panel.selected_level = 0
+            panel.highlight_level(0)
+
             player_create(name, hashlib.md5(pswd.encode('utf-8')).hexdigest())  # in cloud_tools
         else:
             msg = ""
