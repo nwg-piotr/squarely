@@ -96,22 +96,22 @@
    		    // user & password ok, update data & last access timestamp
 
    		    $sql = "UPDATE players SET ";
-   		    if(isset($ps0) && !empty(ps0)){
+   		    if(defined($ps0)){
                 $sql .= "ps0 = '$ps0'";
             }
-            if(isset($ps1) && !empty(ps1)){
+            if(defined($ps1)){
                 $sql .= ", ps1 = '$ps1'";
             }
-            if(isset($ps2) && !empty(ps2)){
+            if(defined($ps2)){
                 $sql .= ", ps2 = '$ps2'";
             }
-            if(isset($ps3) && !empty(ps3)){
+            if(defined($ps3)){
                 $sql .= ", ps3 = '$ps3'";
             }
-            if(isset($ps4) && !empty(ps4)){
+            if(defined($ps4)){
                 $sql .= ", ps4 = '$ps4'";
             }
-            if(isset($ps5) && !empty(ps5)){
+            if(defined($ps5)){
                 $sql .= ", ps5 = '$ps5'";
             }
             // $sql .= ", placcess=current_timestamp WHERE pname = '$pname'";
@@ -124,22 +124,22 @@
    		    } else {
    		        echo "no_result";
    		    }
-	
+
    	    } else {
    		    die ("user_data_invalid");
    	    }
 
 
 	} else if ($action == 'create') {
-		
+
 		if($agent != $vagent) {
 			die("access_denied");
    	    }
-   	
+
    	    // Check if player exists, die if so
         $sql = "SELECT * FROM players WHERE pname = '$pname'";
    	    $result = mysql_query( $sql, $conn );
-   	
+
    	    if(mysql_num_rows($result) > 0) {
    		    die("player_exists");
    	    }
@@ -149,28 +149,28 @@
         VALUES('$pname', '$ppswd')";
 
    	    $result = mysql_query( $sql, $conn );
-   	
+
    	    if($result) {
-   			
+
    		    echo "player_created";
-   			 
+
    	    } else {
    		    echo "failed_creating";
  		}
-   	
+
 	} else if ($action == 'delete') {
-		
+
 		if($agent != $vagent) {
 			die("access_denied");
    	    }
-   	
-		$sql = "SELECT pname FROM players WHERE pname = '$pname' AND ppswd = '$ppswd'";		
+
+		$sql = "SELECT pname FROM players WHERE pname = '$pname' AND ppswd = '$ppswd'";
 		$result = mysql_query( $sql, $conn );
-		
-		$num_rows = mysql_num_rows($result);	
-		
+
+		$num_rows = mysql_num_rows($result);
+
 		if($num_rows > 0){
-			
+
 			$row = mysql_fetch_row($result);
 			$pname = $row[0];
 			$sql = "DELETE FROM players WHERE pname = '$pname' AND ppswd = '$ppswd'";
@@ -180,7 +180,7 @@
 	   		} else {
 	   			echo "failed_deleting";
 	   		}
-			
+
 		} else {
 			echo "no_player_wrong_pass";
 		}
