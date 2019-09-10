@@ -60,8 +60,11 @@ class GameBoard(object):
         if common.rc.debug_mode:
             print("cell_resources = " + str(self.cell_resources))
 
-        platform = pyglet.window.get_platform()
-        display = platform.get_default_display()
+        if pyglet.version > '1.3':
+            display = pyglet.canvas.get_display()
+        else:
+            platform = pyglet.window.get_platform()
+            display = platform.get_default_display()
         screen = display.get_default_screen()
         self.window_height = int(screen.height * 0.8)
         self.window_width = int((self.window_height / 8) * 6)
